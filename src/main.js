@@ -31,7 +31,7 @@ function assetRows(list) {
     <button type="button" class="asset-row" data-asset="${asset.id}">
       <span class="asset-icon">${icon('assets')}</span>
       <span class="asset-description"><strong>${asset.model}</strong><small>${asset.id} · Serie ${asset.serial}</small></span>
-      <span class="asset-state">En alquiler</span><span class="row-arrow">${icon('diagonal')}</span>
+      <span class="asset-state">En alquiler</span><span class="row-arrow"><span>Ver ficha</span>${icon('diagonal')}</span>
     </button>`).join('') || empty('No encontramos equipos que coincidan con tu búsqueda.');
 }
 function setView(nextView) {
@@ -68,7 +68,7 @@ function render() {
       output = `<div class="client-grid">${filteredClients.map(item => `
         <button type="button" class="client-card ${item.id === selected ? 'chosen' : ''}" data-client="${item.id}" aria-pressed="${item.id === selected}">
           <span class="client-avatar ${item.color}">${item.initials}</span><span class="client-card-arrow">${icon('diagonal')}</span>
-          <strong>${item.name}</strong><small>${item.sector}</small><span class="client-meta">${item.assets.length} equipos <i>·</i> Cliente activo</span>
+          <strong>${item.name}</strong><small>${item.sector}</small><span class="client-meta">Ver sus ${item.assets.length} equipos</span>
         </button>`).join('')}</div>
         <div class="client-detail"><div class="detail-heading"><div><h4>${client.name}</h4><p>Contacto: ${client.contact}<span class="contact-separator"> · </span></p></div><span class="connected-tag">${icon('link')} Información conectada</span></div>
         <div class="detail-tabs"><span class="tab-selected">Equipos asociados <b>${client.assets.length}</b></span><button type="button" data-client-docs="${client.id}">Documentos ${icon('diagonal')}</button></div>
@@ -81,6 +81,7 @@ function render() {
   if (view === 'history') output = `<div class="list-panel">${filteredAssets.map(asset => `
     <button type="button" class="asset-row" data-asset="${asset.id}"><span class="asset-icon">${icon('history')}</span><span class="asset-description"><strong>Asignado a ${clientFor(asset).name}</strong><small>${asset.id} · ${asset.date} · Ver historial completo</small></span><span class="row-arrow">${icon('diagonal')}</span></button>`).join('') || empty('No encontramos movimientos con esa búsqueda.')}</div>`;
   $('#demo-content').innerHTML = output;
+  $('#demo-instruction').textContent = { clients: 'Pulsa un cliente. Debajo aparecerán sus equipos; «Ver ficha» abre el historial.', assets: 'Pulsa «Ver ficha» en un equipo para consultar su historial y contrato.', documents: 'Pulsa un contrato para abrir el documento de demostración.', history: 'Pulsa un movimiento para consultar la historia del equipo.' }[view];
 }
 
 function openDialog() {
@@ -156,37 +157,6 @@ $('#detail-dialog').addEventListener('close', () => {
   if (modalTrigger?.isConnected) modalTrigger.focus({ preventScroll: true });
 });
 
-// The dossier is a three-date story, independent from the full demo.
-const dossierEvents = [
-  { state: 'Cliente anterior', client: 'Grupo del Pacífico', tag: 'Devuelto', description: 'La devolución queda registrada. El equipo conserva el vínculo con su cliente anterior.' },
-  { state: 'Servicio registrado', client: 'Mantenimiento preventivo', tag: 'Revisado', description: 'La revisión y el contador pasan a formar parte del historial del mismo equipo.' },
-  { state: 'Cliente actual', client: 'Constructora Horizonte', tag: 'En alquiler', description: 'El contrato, la entrega y los documentos están relacionados con este equipo.' },
-];
-let dossierAnimation;
-function updateDossier(index, animate = true) {
-  const entry = dossierEvents[index];
-  $('#dossier-state').textContent = entry.state;
-  $('#dossier-client').textContent = entry.client;
-  $('#dossier-tag').textContent = entry.tag;
-  $('#dossier-description').textContent = entry.description;
-  $('.dossier-timeline').dataset.index = String(index);
-  document.querySelectorAll('[data-dossier]').forEach(button => {
-    const current = Number(button.dataset.dossier) === index;
-    button.classList.toggle('active', current);
-    button.classList.toggle('is-past', Number(button.dataset.dossier) < index);
-    button.setAttribute('aria-pressed', String(current));
-  });
-  dossierAnimation?.cancel();
-  if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    dossierAnimation = $('.dossier-event').animate([
-      { opacity: .55, transform: 'translateY(4px)' },
-      { opacity: 1, transform: 'translateY(0)' },
-    ], { duration: 220, easing: 'cubic-bezier(.16,1,.3,1)' });
-  }
-}
-document.querySelectorAll('[data-dossier]').forEach(button => button.addEventListener('click', () => updateDossier(Number(button.dataset.dossier))));
-updateDossier(2, false);
-
 const menuToggle = $('#menu-toggle');
 const nav = $('#main-nav');
 const compactNavigation = matchMedia('(max-width: 860px)');
@@ -224,3 +194,18 @@ $('#contact-form').addEventListener('submit', event => {
 });
 $('#year').textContent = new Date().getFullYear();
 render();
+
+// Navigation opens the optional workspace; the main explanation remains visible without it.
+function revealDemo() { $('#demo-disclosure').open = true; }
+document.querySelectorAll('a[href="#demo"]').forEach(link => link.addEventListener('click', revealDemo));
+if (location.hash === '#demo') revealDemo();
+document.querySelectorAll('[data-guide]').forEach(button => button.addEventListener('click', () => {
+  selected = 1;
+  setView('clients');
+  if (button.dataset.guide === 'client') {
+    $('[data-client="1"]').focus({ preventScroll: true });
+    $('[data-client="1"]').scrollIntoView({ block: 'center', behavior: 'instant' });
+  }
+  if (button.dataset.guide === 'asset') showAsset('EQ-024');
+  if (button.dataset.guide === 'document') showDoc('EQ-024');
+}));

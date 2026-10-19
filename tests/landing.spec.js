@@ -4,45 +4,71 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
-test('La ficha inicial conserva equipo y permite recorrer sus tres fechas', async ({ page }) => {
+test('La oferta y ambos resultados se entienden sin reproducir la explicación', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#dossier-client')).toHaveText('Constructora Horizonte');
-  await page.locator('[data-dossier="0"]').click();
-  await expect(page.locator('#dossier-client')).toHaveText('Grupo del Pacífico');
-  await expect(page.locator('[data-dossier="0"]')).toHaveAttribute('aria-pressed', 'true');
-  await page.locator('[data-dossier="1"]').click();
-  await expect(page.locator('#dossier-client')).toHaveText('Mantenimiento preventivo');
-  await page.locator('[data-dossier="2"]').click();
-  await expect(page.locator('#dossier-client')).toHaveText('Constructora Horizonte');
-  await expect(page.locator('#dossier-title')).toHaveText('EQ-024');
+  await expect(page.locator('h1')).toContainText('sistema para tu empresa');
+  await expect(page.locator('.hero-copy')).toContainText('software a medida');
+  await expect(page.locator('#before-title')).toBeVisible();
+  await expect(page.locator('#after-title')).toBeVisible();
+  await expect(page.locator('.linked-record')).toContainText('Su contrato de alquiler');
+  await expect(page.locator('#demo-disclosure')).not.toHaveAttribute('open', '');
+  await page.locator('.service-bridge a').click();
+  await expect(page.locator('#demo-disclosure')).toHaveAttribute('open', '');
+  await page.locator('[data-guide="asset"]').click();
+  await expect(page.locator('#detail-title')).toHaveText('Ricoh IM C3000');
+  await page.keyboard.press('Escape');
+  await page.locator('[data-guide="document"]').click();
+  await expect(page.locator('#detail-title')).toHaveText('Contrato de alquiler');
 });
 
-test('La transformación anima archivos y puede interrumpirse y repetirse', async ({ page }) => {
+test('La explicación puede pausarse, continuar, terminar y repetirse', async ({ page }) => {
+  await page.clock.install();
   await page.goto('/');
-  await page.locator('#unify-button').click();
-  await expect(page.locator('.tr-flying-file').first()).toBeAttached();
-  await page.locator('#before-button').click();
-  await expect(page.locator('#scene')).toHaveAttribute('data-phase', 'before');
-  await expect(page.locator('.tr-flying-file')).toHaveCount(0);
-  await page.locator('#unify-button').click();
-  await expect(page.locator('#scene')).toHaveAttribute('data-phase', 'after');
-  await page.locator('[data-tr-asset="1"]').click();
-  await expect(page.locator('#tr-contract-name')).toHaveText('Contrato de alquiler · EQ-018');
-  await page.locator('#unify-button').click();
-  await expect(page.locator('#scene')).toHaveAttribute('data-phase', 'after');
-  await expect(page.locator('#tr-contract-name')).toHaveText('Contrato de alquiler · EQ-024');
+  await page.locator('#story-play').click();
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '0');
+  await page.clock.runFor(1000);
+  await page.locator('#story-play').click();
+  await expect(page.locator('#story-play')).toHaveAttribute('aria-pressed', 'false');
+  await page.clock.runFor(5000);
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '0');
+  await page.locator('#story-play').click();
+  await page.clock.runFor(2100);
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '1');
+  await page.clock.runFor(6000);
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', 'complete');
+  await page.locator('#story-play').click();
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '0');
+  await page.locator('[data-story-step="2"]').click();
+  await expect(page.locator('#story-play')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#story-caption')).toContainText('historial');
 });
 
-test('El modo de movimiento reducido muestra el resultado sin archivos animados', async ({ page }) => {
+test('Movimiento reducido ofrece pasos manuales y nunca inicia una reproducción', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  await page.locator('#unify-button').click();
-  await expect(page.locator('#scene')).toHaveAttribute('data-phase', 'after');
-  await expect(page.locator('.tr-flying-file')).toHaveCount(0);
+  await page.locator('#story-play').click();
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '0');
+  await expect(page.locator('#story-play')).toHaveAttribute('aria-pressed', 'false');
+  await page.locator('#story-play').click();
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '1');
+  await page.locator('[data-story-step="2"]').click();
+  await expect(page.locator('.comparison')).toHaveAttribute('data-step', '2');
+});
+
+test('La comparación conserva su explicación y la demo informa su requisito sin JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto('http://127.0.0.1:4181/');
+  await expect(page.locator('#before-title')).toBeVisible();
+  await expect(page.locator('#after-title')).toBeVisible();
+  await page.locator('#demo-disclosure > summary').click();
+  await expect(page.locator('.demo-instruction-static')).toContainText('activa JavaScript');
+  await context.close();
 });
 
 test('Clientes, equipos y documentos conservan sus relaciones y el foco del diálogo', async ({ page }) => {
   await page.goto('/');
+  await page.locator('#demo-disclosure > summary').click();
   await page.locator('[data-client="2"]').click();
   await expect(page.locator('.detail-heading h4')).toHaveText('Grupo del Pacífico');
   const trigger = page.locator('[data-asset="EQ-031"]').first();
@@ -58,6 +84,7 @@ test('Clientes, equipos y documentos conservan sus relaciones y el foco del diá
 
 test('La búsqueda tolera tildes, muestra vacío y permite restablecer registros', async ({ page }) => {
   await page.goto('/');
+  await page.locator('#demo-disclosure > summary').click();
   await page.locator('[data-view="clients"]').click();
   await page.locator('#search').fill('pacifico');
   await expect(page.locator('.client-card')).toHaveCount(1);
@@ -130,11 +157,10 @@ for (const viewport of [
     await page.goto('/');
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.locator('#after-button').click();
-    await expect(page.locator('#scene')).toHaveAttribute('data-phase', 'after');
+    await page.locator('[data-story-step="2"]').click();
+    await expect(page.locator('.comparison')).toHaveAttribute('data-step', '2');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.locator('[data-tr-asset="1"]').click();
-    await expect(page.locator('#tr-asset-name')).toHaveText('HP DesignJet T650');
+    await page.locator('#demo-disclosure > summary').click();
     await page.locator('[data-client="1"]').click();
     await page.locator('[data-asset="EQ-024"]').first().click();
     await expect(page.locator('#detail-dialog')).toBeVisible();
@@ -175,7 +201,10 @@ test('Accesibilidad automática en escritorio y móvil, antes y después', async
     await page.evaluate(() => document.fonts.ready);
     await page.addScriptTag({ content: axeSource });
     for (const after of [false, true]) {
-      if (after) await page.locator('#after-button').click();
+      if (after) {
+        await page.locator('[data-story-step="2"]').click();
+        await page.locator('#demo-disclosure > summary').click();
+      }
       const violations = await page.evaluate(async () => {
         const result = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } });
         return result.violations.map(item => ({ id: item.id, nodes: item.nodes.map(node => ({ target: node.target, summary: node.failureSummary })) }));

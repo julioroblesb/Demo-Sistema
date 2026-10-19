@@ -20,29 +20,30 @@ La oferta sigue siendo un sistema a medida que relaciona clientes, equipos, docu
 
 Contacto autorizado: WhatsApp +51 936 755 465 y `asesoria@nexoamedida.com`. El formulario prepara el mensaje y abre WhatsApp; el visitante realiza el envío. El correo alternativo usa mailto. No afirmar entrega de mensajes ni existencia de un backend de recepción.
 
-## Composición
+## Composición y comprensión (revisión de octubre de 2026)
 
-La portada se construye alrededor de una ficha concreta de equipo. A la izquierda, una propuesta breve alineada al margen; a la derecha, la ficha EQ-024 permite recorrer devolución, mantenimiento y nuevo alquiler. No usar una etiqueta corporativa sobre el H1 ni colorear una frase del título para simular jerarquía.
+La primera visita debe responder qué vendemos antes de pedir explorar. El título nombra el cambio de Excels y carpetas a un sistema para la empresa, y el párrafo identifica el servicio como software a medida.
 
-La transformación de escritorios a sistema continúa como demostración central. Después, una sección de preguntas muestra el valor de las relaciones. La demo completa permite comprobarlo; el proceso por etapas, las dudas y el contacto completan el argumento comercial.
+Una única comparación de portada muestra **Antes** y **Después, con Nexo** simultáneamente. La lectura del resultado no depende de reproducir animación ni de recordar un estado anterior. Cliente, contrato e historial son los tres puntos del relato. Las fichas ilustradas son estáticas y no se presentan como botones.
 
-Las tres tarjetas genéricas de beneficios y las etiquetas numeradas de secciones desaparecen. La numeración se reserva al recorrido de la demo y a las etapas del proceso, donde sí significa una secuencia. No añadir testimonios, logotipos de supuestos clientes, cifras de ahorro ni garantías sin evidencia.
+El botón comercial inicia la consulta; el enlace secundario conduce a la comparación. La demo completa es opcional y se despliega en la misma página con un control nativo, texto que explica dónde se abrirá y acciones guiadas. La información esencial del servicio permanece fuera del desplegable. Se retiran la ficha independiente de portada y las secciones que repetían preguntas y el problema de la dispersión.
 
-El fondo oscuro es la tinta bosque ya presente en el manual; organiza un cambio de capítulo, no una nueva identidad. Evitar fondos con halos, gradientes decorativos, iconos sueltos y tarjetas repetidas como estructura de toda la página.
+No añadir testimonios, logotipos de supuestos clientes, cifras de ahorro ni garantías sin evidencia. El ejemplo de alquiler es una demostración, no una limitación del servicio a impresoras o alquileres.
 
 ## Recursos visuales y movimiento
 
-- `src/assets/equipo.svg`: ilustración vectorial propia de un equipo, con anotaciones y geometría que responden a la historia de la demo; no es fotografía ni imagen de un cliente.
-- La ficha de portada cambia por acción del visitante. Una llegada breve del documento, seguida de estados legibles y estables.
-- La transformación mantiene continuidad espacial: archivos que viajan a sus registros. Se miden las posiciones en un lote antes de escribir en el DOM.
+- La comparación funciona como una explicación animada de nueve segundos, iniciada por el visitante, con pausa, continuación, repetición y selección manual de pasos.
+- Cada pieza viaja desde su archivo de origen al registro relacionado. Se leen las posiciones antes de escribir en el DOM; el movimiento usa transform y opacity mediante Web Animations API.
+- Ambos resultados siguen visibles durante todo el relato; un texto breve explica el paso en curso. Sin audio ni descarga de vídeo para entender la oferta.
+- Fuera de pantalla o al ocultar la pestaña, la reproducción se pausa. No se reanuda automáticamente.
+- Con `prefers-reduced-motion`, pasos manuales sin reproducción temporizada ni desplazamiento de piezas.
 - Sin secuestro de scroll, cursores personalizados, precargas, marquesinas ni bucles decorativos.
-- Animaciones interrumpibles. Con `prefers-reduced-motion`, resultado directo y sin viaje de archivos.
-- Iconos SVG de trazo coherente. Los menús, FAQs y diálogos usan controles nativos.
+- Las listas de equipos indican «Ver ficha» y los clientes «Ver sus equipos». Los menús, desplegables, FAQs y diálogos usan controles nativos.
 
 ## Lectura y adaptación
 
 - Contenedor de hasta 1296 px; composición de dos columnas en escritorio y una columna en móvil.
-- Escala de portada 38–74 px dentro de Manrope; cuerpos comerciales 14–17 px según contexto. Los tamaños de una ilustración no definen el tamaño del texto comercial.
+- Escala de portada 35–61 px dentro de Manrope; cuerpos comerciales 14–17 px según contexto. Los tamaños de una ilustración no definen el tamaño del texto comercial.
 - Menú compacto hasta 860 px; las tarjetas de clientes se convierten en filas verticales hasta 650 px. Los campos del formulario usan al menos 16 px en móvil.
 - Las superficies de navegación y acción se diseñan con blancos táctiles amplios, foco visible y nombres accesibles. Los diálogos no exceden la altura dinámica disponible.
 - Comprobar paisaje móvil, tablet, escritorio y reflujo equivalente a zoom del navegador. No basta con comprobar que el ancho total no desborda.
