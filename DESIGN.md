@@ -18,7 +18,7 @@ La página es comercial: que un dueño o encargado comprenda cómo conectar info
 
 La oferta sigue siendo un sistema a medida que relaciona clientes, equipos, documentos, operaciones e historial. WhatsApp, reportes y automatizaciones son ampliaciones. La demo usa datos ficticios, sin conexión con sistemas de clientes.
 
-Contacto autorizado: WhatsApp +51 936 755 465 y `asesoria@nexoamedida.com`. El formulario prepara el mensaje y abre WhatsApp; el visitante realiza el envío. El correo alternativo usa mailto. No afirmar entrega de mensajes ni existencia de un backend de recepción.
+Contacto autorizado: WhatsApp +51 936 755 465 y `asesoria@nexoamedida.com`. Dirección: Jirón Tarapacá 670, Magdalena del Mar, Lima. El formulario prepara el mensaje y abre WhatsApp; el visitante realiza el envío. El correo alternativo usa mailto. No afirmar entrega de mensajes ni existencia de un backend de recepción.
 
 ## Composición y comprensión (revisión de octubre de 2026)
 
