@@ -1,0 +1,28 @@
+P05 — El archivo también necesita contexto
+FECHA: 2026-10-21 12:30 · Lima
+USO: Orgánico
+
+FACEBOOK
+Encontrar un PDF resuelve una parte de la consulta. Saber a qué cliente, equipo u operación corresponde completa la respuesta.
+
+En Nexo trabajamos esas relaciones: que un contrato aparezca junto al alquiler al que pertenece y que el equipo conserve el vínculo con su historial.
+
+Este diagrama usa información ficticia para mostrar la idea. ¿Qué tipo de documento cuesta ubicar en tu empresa?
+
+INSTAGRAM
+Encontraste el PDF. ¿A qué operación pertenece?
+
+Contrato → equipo → cliente. La relación es la que permite entender el archivo.
+
+¿Qué documento suele quedar sin contexto en tu empresa?
+
+#GestionDocumental #ProcesosEmpresariales #PymesPeru
+
+TEXTO ALTERNATIVO SUGERIDO
+Pieza de Nexo: El archivo también necesita contexto. Encontrar un PDF sin saber a qué equipo, contrato o cliente corresponde. Ejemplo ilustrativo con datos ficticios.
+
+CTA
+Comenta qué documento cuesta relacionar.
+
+WHATSAPP
+https://wa.me/51936755465?text=Hola%2C%20vi%20DOCUMENTO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.

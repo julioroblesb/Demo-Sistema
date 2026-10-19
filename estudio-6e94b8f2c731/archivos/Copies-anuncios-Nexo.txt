@@ -1,0 +1,23 @@
+A1 / P02 — Lanzar primero
+Formato: Video vertical de 24 s. Versión 9:16 y adaptación 4:5.
+Texto principal:
+¿Tu operación está repartida entre Excels y carpetas? Mira cómo se conectan cliente, equipo, documentos e historial en un sistema a medida. Cuéntanos por WhatsApp qué proceso necesitas ordenar.
+Titular: Conecta la información de tu empresa
+CTA: Enviar mensaje por WhatsApp
+Destino: https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20CONEXI%C3%93N%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.
+
+A2 / P04 — Lanzar junto con A1 en la prueba inicial
+Formato: Carrusel de cinco láminas 1:1.
+Texto principal:
+¿Para saber qué tiene un cliente tienes que abrir varios archivos? En Nexo diseñamos sistemas para relacionar clientes, equipos, contratos e historial. Escríbenos y cuéntanos cómo hacen hoy esa consulta.
+Titular: ¿Cuántos archivos abres por cliente?
+CTA: Enviar mensaje por WhatsApp
+Destino: https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20CLIENTE%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.
+
+A3 / P08 — Reserva; probar después o sustituir una creatividad
+Formato: Video de 24 s. 9:16 y 4:5.
+Texto principal:
+¿Quién tiene el equipo? ¿Dónde estuvo? ¿Qué contrato le corresponde? Explora estas relaciones en la demo y conversemos sobre el proceso de tu empresa.
+Titular: Toda la historia del mismo equipo
+CTA: Enviar mensaje por WhatsApp
+Destino: https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20HISTORIA%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.

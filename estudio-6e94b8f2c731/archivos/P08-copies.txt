@@ -1,0 +1,32 @@
+P08 — Tres preguntas que una ficha conectada puede responder
+FECHA: 2026-10-30 12:30 · Lima
+USO: Reserva
+
+FACEBOOK
+¿Quién tiene este equipo? ¿Dónde estuvo antes? ¿Qué contrato le corresponde?
+
+En este ejemplo respondemos las tres preguntas recorriendo registros relacionados. El valor está en conservar el contexto entre clientes, equipos, movimientos y documentos.
+
+Diseñamos el sistema según el proceso de cada empresa. Si estas consultas hoy requieren buscar en varios lugares, escribe HISTORIA por WhatsApp y cuéntanos qué necesitas conectar.
+
+Demostración con datos ficticios.
+
+INSTAGRAM
+Tres preguntas. Un recorrido conectado.
+
+¿Quién lo tiene?
+¿Dónde estuvo?
+¿Qué contrato corresponde?
+
+Mira la demo. Para revisar un proceso de tu empresa, escribe HISTORIA en el WhatsApp del perfil.
+
+#TrazabilidadOperativa #SistemasAMedida #PymesPeru
+
+TEXTO ALTERNATIVO SUGERIDO
+Pieza de Nexo: Tres preguntas que una ficha conectada puede responder. No poder reconstruir relaciones desde registros aislados. Ejemplo ilustrativo con datos ficticios.
+
+CTA
+Escribe HISTORIA por WhatsApp.
+
+WHATSAPP
+https://wa.me/51936755465?text=Hola%2C%20vi%20HISTORIA%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.
