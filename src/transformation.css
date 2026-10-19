@@ -36,3 +36,6 @@
 .tr-mode button{display:flex;align-items:center;gap:10px}.tr-mode button svg{width:12px;height:12px}.tr-browser-footer a{display:flex;align-items:center;gap:5px}.tr-browser-footer a svg{width:11px;height:11px}.tr-heading .tr-mode{align-self:center}
 .tr-gather-logo svg{width:38px;height:38px;stroke-width:1.8}
 @media(max-width:720px){.tr-asset-tabs button{min-height:40px}.tr-mode button{min-height:40px}.tr-gather-logo svg{width:31px;height:31px}}
+
+/* Approved secondary ink for readable controls. */
+.tr-mode button{color:#607168}

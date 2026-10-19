@@ -67,10 +67,20 @@ function reset() {
 
 function flyFiles(run) {
   const stageRect = stage.getBoundingClientRect();
-  root.querySelectorAll('[data-source]').forEach((source, index) => {
+  const browserRect = browser.getBoundingClientRect();
+  const browserLeft = browser.offsetLeft;
+  const browserTop = browser.offsetTop;
+  const scale = browserRect.width / browser.offsetWidth || 1;
+  // Complete layout reads together before appending or animating any clones.
+  const measurements = [...root.querySelectorAll('[data-source]')].map(source => {
     const target = root.querySelector(`[data-target="${source.dataset.source}"]`);
     const from = source.getBoundingClientRect();
     const to = target.getBoundingClientRect();
+    const targetX = stageRect.left + browserLeft + (to.left + to.width / 2 - browserRect.left) / scale;
+    const targetY = stageRect.top + browserTop + (to.top + to.height / 2 - browserRect.top) / scale;
+    return { source, target, from, dx: targetX - from.left - from.width / 2, dy: targetY - from.top - from.height / 2 };
+  });
+  measurements.forEach(({ source, target, from, dx, dy }, index) => {
     const flight = source.cloneNode(true);
     flight.removeAttribute('data-source');
     flight.classList.add('tr-flying-file');
@@ -82,8 +92,6 @@ function flyFiles(run) {
       height: `${from.height}px`,
     });
     stage.append(flight);
-    const dx = to.left + to.width / 2 - from.left - from.width / 2;
-    const dy = to.top + to.height / 2 - from.top - from.height / 2;
     const animation = flight.animate([
       { transform: 'translate(0, 0) scale(1)', opacity: 1, offset: 0 },
       { transform: `translate(${dx * .5}px, ${dy * .35 - 24}px) scale(.85)`, opacity: 1, offset: .5 },

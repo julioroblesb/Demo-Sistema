@@ -43,3 +43,17 @@ npm run build
 Publicar el contenido generado de `dist/`, incluido `CNAME`, y un archivo vacío `.nojekyll` en la rama `gh-pages`, configurada como origen de GitHub Pages. La base de los recursos debe ser `/` para el dominio propio. El código fuente permanece en `main`.
 
 La configuración exacta de DonWeb y los pasos de HTTPS están en [docs/dominio-donweb.md](docs/dominio-donweb.md).
+
+## Diseño y contacto
+
+La identidad fija y las reglas de interfaz están en [DESIGN.md](DESIGN.md). La investigación de habilidades públicas y los criterios aplicados a la revisión comercial están en [docs/investigacion-diseno-v2.md](docs/investigacion-diseno-v2.md).
+
+El contacto abre una consulta preparada en WhatsApp al número `+51 936 755 465`, con correo alternativo `asesoria@nexoamedida.com`. El visitante realiza el envío en su aplicación; no hay un servicio backend de formularios ni una confirmación automática de recepción.
+
+## Pruebas de regresión
+
+```sh
+npm test
+```
+
+Las pruebas usan Playwright y axe sobre la compilación de producción. Si Chromium no está instalado, ejecuta `npx playwright install chromium`; también puedes señalar un ejecutable existente con `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. Cubren 11 dimensiones, orientación horizontal, teclado, movimiento reducido, relaciones de datos y URLs de contacto. Los mensajes se interceptan en las pruebas; no se envían consultas reales.
