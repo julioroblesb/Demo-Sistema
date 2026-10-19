@@ -34,10 +34,12 @@ La escena inicial muestra tres escritorios con seis fuentes de información. Al 
 
 Las referencias de diseño revisadas y las decisiones están en [docs/design-review.md](docs/design-review.md).
 
-Para generar la versión de GitHub Pages de este repositorio:
+Para generar la versión de GitHub Pages con el dominio propio `nexoamedida.com`:
 
 ```sh
-npm run build -- --base=/Demo-Sistema/
+npm run build
 ```
 
-Publicar el contenido generado de `dist/` y un archivo vacío `.nojekyll` en la rama `gh-pages`, configurada como origen de GitHub Pages. El código fuente permanece en `main`.
+Publicar el contenido generado de `dist/`, incluido `CNAME`, y un archivo vacío `.nojekyll` en la rama `gh-pages`, configurada como origen de GitHub Pages. La base de los recursos debe ser `/` para el dominio propio. El código fuente permanece en `main`.
+
+La configuración exacta de DonWeb y los pasos de HTTPS están en [docs/dominio-donweb.md](docs/dominio-donweb.md).
