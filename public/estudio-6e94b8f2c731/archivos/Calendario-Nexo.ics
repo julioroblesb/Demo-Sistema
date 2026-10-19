@@ -1,0 +1,186 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Nexo//Calendario de contenido//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:P03-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261020T150000Z
+DTEND:20261020T153000Z
+SUMMARY:P03 - Así empieza un sistema hecho para tu empresa
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P02-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261020T180000Z
+DTEND:20261020T183000Z
+SUMMARY:P02 - De tres escritorios a una historia conectada
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P01-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261020T233000Z
+DTEND:20261021T000000Z
+SUMMARY:P01 - De Excels y carpetas a un sistema para tu empresa
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P05-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261021T173000Z
+DTEND:20261021T180000Z
+SUMMARY:P05 - El archivo también necesita contexto
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P09-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261021T233000Z
+DTEND:20261022T000000Z
+SUMMARY:P09 - Puedes comenzar por un proceso concreto
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P06-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261022T233000Z
+DTEND:20261023T000000Z
+SUMMARY:P06 - El equipo cambia de cliente. El historial lo acompaña.
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S01-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261023T233000Z
+DTEND:20261024T000000Z
+SUMMARY:S01 - Detectar el problema
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P04-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261026T173000Z
+DTEND:20261026T180000Z
+SUMMARY:P04 - ¿Cuántos archivos abres para responder por un cliente?
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S02-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261027T233000Z
+DTEND:20261028T000000Z
+SUMMARY:S02 - Presentar la demo
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P07-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261028T233000Z
+DTEND:20261029T000000Z
+SUMMARY:P07 - Cuando la respuesta depende de una persona
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S03-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261029T233000Z
+DTEND:20261030T000000Z
+SUMMARY:S03 - Escuchar consultas
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P08-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261030T173000Z
+DTEND:20261030T180000Z
+SUMMARY:P08 - Tres preguntas que una ficha conectada puede responder
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P10-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261102T173000Z
+DTEND:20261102T180000Z
+SUMMARY:P10 - Tus Excels son el punto de partida
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S04-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261103T233000Z
+DTEND:20261104T000000Z
+SUMMARY:S04 - Mostrar trazabilidad
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P11-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261104T233000Z
+DTEND:20261105T000000Z
+SUMMARY:P11 - Primero el núcleo. Después\, las ampliaciones.
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S05-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261105T233000Z
+DTEND:20261106T000000Z
+SUMMARY:S05 - Reconocer dependencia
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:P12-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261106T173000Z
+DTEND:20261106T180000Z
+SUMMARY:P12 - Muéstranos el proceso que quieres ordenar
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S06-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261110T233000Z
+DTEND:20261111T000000Z
+SUMMARY:S06 - Resolver una objeción
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S07-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261112T233000Z
+DTEND:20261113T000000Z
+SUMMARY:S07 - Explicar el diagnóstico
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+BEGIN:VEVENT
+UID:S08-202610-nexo@nexoamedida.com
+DTSTAMP:20261019T120000Z
+DTSTART:20261113T233000Z
+DTEND:20261114T000000Z
+SUMMARY:S08 - Facilitar la consulta
+DESCRIPTION:Publicación sugerida en Facebook e Instagram. Zona horaria o
+ riginal: Lima.
+END:VEVENT
+END:VCALENDAR

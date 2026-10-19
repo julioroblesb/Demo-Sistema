@@ -1,0 +1,30 @@
+P06 — El equipo cambia de cliente. El historial lo acompaña.
+FECHA: 2026-10-22 18:30 · Lima
+USO: Orgánico
+
+FACEBOOK
+Un equipo puede pasar por varios clientes, una devolución y un mantenimiento. Consultar solo su ubicación actual deja parte de la historia fuera.
+
+En este ejemplo recorremos los movimientos del mismo equipo y vemos cómo conserva el vínculo con clientes y documentos.
+
+Es un ejemplo de alquiler de equipos con datos ficticios. La misma lógica puede evaluarse para otros activos y procesos según el funcionamiento de cada negocio.
+
+Explora la demo y piensa qué historial te gustaría consultar así.
+
+INSTAGRAM
+Un equipo cambia de cliente. Su historial lo acompaña.
+
+Devolución, mantenimiento y nuevo alquiler: mira las tres fechas de EQ-024 en este ejemplo con datos ficticios.
+
+Encuentra la demo en el perfil.
+
+#Trazabilidad #GestionDeActivos #AlquilerDeEquipos
+
+TEXTO ALTERNATIVO SUGERIDO
+Pieza de Nexo: El equipo cambia de cliente. El historial lo acompaña.. Historial perdido o separado cada vez que se mueve un activo. Ejemplo ilustrativo con datos ficticios.
+
+CTA
+Explora el historial en la demo.
+
+WHATSAPP
+https://wa.me/51936755465?text=Hola%2C%20vi%20EQUIPO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.

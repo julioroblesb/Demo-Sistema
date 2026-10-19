@@ -1,0 +1,716 @@
+{
+  "posts": [
+    {
+      "id": "P01",
+      "week": 1,
+      "day": "Lunes",
+      "time": "12:30",
+      "format": "Imagen",
+      "role": "Orgánico · Fijar",
+      "title": "Tu información existe. ¿Puedes conectarla?",
+      "pain": "Información repartida entre archivos y personas.",
+      "goal": "Explicar en una visita qué vende Nexo.",
+      "hook": "Clientes en un Excel. Equipos en otro. Documentos en carpetas.",
+      "visual": "Una misma ficha de cliente se descompone a la izquierda en tres fuentes y se reúne a la derecha. Logo maestro discreto. La relación cliente–equipo–contrato es el protagonista.",
+      "fb": "¿Dónde está la información de tu empresa?\n\nTal vez los clientes viven en un Excel, los equipos en otro y los contratos en carpetas. La dificultad aparece cuando necesitas relacionarlos para responder qué tiene un cliente o qué pasó con un equipo.\n\nEn Nexo diseñamos sistemas de información a medida para conectar esos registros y consultar su contexto desde un mismo lugar. Empezamos por entender un proceso concreto de tu empresa.\n\nExplora la demo de nexoamedida.com y cuéntanos qué información necesitas conectar por WhatsApp.",
+      "ig": "Clientes en un Excel. Equipos en otro. Contratos en carpetas.\n\nNexo conecta esas piezas en un sistema diseñado para la forma en que trabaja tu empresa.\n\n¿Qué necesitas relacionar hoy? Mira la demo y conversemos desde los enlaces del perfil.\n\n#GestionEmpresarial #PymesPeru #SistemasAMedida",
+      "cta": "Explora la demo y cuéntanos qué necesitas conectar.",
+      "keyword": "MAPA"
+    },
+    {
+      "id": "P02",
+      "week": 1,
+      "day": "Miércoles",
+      "time": "18:30",
+      "format": "Reel / video · 24 s",
+      "role": "PAUTA A1 · Inicio",
+      "title": "De tres escritorios a una historia conectada",
+      "pain": "Reconstruir un caso abriendo varios archivos.",
+      "goal": "Mostrar la transformación y generar conversaciones de empresas con ese problema.",
+      "hook": "Para entender un equipo, ¿tienes que buscar en tres lugares?",
+      "visual": "Captura real de la transformación en la landing, ampliada por partes para móvil. Archivos → conexión → cliente y equipo con documentos. No mostrar toda la pantalla de escritorio diminuta.",
+      "fb": "Para responder por un equipo, ¿tienes que revisar varios archivos y preguntarle a alguien?\n\nEn esta demo ves cómo clientes, equipos, documentos e historial se conectan en un mismo sistema. La implementación se diseña a partir de cómo funciona tu empresa y puede comenzar por un proceso.\n\nLos datos del video son ficticios. Si reconoces este problema en tu operación, escríbenos por WhatsApp con la palabra CONEXIÓN y cuéntanos cómo lo gestionan hoy.",
+      "ig": "Un mismo equipo. Su información, en varios lugares.\n\nMira cómo se conectan cliente, documentos e historial en la demo de Nexo.\n\nSi así funciona tu empresa, escribe CONEXIÓN en el WhatsApp del perfil. Los datos del video son ficticios.\n\n#ProcesosEmpresariales #PymesPeru #GestionDeEquipos",
+      "cta": "Escribe CONEXIÓN por WhatsApp y cuéntanos tu proceso.",
+      "keyword": "CONEXIÓN"
+    },
+    {
+      "id": "P03",
+      "week": 1,
+      "day": "Viernes",
+      "time": "12:30",
+      "format": "Carrusel · 5 láminas",
+      "role": "Orgánico · Fijar",
+      "title": "Así empieza un sistema hecho para tu empresa",
+      "pain": "Pensar que implementar un sistema exige cambiarlo todo de golpe.",
+      "goal": "Explicar el proceso y reducir incertidumbre.",
+      "hook": "El primer paso es entender cómo trabajas.",
+      "visual": "Cinco láminas con un proceso real: revisar fuentes, mapear relaciones, elegir alcance, construir núcleo y evaluar siguientes módulos. Diagramas y documentos; evitar cinco tarjetas iguales con iconos genéricos.",
+      "fb": "Un sistema a medida empieza antes de diseñar pantallas.\n\nPrimero revisamos cómo trabaja tu empresa: qué registra, dónde lo guarda y qué información debe quedar relacionada. Después definimos un primer proceso y su alcance.\n\nEsta secuencia permite conversar sobre algo concreto: qué se va a construir, qué información incluirá y qué quedará para otra etapa.\n\nEn el carrusel te mostramos cómo lo planteamos. Si quieres revisar tu caso, escríbenos por WhatsApp y cuéntanos cuál es el proceso que hoy más cuesta seguir.",
+      "ig": "El primer paso es entender cómo trabajas.\n\nDespués vienen las relaciones entre datos, el alcance y el sistema. Desliza para ver cómo se plantea una primera implementación.\n\nGuárdalo si estás evaluando ordenar la operación de tu empresa.\n\n#SistemasAMedida #GestionDeProcesos #EmpresasPeruanas",
+      "cta": "Guárdalo como referencia para tu primera implementación.",
+      "keyword": "PROCESO"
+    },
+    {
+      "id": "P04",
+      "week": 2,
+      "day": "Lunes",
+      "time": "12:30",
+      "format": "Carrusel · 5 láminas",
+      "role": "PAUTA A2 · Inicio",
+      "title": "¿Cuántos archivos abres para responder por un cliente?",
+      "pain": "Información del mismo cliente fragmentada entre áreas.",
+      "goal": "Captar interés desde una pregunta reconocible sin exigir conocer software.",
+      "hook": "¿Qué equipos tiene este cliente y dónde está su contrato?",
+      "visual": "Una pregunta que atraviesa cuatro registros: cliente, equipos, contrato e historial. Última lámina: ficha conectada. Variante 1:1 para carrusel publicitario.",
+      "fb": "“¿Qué equipos tiene este cliente y dónde está su contrato?”\n\nSi para responder abres varios Excels, buscas carpetas o consultas a otra área, el contexto está repartido.\n\nUn sistema a medida puede relacionar el cliente con sus equipos, contratos y operaciones para consultar esa información en conjunto. En este ejemplo mostramos cómo se ve.\n\n¿Ocurre algo parecido en tu empresa? Escríbenos por WhatsApp con la palabra CLIENTE y cuéntanos cómo hacen hoy esa búsqueda.",
+      "ig": "Una pregunta de un cliente puede llevarte por varios archivos.\n\nDesliza y mira cómo se conectan cliente, equipos, contrato e historial en una misma ficha.\n\nSi reconoces este proceso, escribe CLIENTE en el WhatsApp del perfil.\n\n#GestionDeClientes #PymesPeru #InformacionEmpresarial",
+      "cta": "Escribe CLIENTE por WhatsApp.",
+      "keyword": "CLIENTE"
+    },
+    {
+      "id": "P05",
+      "week": 2,
+      "day": "Miércoles",
+      "time": "18:30",
+      "format": "Imagen / diagrama",
+      "role": "Orgánico · Confianza",
+      "title": "El archivo también necesita contexto",
+      "pain": "Encontrar un PDF sin saber a qué equipo, contrato o cliente corresponde.",
+      "goal": "Diferenciar centralizar archivos de relacionar información.",
+      "hook": "Encontraste el PDF. ¿A qué operación pertenece?",
+      "visual": "Documento ficticio DEMO con tres conectores: contrato → equipo EQ-024 → cliente Horizonte. Identificador repetido y legible en todos los registros.",
+      "fb": "Encontrar un PDF resuelve una parte de la consulta. Saber a qué cliente, equipo u operación corresponde completa la respuesta.\n\nEn Nexo trabajamos esas relaciones: que un contrato aparezca junto al alquiler al que pertenece y que el equipo conserve el vínculo con su historial.\n\nEste diagrama usa información ficticia para mostrar la idea. ¿Qué tipo de documento cuesta ubicar en tu empresa?",
+      "ig": "Encontraste el PDF. ¿A qué operación pertenece?\n\nContrato → equipo → cliente. La relación es la que permite entender el archivo.\n\n¿Qué documento suele quedar sin contexto en tu empresa?\n\n#GestionDocumental #ProcesosEmpresariales #PymesPeru",
+      "cta": "Comenta qué documento cuesta relacionar.",
+      "keyword": "DOCUMENTO"
+    },
+    {
+      "id": "P06",
+      "week": 2,
+      "day": "Viernes",
+      "time": "12:30",
+      "format": "Reel / video · 24 s",
+      "role": "Orgánico · Demostración",
+      "title": "El equipo cambia de cliente. El historial lo acompaña.",
+      "pain": "Historial perdido o separado cada vez que se mueve un activo.",
+      "goal": "Demostrar trazabilidad con un caso específico.",
+      "hook": "Este equipo estuvo en otro cliente. ¿Puedes ver qué pasó?",
+      "visual": "Recorrer las tres fechas de la ficha EQ-024: devolución, mantenimiento y alquiler. Acercamientos a nombres, fechas y documentos; nunca datos de LR.",
+      "fb": "Un equipo puede pasar por varios clientes, una devolución y un mantenimiento. Consultar solo su ubicación actual deja parte de la historia fuera.\n\nEn esta demo recorremos los movimientos del mismo equipo y vemos cómo conserva el vínculo con clientes y documentos.\n\nEs un ejemplo de alquiler de equipos con datos ficticios. La misma lógica puede evaluarse para otros activos y procesos según el funcionamiento de cada negocio.\n\nExplora la demo y piensa qué historial te gustaría consultar así.",
+      "ig": "Un equipo cambia de cliente. Su historial lo acompaña.\n\nDevolución, mantenimiento y nuevo alquiler: recorre las tres fechas de EQ-024 en esta demo con datos ficticios.\n\nEncuentra la demo en el perfil.\n\n#Trazabilidad #GestionDeActivos #AlquilerDeEquipos",
+      "cta": "Explora el historial en la demo.",
+      "keyword": "EQUIPO"
+    },
+    {
+      "id": "P07",
+      "week": 3,
+      "day": "Lunes",
+      "time": "12:30",
+      "format": "Carrusel · 5 láminas",
+      "role": "Orgánico · Problema",
+      "title": "Cuando la respuesta depende de una persona",
+      "pain": "Consultas operativas que dependen de la memoria o archivos personales.",
+      "goal": "Ayudar al prospecto a identificar dependencia de información.",
+      "hook": "“Eso lo sabe Carlos”. ¿Te resulta familiar?",
+      "visual": "La misma consulta pasa entre administración, operaciones y comercial. Se revela la relación faltante y una ficha común como alternativa. Sin burlarse de trabajadores ni sugerir vigilancia.",
+      "fb": "“Eso lo sabe Carlos”. A veces el proceso termina en una persona porque la información está en sus archivos, sus notas o su memoria.\n\nAntes de construir un sistema conviene identificar qué preguntas dependen de ese conocimiento y qué registros deberían respaldarlas.\n\nEl objetivo es que las personas que correspondan puedan consultar el contexto, con accesos definidos según el proyecto.\n\nEn el carrusel tienes un ejemplo para reconocerlo en tu operación. Guarda estas preguntas para conversarlas con tu equipo.",
+      "ig": "“Eso lo sabe Carlos”.\n\n¿Qué consulta de tu empresa suele terminar en esa respuesta? Desliza para ver cómo identificar el contexto que falta compartir.\n\nGuarda el carrusel y revísalo con tu equipo.\n\n#GestionOperativa #PymesPeru #ProcesosEmpresariales",
+      "cta": "Guarda el carrusel y revísalo con tu equipo.",
+      "keyword": "CONTEXTO"
+    },
+    {
+      "id": "P08",
+      "week": 3,
+      "day": "Miércoles",
+      "time": "18:30",
+      "format": "Reel / video · 24 s",
+      "role": "PAUTA A3 · Reserva",
+      "title": "Tres preguntas que una ficha conectada puede responder",
+      "pain": "No poder reconstruir relaciones desde registros aislados.",
+      "goal": "Creatividad alternativa para comparar comprensión y calidad de consultas.",
+      "hook": "¿Quién lo tiene? ¿Dónde estuvo? ¿Qué documento corresponde?",
+      "visual": "Tres acciones reales en la demo: abrir cliente, abrir equipo y abrir contrato. Un resultado por toma. Cierre con nombre de servicio y WhatsApp.",
+      "fb": "¿Quién tiene este equipo? ¿Dónde estuvo antes? ¿Qué contrato le corresponde?\n\nEn esta demo respondemos las tres preguntas recorriendo registros relacionados. El valor está en conservar el contexto entre clientes, equipos, movimientos y documentos.\n\nDiseñamos el sistema según el proceso de cada empresa. Si estas consultas hoy requieren buscar en varios lugares, escribe HISTORIA por WhatsApp y cuéntanos qué necesitas conectar.\n\nDemostración con datos ficticios.",
+      "ig": "Tres preguntas. Un recorrido conectado.\n\n¿Quién lo tiene?\n¿Dónde estuvo?\n¿Qué contrato corresponde?\n\nMira la demo. Para revisar un proceso de tu empresa, escribe HISTORIA en el WhatsApp del perfil.\n\n#TrazabilidadOperativa #SistemasAMedida #PymesPeru",
+      "cta": "Escribe HISTORIA por WhatsApp.",
+      "keyword": "HISTORIA"
+    },
+    {
+      "id": "P09",
+      "week": 3,
+      "day": "Viernes",
+      "time": "12:30",
+      "format": "Imagen / esquema",
+      "role": "Orgánico · Objeción",
+      "title": "Puedes comenzar por un proceso concreto",
+      "pain": "Temor a un proyecto de software amplio e indefinido.",
+      "goal": "Mostrar implementación por etapas sin prometer plazos o precios no definidos.",
+      "hook": "¿Qué proceso vale la pena ordenar primero?",
+      "visual": "Mapa de una operación con un solo tramo resaltado: cliente → equipo → contrato. El resto queda delineado como etapas futuras.",
+      "fb": "¿Qué proceso vale la pena ordenar primero?\n\nNo todas las relaciones necesitan construirse a la vez. Podemos definir una primera etapa alrededor de una consulta que hoy cuesta resolver: qué activos tiene un cliente, dónde está un documento o qué ocurrió en un servicio.\n\nEl alcance debe dejar claro qué entra, qué información se requiere y qué queda para después.\n\nCuéntanos qué proceso revisarías primero en tu empresa.",
+      "ig": "Elige un proceso. Define qué necesita conectar. Construye una primera etapa.\n\n¿Qué consulta te gustaría resolver desde una sola ficha?\n\nCuéntanos por WhatsApp desde el perfil.\n\n#GestionDeProcesos #SoftwareAMedida #EmpresasPeruanas",
+      "cta": "Cuéntanos qué proceso revisarías primero.",
+      "keyword": "PRIMERA ETAPA"
+    },
+    {
+      "id": "P10",
+      "week": 4,
+      "day": "Lunes",
+      "time": "12:30",
+      "format": "Carrusel · 5 láminas",
+      "role": "Orgánico · Objeción",
+      "title": "Tus Excels son el punto de partida",
+      "pain": "Pensar que hay que empezar desde cero o que cualquier archivo se importa sin revisión.",
+      "goal": "Explicar el diagnóstico de datos con expectativas realistas.",
+      "hook": "Antes de mover un Excel, hay que entender qué contiene.",
+      "visual": "Una tabla ficticia muestra campos repetidos, identificadores y vínculos. Después: mapa de relaciones y selección de un primer alcance.",
+      "fb": "Tus Excels contienen parte del conocimiento de tu empresa. Antes de moverlos, hay que entender qué registra cada uno y cómo se relacionan.\n\nRevisamos identificadores, duplicados, campos y documentos asociados. Con ese mapa se puede acordar qué información se limpiará, importará o conectará dentro del alcance del proyecto.\n\nEste carrusel muestra las preguntas iniciales. ¿Qué archivo reúne hoy la información más importante de tu operación?",
+      "ig": "Antes de mover un Excel, hay que entender qué contiene.\n\nCampos, duplicados, identificadores y relaciones: esas preguntas ayudan a definir una primera implementación.\n\nDesliza y guarda la guía.\n\n#ExcelEmpresarial #GestionDeDatos #PymesPeru",
+      "cta": "Guarda la guía para revisar tus fuentes de información.",
+      "keyword": "EXCEL"
+    },
+    {
+      "id": "P11",
+      "week": 4,
+      "day": "Miércoles",
+      "time": "18:30",
+      "format": "Imagen / mapa de módulos",
+      "role": "Orgánico · Oferta",
+      "title": "Primero el núcleo. Después, las ampliaciones.",
+      "pain": "Confundir la propuesta con campañas de WhatsApp o automatizaciones sueltas.",
+      "goal": "Aclarar qué se vende y cómo puede ampliarse.",
+      "hook": "Una alerta necesita información que tenga contexto.",
+      "visual": "Núcleo cliente–equipo–documento–historial en el centro; reportes, alertas, tickets e integraciones como módulos satélite discretos.",
+      "fb": "Una alerta necesita información que tenga contexto: qué pasó, con quién y a qué registro corresponde.\n\nPor eso el núcleo de Nexo es relacionar la información operativa. Reportes, alertas, tickets o integraciones pueden plantearse como ampliaciones según las necesidades de cada empresa.\n\nLa propuesta define qué incluye cada etapa. ¿Qué información necesitas ordenar antes de pensar en automatizarla?",
+      "ig": "Clientes, equipos, documentos e historial forman el núcleo.\n\nReportes, alertas, tickets e integraciones pueden venir después, según tu operación.\n\n¿Qué información necesitas conectar primero?\n\n#AutomatizacionDeProcesos #GestionEmpresarial #SistemasAMedida",
+      "cta": "Identifica el núcleo que necesita tu empresa.",
+      "keyword": "NÚCLEO"
+    },
+    {
+      "id": "P12",
+      "week": 4,
+      "day": "Viernes",
+      "time": "12:30",
+      "format": "Reel / video · 24 s",
+      "role": "Orgánico · Contacto",
+      "title": "Muéstranos el proceso que quieres ordenar",
+      "pain": "No saber cómo iniciar una conversación sobre un sistema a medida.",
+      "goal": "Explicar el siguiente paso y facilitar una consulta concreta.",
+      "hook": "Para empezar, cuéntanos cómo trabajan hoy.",
+      "visual": "Julio a cámara o voz sobre capturas: tres preguntas sencillas, demo y botón de WhatsApp. Sin presentar un equipo ficticio ni prometer una entrega inmediata.",
+      "fb": "Para empezar una conversación sobre un sistema, cuéntanos tres cosas:\n\n1. ¿Qué proceso quieres revisar?\n2. ¿Dónde registran hoy la información?\n3. ¿Qué pregunta cuesta responder?\n\nCon ese contexto podemos entender mejor tu operación y plantear qué habría que conectar en una primera etapa.\n\nEscríbenos por WhatsApp al +51 936 755 465. Puedes explorar antes la demo en nexoamedida.com.",
+      "ig": "¿Qué proceso quieres revisar?\n¿Dónde está hoy la información?\n¿Qué pregunta cuesta responder?\n\nEse es un buen punto de partida para conversar. Escríbenos desde el WhatsApp del perfil.\n\n#PymesPeru #SistemasAMedida #GestionOperativa",
+      "cta": "Escríbenos con esas tres respuestas.",
+      "keyword": "MI PROCESO"
+    }
+  ],
+  "slides": {
+    "P03": [
+      [
+        "El sistema empieza por entender tu empresa",
+        "Antes de diseñar pantallas, revisamos el proceso que quieres ordenar.",
+        "Una hoja de proceso con tres fuentes de información."
+      ],
+      [
+        "Dónde vive cada dato",
+        "Clientes, equipos, documentos y operaciones: identificamos sus fuentes.",
+        "Cuatro fuentes etiquetadas, con datos ficticios."
+      ],
+      [
+        "Qué debe quedar relacionado",
+        "Un cliente tiene equipos. Cada equipo tiene documentos e historial.",
+        "Diagrama de relaciones, sin nombres técnicos de bases de datos."
+      ],
+      [
+        "Qué construiremos primero",
+        "Definimos un proceso, sus registros y el alcance de la primera etapa.",
+        "Resaltar un tramo concreto del mapa."
+      ],
+      [
+        "Qué podría venir después",
+        "Evaluamos reportes, alertas o integraciones según tu operación.",
+        "El núcleo permanece; ampliaciones delineadas. CTA: guarda el proceso."
+      ]
+    ],
+    "P04": [
+      [
+        "¿Qué equipos tiene este cliente?",
+        "Una pregunta sencilla puede llevarte a varios archivos.",
+        "Pregunta grande y ficha ficticia de Horizonte."
+      ],
+      [
+        "Primero, el Excel de clientes",
+        "Encuentras sus datos. Todavía falta relacionar la operación.",
+        "Acercamiento legible al registro del cliente."
+      ],
+      [
+        "Después, equipos y carpetas",
+        "Ahora buscas el activo, el contrato y los documentos.",
+        "Dos archivos con EQ-024 repetido como identificador."
+      ],
+      [
+        "Las piezas pueden consultarse juntas",
+        "Cliente, equipo, contrato e historial, relacionados en un sistema a medida.",
+        "Captura ampliada de la ficha conectada."
+      ],
+      [
+        "¿Así funciona hoy tu empresa?",
+        "Escribe CLIENTE por WhatsApp y cuéntanos cómo hacen esa consulta.",
+        "Logo y CTA. URL visible corta: nexoamedida.com. Datos ficticios."
+      ]
+    ],
+    "P07": [
+      [
+        "“Eso lo sabe Carlos”",
+        "¿Qué pregunta de tu operación depende de una sola persona?",
+        "Consulta visible con un interlocutor ilustrado; no foto de empleado real."
+      ],
+      [
+        "A veces falta el registro común",
+        "Una parte está en archivos personales; otra, en la memoria.",
+        "Misma consulta distribuida entre fuentes."
+      ],
+      [
+        "Haz tres preguntas",
+        "¿Qué pasó? ¿Con quién? ¿Qué documento lo respalda?",
+        "Tres preguntas legibles, un ejemplo EQ-024."
+      ],
+      [
+        "Relaciona el contexto",
+        "Los registros deben permitir seguir la historia del proceso.",
+        "Ficha de equipo vinculada a operación y documento."
+      ],
+      [
+        "Revísalo con tu equipo",
+        "Identifiquen una consulta que debería poder responderse desde los registros.",
+        "CTA: guarda y comparte internamente. Sin prometer eliminar personas."
+      ]
+    ],
+    "P10": [
+      [
+        "Antes de mover un Excel…",
+        "Hay que entender qué contiene y para qué se utiliza.",
+        "Una tabla ficticia y un título claro."
+      ],
+      [
+        "¿Qué identifica cada registro?",
+        "Cliente, número de serie o código: revisa cómo distingues cada elemento.",
+        "Señalar un identificador ficticio."
+      ],
+      [
+        "¿Hay datos repetidos o versiones distintas?",
+        "Conviene detectarlos antes de definir una importación.",
+        "Dos filas ilustrativas, sin afirmar que todo puede limpiarse automáticamente."
+      ],
+      [
+        "¿Qué relación falta?",
+        "Conectar datos requiere saber a qué cliente, equipo u operación pertenecen.",
+        "Campo que enlaza con una ficha relacionada."
+      ],
+      [
+        "Define una primera etapa",
+        "La revisión, limpieza e importación deben formar parte del alcance acordado.",
+        "CTA: guarda esta guía para revisar tus archivos."
+      ]
+    ]
+  },
+  "scripts": {
+    "P02": [
+      [
+        "0–3 s",
+        "Tres fuentes separadas en pantalla, con EQ-024 legible.",
+        "¿Buscas en tres lugares?",
+        "Para entender un equipo, a veces hay que abrir varios archivos."
+      ],
+      [
+        "3–8 s",
+        "Zoom a cliente, equipo y contrato en sus archivos.",
+        "Cliente / Equipo / Contrato",
+        "El cliente está en un Excel. El equipo, en otro. El contrato, en una carpeta."
+      ],
+      [
+        "8–14 s",
+        "Activar la transformación de Nexo, sin cursor errático.",
+        "Conectamos las piezas",
+        "Un sistema a medida relaciona esa información."
+      ],
+      [
+        "14–19 s",
+        "Mostrar la ficha final y abrir un equipo.",
+        "Toda la historia del equipo",
+        "Ahora puedes seguir el vínculo entre cliente, documentos e historial."
+      ],
+      [
+        "19–24 s",
+        "Cierre de marca y WhatsApp; mantener 3–5 s.",
+        "¿Te pasa? Escribe CONEXIÓN",
+        "Cuéntanos cómo gestionan ese proceso en tu empresa."
+      ]
+    ],
+    "P06": [
+      [
+        "0–3 s",
+        "Primer plano de EQ-024 en la ficha.",
+        "¿Dónde estuvo este equipo?",
+        "Este equipo estuvo en otro cliente."
+      ],
+      [
+        "3–8 s",
+        "Seleccionar 01 sep, devolución.",
+        "01 sep / Devolución",
+        "La devolución queda registrada."
+      ],
+      [
+        "8–13 s",
+        "Seleccionar 20 sep, mantenimiento.",
+        "20 sep / Mantenimiento",
+        "La revisión forma parte del historial del mismo equipo."
+      ],
+      [
+        "13–19 s",
+        "Seleccionar 12 oct, nuevo alquiler.",
+        "12 oct / Nuevo cliente",
+        "El cliente cambia y la historia sigue relacionada."
+      ],
+      [
+        "19–24 s",
+        "Captura de historial y dirección de la demo.",
+        "Explora la demo en el perfil",
+        "Mira el recorrido con datos ficticios en la demo de Nexo."
+      ]
+    ],
+    "P08": [
+      [
+        "0–3 s",
+        "Ficha EQ-024, con tres preguntas entrando una a una.",
+        "¿Quién lo tiene?",
+        "¿Quién tiene este equipo?"
+      ],
+      [
+        "3–8 s",
+        "Abrir Constructora Horizonte y equipo.",
+        "Su cliente actual",
+        "La ficha muestra al cliente actual."
+      ],
+      [
+        "8–13 s",
+        "Acercamiento al historial y fecha anterior.",
+        "¿Dónde estuvo antes?",
+        "El historial permite seguir sus movimientos."
+      ],
+      [
+        "13–19 s",
+        "Abrir contrato DEMO relacionado.",
+        "¿Qué contrato corresponde?",
+        "El contrato aparece vinculado al mismo equipo."
+      ],
+      [
+        "19–24 s",
+        "Cierre de marca y WhatsApp.",
+        "Escribe HISTORIA",
+        "Si hoy reconstruyes esa información, conversemos sobre tu proceso."
+      ]
+    ],
+    "P12": [
+      [
+        "0–3 s",
+        "Julio a cámara o una ficha de proceso en pantalla.",
+        "¿Por dónde empezar?",
+        "Para empezar, cuéntanos cómo trabajan hoy."
+      ],
+      [
+        "3–8 s",
+        "Pregunta 1, acompañada de un proceso de ejemplo.",
+        "¿Qué proceso quieres revisar?",
+        "¿Qué proceso quieres revisar en tu empresa?"
+      ],
+      [
+        "8–13 s",
+        "Pregunta 2 con archivos y carpetas ficticios.",
+        "¿Dónde está la información?",
+        "¿Dónde registran hoy esa información?"
+      ],
+      [
+        "13–19 s",
+        "Pregunta 3 sobre la consulta del equipo.",
+        "¿Qué cuesta responder?",
+        "¿Qué pregunta cuesta responder con lo que tienen?"
+      ],
+      [
+        "19–24 s",
+        "Nombre Nexo, WhatsApp y landing.",
+        "Conversemos por WhatsApp",
+        "Escríbenos con ese contexto. Así podemos revisar una primera etapa."
+      ]
+    ]
+  },
+  "stories": [
+    [
+      1,
+      "Martes",
+      "S01",
+      "Detectar el problema",
+      "1: ¿Dónde guardas la información de clientes?\n2: Encuesta: Excel / Carpetas / Sistema / Varios lugares.\n3: Una relación cliente–equipo–contrato como ejemplo.",
+      "Usar encuesta si la cuenta la ofrece; enlace a la demo en la última historia.",
+      "Publicar la misma secuencia; invitar a responder o usar el botón de WhatsApp de la página."
+    ],
+    [
+      1,
+      "Jueves",
+      "S02",
+      "Presentar la demo",
+      "1: Captura antes, 3–5 s.\n2: Transformación, 5–8 s.\n3: Ficha conectada + “Prueba la demo”.",
+      "Sticker de enlace a la demo.",
+      "Enlace en la publicación o botón de la página según disponibilidad."
+    ],
+    [
+      2,
+      "Martes",
+      "S03",
+      "Escuchar consultas",
+      "1: ¿Qué pregunta te obliga a abrir varios archivos?\n2: Caja de preguntas o invitación a responder.\n3: Ejemplo ficticio: qué tiene un cliente.",
+      "Caja de preguntas si está disponible; responder manualmente.",
+      "Invitar a responder la historia o escribir por WhatsApp."
+    ],
+    [
+      2,
+      "Jueves",
+      "S04",
+      "Mostrar trazabilidad",
+      "1: Mismo equipo, cliente anterior.\n2: Mantenimiento.\n3: Cliente actual y enlace a la demo.",
+      "Enlace a la demo; marcar “Datos ficticios”.",
+      "Misma secuencia; CTA al botón de WhatsApp."
+    ],
+    [
+      3,
+      "Martes",
+      "S05",
+      "Reconocer dependencia",
+      "1: “Eso lo sabe una persona”.\n2: ¿Qué dato debería quedar registrado?\n3: Invitar a revisar una consulta con el equipo.",
+      "Encuesta o respuesta; no publicar nombres de empleados reales.",
+      "Invitación a responder; no etiquetar empresas sin autorización."
+    ],
+    [
+      3,
+      "Jueves",
+      "S06",
+      "Resolver una objeción",
+      "1: ¿Hay que implementarlo todo?\n2: Ejemplo de primer alcance: cliente–equipo–contrato.\n3: Siguiente etapa según necesidad.",
+      "Enlace de WhatsApp: palabra PRIMERA ETAPA.",
+      "Botón de WhatsApp de la página o enlace directo."
+    ],
+    [
+      4,
+      "Martes",
+      "S07",
+      "Explicar el diagnóstico",
+      "1: Un Excel ficticio.\n2: Identificador + relación que falta.\n3: Qué información revisar antes de importar.",
+      "Enlace a P10 o invitar a guardarlo desde el feed.",
+      "Compartir P10 y una pregunta de seguimiento."
+    ],
+    [
+      4,
+      "Jueves",
+      "S08",
+      "Facilitar la consulta",
+      "1: Qué proceso quieres revisar.\n2: Dónde está la información.\n3: Qué pregunta cuesta responder + WhatsApp.",
+      "Enlace directo a WhatsApp, sin pedir información sensible en una historia.",
+      "Enlace a WhatsApp o botón de la página."
+    ]
+  ],
+  "strategy": [
+    [
+      "Objetivo del mes",
+      "Que empresas con información dispersa entiendan la propuesta y abran conversaciones relevantes por WhatsApp. No se busca compra inmediata ni seguidores como resultado principal."
+    ],
+    [
+      "Producción",
+      "12 piezas base en cuatro semanas; adaptadas a Facebook e Instagram: 24 publicaciones de feed. Ocho secuencias de historias, adaptadas a ambas redes. Reutilizar el material, no duplicar todo el trabajo."
+    ],
+    [
+      "Calendario",
+      "Lunes y viernes 12:30; miércoles 18:30. Horario de Lima. Son horarios iniciales para probar, no los mejores horarios demostrados para esta cuenta. Historias martes y jueves a las 18:30 como punto de partida."
+    ],
+    [
+      "Facebook",
+      "Crear página de empresa Nexo. Incluir logo, portada, descripción, web y botón a WhatsApp. Una cuenta personal usada como negocio no reemplaza la página."
+    ],
+    [
+      "Instagram",
+      "Crear cuenta profesional de Nexo y vincularla con la página en Meta Business Suite. Proponer @nexoamedida solo si está disponible; no se comprobó el usuario."
+    ],
+    [
+      "Perfiles vinculados",
+      "Vincular Facebook, Instagram y WhatsApp Business. Para esta estrategia recomiendo ambas redes; no implica dos campañas separadas ni publicar todos los días."
+    ],
+    [
+      "WhatsApp autorizado",
+      "+51 936 755 465. Preparar perfil comercial y una respuesta inicial que haga preguntas sobre la empresa y su proceso."
+    ],
+    [
+      "Correo indicado",
+      "asesoria@nexoamedida.com. Mantener WhatsApp como CTA principal mientras el buzón y su recepción no estén confirmados."
+    ],
+    [
+      "Bio sugerida Instagram",
+      "Clientes, equipos, documentos e historial, conectados.\nSistemas a medida para empresas en Perú.\nExplora la demo y conversemos por WhatsApp."
+    ],
+    [
+      "Descripción Facebook",
+      "Diseñamos sistemas de información a medida para conectar clientes, equipos, documentos, operaciones e historial. Revisa la demo y cuéntanos qué proceso necesita ordenar tu empresa."
+    ],
+    [
+      "Enlaces del perfil",
+      "Primario: WhatsApp para conversar. Secundario: https://nexoamedida.com/#demo para explorar. Evitar una página de enlaces adicional si la plataforma permite ambos."
+    ],
+    [
+      "Contenido fijado",
+      "P01: qué hace Nexo. P02: demostración antes/después. P03: cómo se plantea una implementación. Fijar en los perfiles donde exista esa opción."
+    ],
+    [
+      "Presencia antes de pautar",
+      "Completar perfiles y publicar esas tres piezas la primera semana. La prospección en frío puede continuar desde el inicio; no hace falta esperar a llenar un perfil."
+    ],
+    [
+      "Identidad fija",
+      "Logo maestro de Nexo, Manrope y DM Sans. Verde #247459, tinta #202730, blanco #FFFFFF, fondo #FAFBFC y salvia #EEF2EE. Recursos visuales con relaciones concretas, sin plantillas repetidas de tres tarjetas."
+    ],
+    [
+      "Formatos",
+      "Imágenes orgánicas: 1080×1350. Carrusel publicitario: preparar versión 1080×1080. Reels/historias: MP4 1080×1920; adaptar anuncios a 1080×1350 donde sea útil. Verificar la vista previa de cada ubicación en Meta."
+    ],
+    [
+      "GIF o video",
+      "Para mostrar procesos, producir un MP4 breve que pueda repetirse; suele ser más práctico para Reels y anuncios que entregar solo un GIF. Se puede exportar un GIF adicional para uso compatible."
+    ],
+    [
+      "Accesibilidad visual",
+      "Una idea por toma o lámina; texto de alto contraste; subtítulos en video. Mantener textos importantes lejos de bordes e interfaces de la app y comprobar las vistas previas. No poner capturas de escritorio completas con texto ilegible."
+    ],
+    [
+      "Prueba comercial",
+      "Usar exclusivamente datos ficticios y marcarlo. No publicar datos del sistema de LR ni inventar testimonios, clientes, cifras de ahorro o garantías de resultados."
+    ],
+    [
+      "Alcance de esta entrega",
+      "Plan, textos finales, guiones y briefs visuales. Los JPG, carruseles y MP4 de estas publicaciones todavía deben producirse; no se han publicado contenidos ni activado anuncios."
+    ]
+  ],
+  "pauta": [
+    [
+      "Qué pautear",
+      "A1/P02 y A2/P04 en la prueba inicial. A3/P08 queda como alternativa. Las demás piezas cumplen una función orgánica de explicación y confianza; no hace falta impulsarlas todas."
+    ],
+    [
+      "Cuándo",
+      "Después de completar perfiles y las tres primeras piezas. Propuesta: comenzar en la semana 2, cuando P04 ya esté publicado o preparado como anuncio."
+    ],
+    [
+      "Destino",
+      "WhatsApp Business +51 936 755 465. Elegir en Ads Manager un objetivo y ubicación de conversión que optimicen conversaciones o leads por mensajería, según las opciones de la cuenta."
+    ],
+    [
+      "Cómo crear los anuncios",
+      "Usar Ads Manager y revisar la vista previa y el destino. El botón Promocionar no debería sustituir la definición del objetivo y la medición."
+    ],
+    [
+      "Presupuesto inicial propuesto",
+      "S/20 diarios durante 10 días = S/200 de inversión publicitaria, más los impuestos o cargos aplicables. Es un ejemplo ajustable, no un gasto autorizado ni una garantía de obtener leads."
+    ],
+    [
+      "Estructura sencilla",
+      "Una campaña y, como punto de partida, un conjunto con dos creatividades A1 y A2. Meta puede repartir el gasto de forma desigual; esta es una exploración, no un experimento A/B causal por sí mismo."
+    ],
+    [
+      "Ubicación",
+      "Perú o las ciudades donde puedas atender. Si la implementación puede hacerse a distancia, no es necesario limitarse a Lima. No segmentar por cargos como si eso garantizara que alguien es dueño de una pyme."
+    ],
+    [
+      "Primer caso comercial",
+      "La creatividad se enfoca en empresas con activos/equipos y clientes recurrentes, donde la demo es más reconocible. El texto filtra el problema antes de prometer un sistema para todo el mundo."
+    ],
+    [
+      "Qué revisar antes de lanzar",
+      "Número de WhatsApp vinculado, mensajes de prueba propios, enlaces, formato legible, presupuesto total, respuesta comercial y capacidad de seguimiento. Nada se ha activado desde esta entrega."
+    ],
+    [
+      "Qué no optimizar como fin",
+      "Likes, alcance o reproducciones no equivalen a una consulta comercial. Pueden informar sobre la creatividad, pero no reemplazan el interés real de una empresa."
+    ],
+    [
+      "Conversación cualificada",
+      "La persona describe una empresa y un proceso concreto; existe información dispersa; tiene influencia o puede acercar al responsable; acepta revisar un siguiente paso. Es una definición de trabajo, no una validación automática."
+    ],
+    [
+      "Preguntas iniciales",
+      "1. ¿A qué se dedica la empresa? 2. ¿Qué proceso quiere ordenar? 3. ¿Dónde registran hoy la información? 4. ¿Qué cuesta responder? 5. ¿Quién participa en esa operación? No pedir documentos internos en el primer contacto."
+    ],
+    [
+      "Medición",
+      "Por pieza: inversión, conversaciones nuevas, conversaciones cualificadas, reuniones o diagnósticos realizados y propuestas enviadas. Registrar fuente y palabra de entrada; no depender solo de la palabra para atribución exacta."
+    ],
+    [
+      "Costes",
+      "Costo por conversación = inversión / conversaciones nuevas. Costo por conversación cualificada = inversión / conversaciones cualificadas. Si el denominador es cero, no reportar un costo cero ni inventar un benchmark."
+    ],
+    [
+      "Decisiones",
+      "Si no se entiende el anuncio, revisar el primer plano y el mensaje. Si hay clics y pocas conversaciones, revisar destino y claridad del CTA. Si conversan personas sin necesidad empresarial, ajustar el caso mostrado y la cualificación."
+    ],
+    [
+      "Uso de A3",
+      "Probar cuando haya una razón: sustituir una creatividad poco clara o explorar otra forma de explicar la trazabilidad. Evitar cambiar todo al mismo tiempo y atribuir el resultado a una sola causa."
+    ],
+    [
+      "Retargeting",
+      "Considerarlo cuando exista una audiencia utilizable y se haya configurado la medición que corresponda. No dividir de entrada un presupuesto pequeño entre muchos públicos y campañas."
+    ],
+    [
+      "Seguimiento",
+      "Responder con las preguntas del proceso, registrar lo conversado y acordar un siguiente paso. No añadir contactos a campañas masivas por el solo hecho de preguntar."
+    ],
+    [
+      "Resultados",
+      "El plan no garantiza ventas ni un costo determinado. Tras la prueba se evalúa la calidad del interés y la viabilidad comercial del servicio, no solo el volumen de mensajes."
+    ]
+  ],
+  "ads": [
+    [
+      "A1",
+      "P02",
+      "Lanzar primero",
+      "Video vertical de 24 s. Versión 9:16 y adaptación 4:5.",
+      "Demostración antes/después",
+      "¿Tu operación está repartida entre Excels y carpetas? Mira cómo se conectan cliente, equipo, documentos e historial en un sistema a medida. Cuéntanos por WhatsApp qué proceso necesitas ordenar.",
+      "Conecta la información de tu empresa",
+      "CONEXIÓN",
+      "https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20CONEXI%C3%93N%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.",
+      "Conversación iniciada y calidad del proceso descrito."
+    ],
+    [
+      "A2",
+      "P04",
+      "Lanzar junto con A1 en la prueba inicial",
+      "Carrusel de cinco láminas 1:1.",
+      "Pregunta concreta del cliente",
+      "¿Para saber qué tiene un cliente tienes que abrir varios archivos? En Nexo diseñamos sistemas para relacionar clientes, equipos, contratos e historial. Escríbenos y cuéntanos cómo hacen hoy esa consulta.",
+      "¿Cuántos archivos abres por cliente?",
+      "CLIENTE",
+      "https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20CLIENTE%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.",
+      "Conversación de una empresa con necesidad real."
+    ],
+    [
+      "A3",
+      "P08",
+      "Reserva; probar después o sustituir una creatividad",
+      "Video de 24 s. 9:16 y 4:5.",
+      "Tres preguntas que puede responder una ficha",
+      "¿Quién tiene el equipo? ¿Dónde estuvo? ¿Qué contrato le corresponde? Explora estas relaciones en la demo y conversemos sobre el proceso de tu empresa.",
+      "Toda la historia del mismo equipo",
+      "HISTORIA",
+      "https://wa.me/51936755465?text=Hola%2C%20vi%20el%20contenido%20HISTORIA%20de%20Nexo.%20Quiero%20revisar%20c%C3%B3mo%20ordenar%20la%20informaci%C3%B3n%20de%20mi%20empresa.",
+      "Calidad de consultas frente a A1/A2; no solo clics."
+    ]
+  ]
+}
