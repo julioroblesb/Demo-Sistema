@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "npm run build && npm run test:crm:unit && npm run test:crm:rules && playwright test",
-    "test:crm:unit": "node --test checks/crm/domain.test.mjs",
+    "test:crm:unit": "node --test checks/crm/domain.test.mjs checks/crm/prospecting.test.mjs",
     "test:crm:rules": "node --test checks/crm/database.test.mjs"
   },
   "devDependencies": {

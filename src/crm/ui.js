@@ -1,4 +1,4 @@
-import { escape as e, initials, money, dateLabel, COMPANY_STATUS, companyStatusLabel, PRIORITIES, STAGES, TASK_KINDS, isPending, today } from './domain.js';
+import { escape as e, initials, money, dateLabel, dateTime, CONTACT_CHANNELS, contactHistory, dealStageKey, COMPANY_STATUS, companyStatusLabel, PRIORITIES, STAGES, TASK_KINDS, isPending, today } from './domain.js';
 const paths = {
  home:'M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z',
  companies:'M4 21V5l8-3v19m0-14h8v14M7 7v1m0 3v1m0 3v1m9-5v1m0 3v1M2 21h20',
@@ -24,7 +24,14 @@ export const icon = (name, className = '') => `<svg class="icon ${className}" vi
 export const action = (label, name, options = {}) => `<button type="button" class="${options.class || 'button secondary'}" data-action="${name}"${options.id ? ` data-id="${e(options.id)}"` : ''}${options.type ? ` data-type="${e(options.type)}"` : ''}${options.extra || ''}>${options.icon ? icon(options.icon) : ''}${label}</button>`;
 export const badge = (label, tone = '') => `<span class="badge ${tone}">${e(label)}</span>`;
 export const companyStatus = status => badge(companyStatusLabel(status), ['cliente','calificada','conversacion'].includes(status) ? 'green' : status === 'no_contactar' ? 'red' : '');
-export const stageBadge = stage => badge(STAGES[stage], stage === 'ganada' ? 'green' : stage === 'perdida' ? 'red' : '');
+export const stageBadge = stage => {const key=typeof stage==='string'?(stage==='negociacion'?'propuesta':stage):dealStageKey(stage);return `<span class="badge pipeline-stage-badge stage-${e(key)}">${e(STAGES[key]||'Filtrado')}</span>`;};
+export function contactSummary(company,data) {
+  const history=contactHistory(company.id,data);
+  const positive=history.response?.outcome==='conversacion';
+  const response=history.response?`<span class="response-state ${positive?'positive':'negative'}">${positive?'Respuesta positiva':'Respuesta negativa'}</span>`:'';
+  if(!history.contact)return `<div class="contact-summary no-contact"><span>${['contactada','conversacion','calificada'].includes(company.status)?'Contacto anterior sin fecha registrada':'Sin contacto registrado'}</span>${response}</div>`;
+  return `<div class="contact-summary contacted"><div class="contact-summary-title">${icon('check')}<strong>Último contacto</strong></div><time datetime="${e(history.at)}">${dateTime(history.at)||'Fecha no registrada'}</time><div class="contact-channel-list">${history.channels.map(key=>`<span>${e(CONTACT_CHANNELS[key])}</span>`).join('')||'<span>Canal no registrado</span>'}</div>${response||'<span class="response-state waiting">Sin respuesta registrada</span>'}</div>`;
+}
 export const priorityBadge = priority => `<span class="priority ${e(priority)}"><i aria-hidden="true"></i>${PRIORITIES[priority] || 'Media'}</span>`;
 export const avatar = (name, size = '') => `<span class="company-avatar ${size}">${e(initials(name || 'Nexo'))}</span>`;
 export function options(values, selected = '', empty = '') { const list = Array.isArray(values) ? values.map(value => [value, value]) : Object.entries(values); return (empty ? `<option value="">${e(empty)}</option>` : '') + list.map(([value,label]) => `<option value="${e(value)}"${String(value) === String(selected) ? ' selected' : ''}>${e(label)}</option>`).join(''); }

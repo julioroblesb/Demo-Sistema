@@ -2,13 +2,16 @@ export const ZONE = 'America/Lima';
 export const TYPES = ['companies', 'contacts', 'deals', 'tasks', 'activities', 'payments', 'milestones', 'settings'];
 export const COMPANY_STATUS = { nueva: 'Por investigar', investigada: 'Investigada', contactada: 'Contactada', conversacion: 'En conversación', calificada: 'Calificada', cliente: 'Cliente', no_encaja: 'No encaja', no_contactar: 'No contactar' };
 // Keep stored legacy codes valid; simplify presentation without migrating live records.
-export const SIMPLE_COMPANY_STATUS = { nueva: 'Por contactar', contactada: 'En seguimiento', cliente: 'Cliente', no_contactar: 'No continuar' };
-export const companyStatusKey = status => ({investigada:'nueva',conversacion:'contactada',calificada:'contactada',no_encaja:'no_contactar'}[status] || status);
+export const SIMPLE_COMPANY_STATUS = { nueva: 'Filtrado', contactada: 'Contactado', conversacion: 'Seguimiento', cliente: 'Ganado', no_contactar: 'Perdido' };
+export const companyStatusKey = status => ({investigada:'nueva',calificada:'conversacion',no_encaja:'no_contactar'}[status] || status);
 export const companyStatusLabel = status => SIMPLE_COMPANY_STATUS[companyStatusKey(status)] || COMPANY_STATUS[status] || status;
 export const SECTORS = ['Maquinaria y construcción', 'Impresoras y oficina', 'Tecnología y audiovisuales', 'Vehículos y transporte', 'Eventos y mobiliario', 'Herramientas', 'Equipos médicos', 'Inmuebles y espacios', 'Otros alquileres'];
-export const STAGES = { diagnostico: 'Primeros pasos', demo: 'Demo', propuesta: 'Propuesta', negociacion: 'Negociación', ganada: 'Ganada', perdida: 'Perdida' };
-export const STAGE_HELP = { diagnostico: 'Confirma el problema, quién decide y qué necesita resolver.', demo: 'Muestra un proceso relacionado con su operación y acuerda el siguiente paso.', propuesta: 'Entrega un alcance, importe y condiciones concretos.', negociacion: 'Resuelve objeciones y acuerda una fecha de decisión.', ganada: 'Registra el acuerdo. Después controla cobros y entrega.', perdida: 'Conserva el motivo y lo aprendido; no borres la historia.' };
-export const TASK_KINDS = { seguimiento: 'Seguimiento', llamada: 'Llamada', reunion: 'Reunión', correo: 'Correo', whatsapp: 'WhatsApp', propuesta: 'Preparar propuesta', entrega: 'Entrega', otro: 'Otra tarea' };
+// These five keys remain compatible with the installed PostgreSQL contract.
+export const STAGES = { diagnostico: 'Filtrado', demo: 'Contactado', propuesta: 'Seguimiento', ganada: 'Ganado', perdida: 'Perdido' };
+export const STAGE_HELP = { diagnostico: 'Las empresas que registras y todavía vas a contactar.', demo: 'Contacto guardado con sus canales, fecha y hora. Registra si respondieron.', propuesta: 'Organiza reuniones, cotizaciones, proformas, visitas y próximas acciones.', ganada: 'Acuerdo confirmado. Controla el importe, los cobros y la entrega.', perdida: 'Seguimiento cerrado. El motivo y la historia se conservan.' };
+export const STAGE_STATUS = { diagnostico:'nueva', demo:'contactada', propuesta:'conversacion', ganada:'cliente', perdida:'no_contactar' };
+export const CONTACT_CHANNELS = { correo:'Correo', whatsapp:'WhatsApp', llamada:'Llamada', instagram:'Instagram', facebook:'Facebook', linkedin:'LinkedIn', presencial:'Presencial', otro:'Otro canal' };
+export const TASK_KINDS = { seguimiento: 'Seguimiento', llamada: 'Llamada', reunion: 'Reunión', cotizacion:'Cotización', proforma:'Proforma', visita:'Visita', correo: 'Correo', whatsapp: 'WhatsApp', propuesta: 'Propuesta', entrega: 'Entrega', otro: 'Otra tarea' };
 export const PRIORITIES = { alta: 'Alta', media: 'Media', baja: 'Baja' };
 export const DELIVERY = { pendiente: 'Por iniciar', desarrollo: 'En desarrollo', revision: 'En revisión', entregado: 'Entregado' };
 export const DEFAULT_SETTINGS = { id: 'preferences', target_companies: 300, target_sales: 0, target_amount_cents: 0, currency: 'PEN', deadline: '', daily_contacts: 5, display_name: 'Julio', version: 0 };
@@ -76,20 +79,56 @@ export function matchesSearch(query,...records) {
   if(/^[+\d\s().-]+$/.test(needle)){const digits=needle.replace(/\D/g,'');if(digits.length>=3&&values.some(value=>value.replace(/\D/g,'').includes(digits)))return true;}
   const haystack=normalize(values.join(' '));return needle.split(/\s+/).every(term=>haystack.includes(term));
 }
-export function companyMatchesSearch(query,company,data){return matchesSearch(query,company,companyStatusLabel(company.status),...['contacts','activities','tasks','deals'].map(type=>(data[type]||[]).filter(row=>row.company_id===company.id)));}
+export function companyMatchesSearch(query,company,data){return matchesSearch(query,company,companyStatusLabel(company.status),STAGES[companyStage(company,data)],...['contacts','activities','tasks','deals'].map(type=>(data[type]||[]).filter(row=>row.company_id===company.id)));}
+export function dealStageKey(deal) {
+  const row=typeof deal==='string'?{stage:deal}:deal;
+  return row?.stage==='negociacion'||(row?.stage==='demo'&&row.pipeline_version!==2)?'propuesta':row?.stage;
+}
+export function activityTime(activity) {
+  const value=activity.occurred_at||(['contacto','respuesta'].includes(activity.kind)?activity.created_at:'')||(activity.date?`${activity.date}T${activity.time||'12:00'}:00-05:00`:activity.created_at);
+  return value&&!Number.isNaN(Date.parse(value))?new Date(value).toISOString():'';
+}
+export function contactHistory(companyId,data) {
+  const rows=(data.activities||[]).filter(row=>row.company_id===companyId);
+  const attempts=rows.filter(row=>row.kind==='contacto'||['correo','whatsapp','llamada','reunion','presencial'].includes(row.kind));
+  attempts.sort((a,b)=>activityTime(b).localeCompare(activityTime(a)));
+  const contact=attempts[0];if(!contact){const responses=rows.filter(row=>row.kind==='respuesta').sort((a,b)=>activityTime(b).localeCompare(activityTime(a)));return {contact:null,at:'',channels:[],response:responses[0]||null};}
+  const at=activityTime(contact);
+  // Old single-channel records saved at the same instant form one contact.
+  const group=attempts.filter(row=>activityTime(row)===at);
+  const channels=[...new Set(group.flatMap(row=>row.kind==='contacto'?row.channels||[]:[row.kind==='reunion'?'presencial':row.kind]))].filter(key=>CONTACT_CHANNELS[key]);
+  const responses=rows.filter(row=>row.kind==='respuesta'&&(row.contact_id===contact.id||!row.contact_id&&activityTime(row)>=at));
+  responses.push(...group.filter(row=>['conversacion','no_interes','no_contactar'].includes(row.outcome)));
+  responses.sort((a,b)=>activityTime(b).localeCompare(activityTime(a)));
+  return {contact,at,channels,response:responses[0]||null};
+}
+export function companyStage(company,data) {
+  if(STAGES[company.pipeline_stage])return company.pipeline_stage;
+  if(['no_contactar','no_encaja'].includes(company.status))return 'perdida';
+  const deals=(data.deals||[]).filter(row=>row.company_id===company.id&&!row.archived);
+  const open=deals.filter(isOpen);
+  if(open.some(row=>dealStageKey(row)==='propuesta'))return 'propuesta';
+  if(!open.length&&(deals.some(row=>row.stage==='ganada')||company.status==='cliente'))return 'ganada';
+  if(!open.length&&deals.some(row=>row.stage==='perdida'))return 'perdida';
+  if(['conversacion','calificada'].includes(company.status))return 'propuesta';
+  const history=contactHistory(company.id,data);
+  if(history.response?.outcome==='conversacion')return 'propuesta';
+  if(history.response&&['no_interes','no_contactar'].includes(history.response.outcome))return 'perdida';
+  if(history.contact||company.status==='contactada'||open.some(row=>dealStageKey(row)==='demo'))return 'demo';
+  return 'diagnostico';
+}
 export function pipelineCompanies(data,query=''){
-  const linked=new Set(data.deals.filter(deal=>!deal.archived).map(deal=>deal.company_id));
-  return data.companies.filter(company=>!company.archived&&!linked.has(company.id)&&!['cliente','no_contactar'].includes(companyStatusKey(company.status))&&companyMatchesSearch(query,company,data));
+  return data.companies.filter(company=>!company.archived&&companyMatchesSearch(query,company,data));
 }
 export function paid(dealId, data) { return data.payments.filter(payment => payment.deal_id === dealId && !payment.voided).reduce((sum, payment) => sum + payment.amount_cents, 0); }
 export function milestonesProgress(dealId, data) { const list = data.milestones.filter(item => item.deal_id === dealId && !item.archived); return { done: list.filter(item => item.done).length, total: list.length, percentage: percent(list.filter(item => item.done).length, list.length) }; }
 export function metrics(data, currency = 'PEN', date = today()) {
   const companies = data.companies; const deals = data.deals.filter(deal => !deal.archived); const won = deals.filter(deal => deal.stage === 'ganada'); const lost = deals.filter(deal => deal.stage === 'perdida');
-  const attempts = data.activities.filter(activity => ['llamada', 'whatsapp', 'correo', 'reunion'].includes(activity.kind));
+  const attempts = data.activities.filter(activity => ['contacto', 'llamada', 'whatsapp', 'correo', 'reunion'].includes(activity.kind));
   const contacts = new Set(attempts.map(activity => activity.company_id).filter(Boolean));
   const totalWon = won.filter(deal => deal.currency === currency).reduce((sum, deal) => sum + deal.amount_cents, 0);
   const totalPaid = data.payments.filter(payment => !payment.voided && won.some(deal => deal.id === payment.deal_id && deal.currency === currency)).reduce((sum, payment) => sum + payment.amount_cents, 0);
-  return { registered: companies.length, contacted: contacts.size, conversations: new Set(attempts.filter(activity => activity.outcome === 'conversacion').map(activity => activity.company_id)).size, won: won.length, lost: lost.length, open: deals.filter(isOpen).length, totalWon, totalPaid, outstanding: totalWon - totalPaid, pipeline: deals.filter(deal => isOpen(deal) && deal.currency === currency).reduce((sum, deal) => sum + deal.amount_cents, 0), overdue: data.tasks.filter(task => isPending(task) && task.due_date < date).length, dueToday: data.tasks.filter(task => isPending(task) && task.due_date === date).length, conversion: won.length + lost.length ? Math.round(won.length / (won.length + lost.length) * 100) : null };
+  return { registered: companies.length, contacted: contacts.size, conversations: new Set(data.activities.filter(activity => activity.outcome === 'conversacion').map(activity => activity.company_id)).size, won: won.length, lost: lost.length, open: deals.filter(isOpen).length, totalWon, totalPaid, outstanding: totalWon - totalPaid, pipeline: deals.filter(deal => isOpen(deal) && deal.currency === currency).reduce((sum, deal) => sum + deal.amount_cents, 0), overdue: data.tasks.filter(task => isPending(task) && task.due_date < date).length, dueToday: data.tasks.filter(task => isPending(task) && task.due_date === date).length, conversion: won.length + lost.length ? Math.round(won.length / (won.length + lost.length) * 100) : null };
 }
 export function calendarEvents(data) {
   return [
@@ -104,20 +143,21 @@ export function validateRecord(type, record) {
     required('name', 'el nombre de la empresa');
     if (record.ruc && !/^\d{11}$/.test(record.ruc)) throw new Error('El RUC debe tener 11 dígitos. Puedes dejarlo vacío.');
     if (!COMPANY_STATUS[record.status]) throw new Error('Selecciona un estado válido.');
+    if (record.pipeline_stage && !STAGES[record.pipeline_stage]) throw new Error('Selecciona una etapa válida del pipeline.');
   }
   if (type === 'contacts') { required('name', 'el nombre del contacto'); required('company_id', 'la empresa'); }
   if (['companies', 'contacts'].includes(type) && record.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(record.email)) throw new Error('Revisa el correo electrónico.');
   if (type === 'deals') {
     required('title', 'el nombre de la oportunidad'); required('company_id', 'la empresa');
-    if (!STAGES[record.stage]) throw new Error('Selecciona una etapa válida.');
+    if (!['diagnostico','demo','propuesta','negociacion','ganada','perdida'].includes(record.stage)) throw new Error('Selecciona una etapa válida.');
     if (!['PEN', 'USD'].includes(record.currency)) throw new Error('Selecciona soles o dólares.');
     if (!Number.isSafeInteger(record.amount_cents) || record.amount_cents < 0) throw new Error('Revisa el importe de la oportunidad.');
     if (record.stage === 'ganada' && (!record.closed_date || record.amount_cents <= 0)) throw new Error('Para registrar una venta, indica un importe mayor a cero y su fecha de cierre.');
     if (record.stage === 'perdida' && !record.lost_reason?.trim()) throw new Error('Indica por qué se perdió la oportunidad.');
-    if (record.delivery_date && record.closed_date && record.delivery_date < record.closed_date) throw new Error('La entrega debe ser el mismo día del cierre o después.');
+    if (record.stage === 'ganada' && record.delivery_date && record.closed_date && record.delivery_date < record.closed_date) throw new Error('La entrega debe ser el mismo día del cierre o después.');
   }
   if (type === 'tasks') { required('title', 'el título de la tarea'); required('due_date', 'la fecha de la tarea'); if (!['pendiente', 'progreso', 'hecha', 'cancelada'].includes(record.status)) throw new Error('Estado de tarea inválido.'); }
-  if (type === 'activities') { required('body', 'el comentario o detalle'); required('company_id', 'la empresa'); }
+  if (type === 'activities') { required('body', 'el comentario o detalle'); required('company_id', 'la empresa');if(record.kind==='contacto'&&(!Array.isArray(record.channels)||!record.channels.length||record.channels.some(key=>!CONTACT_CHANNELS[key])))throw new Error('Elige al menos un canal de contacto.');if(['contacto','respuesta'].includes(record.kind)&&(!record.occurred_at||Number.isNaN(Date.parse(record.occurred_at))))throw new Error('No se pudo registrar la fecha y hora del contacto.'); }
   if (type === 'payments') { required('deal_id', 'la venta'); required('date', 'la fecha del cobro'); if (!Number.isSafeInteger(record.amount_cents) || record.amount_cents <= 0) throw new Error('El cobro debe ser mayor a cero.'); if (record.date > today()) throw new Error('Un cobro recibido no puede tener una fecha futura.'); }
   if (type === 'milestones') { required('title', 'el nombre del hito'); required('deal_id', 'la venta'); }
   if(type==='settings'&&(!Number.isInteger(record.target_companies)||record.target_companies<1||record.target_companies>100000||!Number.isInteger(record.daily_contacts)||record.daily_contacts<1||record.daily_contacts>300||!['PEN','USD'].includes(record.currency)))throw new Error('Revisa las metas y la moneda.');
