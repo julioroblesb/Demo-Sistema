@@ -1,0 +1,76 @@
+{
+  "emails": [
+    {
+      "id":"responsable",
+      "title":"Primer correo · responsable identificado",
+      "when":"Para gerencia, operaciones, administración o quien controle los alquileres. Sustituye los campos entre corchetes y verifica la observación sobre su negocio.",
+      "subject":"[Empresa]: una demo para el control de sus alquileres",
+      "body":"Hola, [Nombre]:\n\nSoy Julio, de Nexo. Vi que [Empresa] alquila [tipo de equipos].\n\nDesarrollo sistemas a medida para conectar equipos, clientes, contratos e historial de mantenimiento. Puedo mostrarte una demo de cómo consultar la información de un equipo y sus documentos desde una sola ficha.\n\nMe gustaría conocer cómo lo gestionan hoy y ver si algo así les sería útil. ¿Podemos verlo en una reunión virtual de 15 minutos el [día y hora 1] o el [día y hora 2]? Si prefieren presencial en Lima, podemos coordinarlo.\n\nSaludos,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465\nnexoamedida.com"
+    },
+    {
+      "id":"derivacion",
+      "title":"Primer correo · ventas o buzón general",
+      "when":"Para ventas@, informes@ o contacto@ cuando todavía no sabes quién decide. El objetivo de este mensaje es conseguir la derivación.",
+      "subject":"¿Quién coordina el control de alquileres en [Empresa]?",
+      "body":"Hola, equipo de [Empresa]:\n\nSoy Julio, de Nexo. Vi que alquilan [tipo de equipos] y quisiera conversar con la persona que coordina el registro de equipos, contratos y mantenimientos.\n\nDesarrollo sistemas a medida para relacionar esa información y tengo una demo que podría servirles como referencia.\n\n¿Podrían indicarme con quién verlo o reenviarle este mensaje? Me serviría su nombre y correo corporativo para coordinar una breve presentación.\n\nMuchas gracias,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465\nnexoamedida.com"
+    },
+    {
+      "id":"derivado",
+      "title":"Cuando ya te indicaron a quién escribir",
+      "when":"Menciona a la persona que te orientó únicamente si ocurrió. Si te incluyen en copia con el responsable, continúa en ese mismo hilo.",
+      "subject":"[Empresa]: demo sobre equipos, alquileres y mantenimiento",
+      "body":"Hola, [Nombre]:\n\n[Nombre de quien te orientó] me indicó que puedo revisar este tema contigo. Soy Julio, de Nexo.\n\nDesarrollo sistemas a medida para conectar la información de equipos, clientes, contratos y mantenimiento. Me gustaría mostrarte una demo y conocer cómo llevan ustedes ese seguimiento.\n\n¿Te acomoda una reunión virtual de 15 minutos el [día y hora 1] o el [día y hora 2]? También podemos coordinar una visita en Lima.\n\nSaludos,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465\nnexoamedida.com"
+    },
+    {
+      "id":"informacion",
+      "title":"Respuesta a «envíame información»",
+      "when":"Aquí sí adjunta Nexo-Alquileres-Presentacion.pdf. No envíes la guía interna ni el ZIP del kit.",
+      "subject":"Nexo · ficha sobre control de equipos y alquileres",
+      "body":"Hola, [Nombre]:\n\nGracias por responder. Te adjunto una ficha de una página con el enfoque de Nexo y lo que podemos revisar en una demo.\n\nEl ejemplo relaciona un equipo con su cliente, documentos e historial de mantenimiento. A partir de cómo trabajan ustedes, podemos evaluar qué tendría sentido desarrollar primero.\n\n¿Podemos revisarlo en 15 minutos el [día y hora 1] o el [día y hora 2]? Así puedes verlo funcionando y hacer preguntas sobre su operación.\n\nSaludos,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465\nnexoamedida.com"
+    },
+    {
+      "id":"seguimiento1",
+      "title":"Seguimiento 1 · después de 3–4 días hábiles",
+      "when":"Responde en el hilo real del primer correo. Si ya te respondieron, adapta la conversación; no sigas esta secuencia automáticamente.",
+      "subject":"Mantén el asunto del hilo original",
+      "body":"Hola, [Nombre o equipo de Empresa]:\n\nRetomo mi mensaje sobre el seguimiento de sus [tipo de equipos].\n\nPuedo mostrar un ejemplo donde se consulta el cliente de un equipo, sus documentos y su historial de mantenimiento desde una misma ficha.\n\n¿Con quién podría coordinar una presentación virtual de 15 minutos?\n\nGracias,\nJulio | Nexo\n+51 936 755 465\nasesoria@nexoamedida.com"
+    },
+    {
+      "id":"seguimiento2",
+      "title":"Seguimiento 2 · después de 7–10 días hábiles desde el primer correo",
+      "when":"Último seguimiento si no hubo respuesta. Después deja la cuenta en pausa; si te piden no escribir, registra No continuar.",
+      "subject":"Mantén el asunto del hilo original",
+      "body":"Hola, [Nombre o equipo de Empresa]:\n\nCierro por ahora el seguimiento sobre la demo de Nexo para equipos y alquileres. Si no es una prioridad para ustedes, lo dejamos aquí.\n\nSi lo revisa otra persona, ¿podrías orientarme con quién conversarlo?\n\nGracias por tu tiempo,\nJulio | Nexo\n+51 936 755 465\nasesoria@nexoamedida.com"
+    }
+  ],
+  "guide": [
+    {
+      "title":"Tu siguiente avance: llegar a la persona correcta",
+      "paragraphs":["Con 50 empresas registradas ya tienes una base para empezar conversaciones. Mantén tu meta de 100 registros de hoy y separa dos tareas: completar la investigación y activar el contacto con un primer grupo de 10–15 empresas que encajen mejor. Es una propuesta de trabajo, no una estimación de respuestas o ventas.","El primer objetivo es identificar a quien conoce el proceso y puede impulsar una mejora. Cuando encuentres a esa persona, propón una reunión de 15 minutos para conocer su operación y mostrar un ejemplo pertinente. Una reunión confirmada tiene persona, fecha, hora de Lima y modalidad acordadas."],
+      "bullets":["Prioriza empresas con equipos que cambian de cliente, contratos/documentos por alquiler y mantenimiento recurrente.","Registra una observación comprobada: qué alquilan, qué servicio ofrecen o qué categorías muestran. La existencia de Excel, WhatsApp o una web antigua no demuestra por sí sola un problema.","Para cada empresa define un contacto principal y una próxima acción con fecha. Evita escribir el mismo mensaje a varias áreas de la empresa simultáneamente."]
+    },
+    {
+      "title":"Cómo llegar desde ventas a operaciones o gerencia",
+      "paragraphs":["Ventas puede ser una puerta de entrada y también un usuario de la solución: cotiza, consulta disponibilidad y atiende preguntas sobre equipos. Pide orientación con respeto y usa su conocimiento de la empresa.","En una pyme pequeña puede decidir el dueño o gerente. En una empresa mayor, operaciones, administración, logística o el encargado de alquileres puede conocer mejor el proceso. Pregunta por la responsabilidad, además del cargo."],
+      "bullets":["Empieza con el correo de derivación si el buzón es ventas@, informes@ o contacto@.","Si no responden y existe un teléfono corporativo publicado, llama para identificar al responsable. Busca un nombre y una vía de contacto, sin intentar hacer toda la presentación en recepción.","Si no comparten el correo, pide que reenvíen el mensaje o que incluyan a la persona responsable en el hilo.","Revisa la web del negocio y LinkedIn para contrastar el nombre y cargo. No inventes una dirección de correo a partir de un patrón.","Si alguien te deriva, anota quién fue, a quién te remitió y el contexto. Menciona esa derivación solo cuando realmente haya ocurrido."],
+      "script":"Buenos días, soy Julio, de Nexo. Quisiera ubicar a quien coordina el control de equipos alquilados, contratos y mantenimiento. Tengo una demo de un sistema a medida y quisiera saber con quién revisarla. ¿Lo ve operaciones, administración o directamente gerencia? Si no pueden compartir su correo, ¿podrían reenviarle mi mensaje o indicarme cómo contactarlo?"
+    },
+    {
+      "title":"Cómo enviar y hacer seguimiento",
+      "paragraphs":["Personaliza al menos [Empresa] y [tipo de equipos]. El nombre de una persona solo se usa cuando lo has comprobado. Lee el mensaje una vez antes de enviarlo y reemplaza todos los corchetes.","Para el primer contacto usa texto sencillo y sin adjuntos. La web en la firma basta como referencia. Envía la ficha PDF cuando pidan información, acepten revisar una propuesta de reunión o exista contexto previo. La ficha presenta el enfoque: no es una propuesta económica.","Propón dos horarios que realmente tengas disponibles e indica que son hora de Lima. Coordina el lugar si prefieren presencial. Envía la invitación de calendario cuando acepten; una propuesta enviada todavía no es una reunión agendada."],
+      "bullets":["Día de envío: correo individual desde asesoria@nexoamedida.com. Antes del primer lote, prueba que recibes respuestas y revisa la entrega de un mensaje a una cuenta tuya.","Si aparecen rebotes o los mensajes de prueba llegan a spam, revisa con tu proveedor la autenticación SPF/DKIM/DMARC y la dirección de destino antes de ampliar el lote.","Sin respuesta: primer seguimiento tras 3–4 días hábiles. Segundo seguimiento tras 7–10 días hábiles desde el primer envío. Ajusta fechas por feriados y respuestas.","Si contestan, trabaja sobre lo que dijeron. Si rechazan o piden no recibir contacto, detén los seguimientos.","Después del envío, registra una actividad Correo y una tarea con la siguiente fecha. Una apertura de WhatsApp o un borrador de correo no equivalen a un mensaje enviado."]
+    },
+    {
+      "title":"Reunión de 15 minutos: entender, mostrar y acordar",
+      "paragraphs":["Prepara un ejemplo del mismo tipo de alquiler. La demo pública de Nexo permite mostrar clientes, equipos, documentos e historial de mantenimiento. Comprueba el recorrido y sus enlaces antes de la reunión; presenta como desarrollo por evaluar cualquier función adicional.","Usa un recorrido corto: elegir un equipo, identificar el cliente, abrir su historial y consultar un reporte. La conversación debe ayudar a decidir si existe un proceso concreto que convenga mejorar."],
+      "bullets":["Minutos 0–4: ¿Cómo registran hoy una entrega y una devolución? ¿Quién actualiza la disponibilidad? ¿Dónde consultan contratos y mantenimientos? ¿Qué consulta suele requerir buscar o preguntar a otra persona?","Minutos 4–9: muestra una ficha de equipo y sus relaciones. Si te preguntan por devoluciones, alertas o integraciones que la demo no ejecuta, explica que se evaluarían para su caso.","Minutos 9–12: ¿Ese proceso les ocurre a ustedes? ¿Con qué frecuencia? ¿Quién usaría el sistema? ¿Quién tendría que aprobar una primera etapa?","Minutos 12–15: acuerda el siguiente paso. Si hay encaje, pide un ejemplo de su proceso sin datos sensibles y acuerda cuándo revisar un alcance. Si no hay necesidad, registra el aprendizaje y cierra con respeto."],
+      "script":"Para que la reunión te sea útil, ¿podemos centrarnos en cómo consultan el estado y el historial de un equipo? Te muestro un ejemplo y luego revisamos si tendría sentido una primera etapa para ustedes."
+    },
+    {
+      "title":"Qué registrar en tu CRM para saber si avanzas",
+      "paragraphs":["El número de empresas registradas mide investigación. Para conocer el avance comercial, registra además contactos correctos, mensajes efectivamente enviados, respuestas y reuniones confirmadas. No se presupone una tasa de conversión de las primeras 50 o 100 empresas.","Las empresas nuevas aparecen en Primeros pasos. Cuando exista un siguiente paso comercial concreto, pulsa Continuar seguimiento y completa la oportunidad. Una venta se marca ganada cuando hay un acuerdo real; la demo o una respuesta no son una venta."],
+      "bullets":["Empresa: web/fuente, categoría y observación comprobada.","Contacto: nombre, cargo, correo corporativo o teléfono y quién te orientó.","Actividad: fecha, canal, texto/resumen y respuesta real. Sin respuesta se registra como tal.","Tarea: próximo contacto con fecha; cancela la tarea si la persona ya respondió o pidió detenerlo.","Reunión: crea una tarea de tipo Reunión con fecha, hora, duración y enlace o ubicación acordados.","Después de la demo: anota el problema confirmado, quién decide y el siguiente paso con fecha. El importe y alcance se definen después de entender el caso."],
+      "script":"Antes de una reunión, completa: Empresa / Persona y cargo / Qué alquilan / Proceso que revisaremos / Preguntas pendientes / Modalidad y hora de Lima / Siguiente paso acordado."
+    }
+  ]
+}
