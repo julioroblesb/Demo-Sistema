@@ -57,3 +57,15 @@ npm test
 ```
 
 Las pruebas usan Playwright y axe sobre la compilación de producción. Si Chromium no está instalado, ejecuta `npx playwright install chromium`; también puedes señalar un ejecutable existente con `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. Cubren 11 dimensiones, orientación horizontal, teclado, movimiento reducido, relaciones de datos y URLs de contacto. Los mensajes se interceptan en las pruebas; no se envían consultas reales.
+
+
+## CRM personal
+
+El CRM se compila como una segunda entrada en `/SKYROTE13/`, conservando la landing y el estudio de contenido. Conecta el proyecto Supabase del propietario mediante Auth, PostgreSQL con RLS y escrituras RPC transaccionales.
+
+- [Investigación y decisiones (15 fuentes originales)](docs/crm/investigacion.md).
+- [Activación y límites de la sincronización](docs/crm/activacion.md).
+- [Migración SQL](supabase/migrations/202610200001_crm.sql), idéntica a la descarga del CRM.
+- `npm test`: compilación, dominio, PostgreSQL local y recorridos de navegador.
+
+No se guardan credenciales administrativas en el código. La demo local es independiente de los registros de la cuenta personal. La sincronización remota requiere instalar el SQL, crear el usuario en Supabase Auth y autorizar su UUID.

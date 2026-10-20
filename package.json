@@ -7,11 +7,17 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "npm run build && playwright test"
+    "test": "npm run build && npm run test:crm:unit && npm run test:crm:rules && playwright test",
+    "test:crm:unit": "node --test checks/crm/domain.test.mjs",
+    "test:crm:rules": "node --test checks/crm/database.test.mjs"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@playwright/test": "1.64.1",
     "axe-core": "4.14.0",
     "vite": "^7.1.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0"
   }
 }

@@ -54,5 +54,14 @@
   "w3c-wcag": {
     "remote": "https://github.com/w3c/wcag.git",
     "commit": "457cece22d8219be32d29c5c1313e71aa6b61eae"
+  },
+  "supabase": {
+    "remote": "https://github.com/supabase/supabase.git",
+    "commit": "807fb3df167bd8b4835ed1f14e4bc74fa212ceda",
+    "documents": [
+      "apps/docs/content/guides/database/postgres/row-level-security.mdx",
+      "apps/docs/content/guides/auth/passwords.mdx",
+      "apps/docs/content/guides/realtime/postgres-changes.mdx"
+    ]
   }
 }
