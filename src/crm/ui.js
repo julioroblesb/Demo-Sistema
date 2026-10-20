@@ -1,4 +1,4 @@
-import { escape as e, initials, money, dateLabel, COMPANY_STATUS, PRIORITIES, STAGES, TASK_KINDS, isPending, today } from './domain.js';
+import { escape as e, initials, money, dateLabel, COMPANY_STATUS, companyStatusLabel, PRIORITIES, STAGES, TASK_KINDS, isPending, today } from './domain.js';
 const paths = {
  home:'M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z',
  companies:'M4 21V5l8-3v19m0-14h8v14M7 7v1m0 3v1m0 3v1m9-5v1m0 3v1M2 21h20',
@@ -23,7 +23,7 @@ const paths = {
 export const icon = (name, className = '') => `<svg class="icon ${className}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.note}"/></svg>`;
 export const action = (label, name, options = {}) => `<button type="button" class="${options.class || 'button secondary'}" data-action="${name}"${options.id ? ` data-id="${e(options.id)}"` : ''}${options.type ? ` data-type="${e(options.type)}"` : ''}${options.extra || ''}>${options.icon ? icon(options.icon) : ''}${label}</button>`;
 export const badge = (label, tone = '') => `<span class="badge ${tone}">${e(label)}</span>`;
-export const companyStatus = status => badge(COMPANY_STATUS[status] || status, ['cliente','calificada','conversacion'].includes(status) ? 'green' : status === 'no_contactar' ? 'red' : '');
+export const companyStatus = status => badge(companyStatusLabel(status), ['cliente','calificada','conversacion'].includes(status) ? 'green' : status === 'no_contactar' ? 'red' : '');
 export const stageBadge = stage => badge(STAGES[stage], stage === 'ganada' ? 'green' : stage === 'perdida' ? 'red' : '');
 export const priorityBadge = priority => `<span class="priority ${e(priority)}"><i aria-hidden="true"></i>${PRIORITIES[priority] || 'Media'}</span>`;
 export const avatar = (name, size = '') => `<span class="company-avatar ${size}">${e(initials(name || 'Nexo'))}</span>`;

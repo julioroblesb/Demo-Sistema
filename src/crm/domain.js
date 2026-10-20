@@ -1,8 +1,12 @@
 export const ZONE = 'America/Lima';
 export const TYPES = ['companies', 'contacts', 'deals', 'tasks', 'activities', 'payments', 'milestones', 'settings'];
 export const COMPANY_STATUS = { nueva: 'Por investigar', investigada: 'Investigada', contactada: 'Contactada', conversacion: 'En conversación', calificada: 'Calificada', cliente: 'Cliente', no_encaja: 'No encaja', no_contactar: 'No contactar' };
+// Keep stored legacy codes valid; simplify presentation without migrating live records.
+export const SIMPLE_COMPANY_STATUS = { nueva: 'Por contactar', contactada: 'En seguimiento', cliente: 'Cliente', no_contactar: 'No continuar' };
+export const companyStatusKey = status => ({investigada:'nueva',conversacion:'contactada',calificada:'contactada',no_encaja:'no_contactar'}[status] || status);
+export const companyStatusLabel = status => SIMPLE_COMPANY_STATUS[companyStatusKey(status)] || COMPANY_STATUS[status] || status;
 export const SECTORS = ['Maquinaria y construcción', 'Impresoras y oficina', 'Tecnología y audiovisuales', 'Vehículos y transporte', 'Eventos y mobiliario', 'Herramientas', 'Equipos médicos', 'Inmuebles y espacios', 'Otros alquileres'];
-export const STAGES = { diagnostico: 'Diagnóstico', demo: 'Demo', propuesta: 'Propuesta', negociacion: 'Negociación', ganada: 'Ganada', perdida: 'Perdida' };
+export const STAGES = { diagnostico: 'Primeros pasos', demo: 'Demo', propuesta: 'Propuesta', negociacion: 'Negociación', ganada: 'Ganada', perdida: 'Perdida' };
 export const STAGE_HELP = { diagnostico: 'Confirma el problema, quién decide y qué necesita resolver.', demo: 'Muestra un proceso relacionado con su operación y acuerda el siguiente paso.', propuesta: 'Entrega un alcance, importe y condiciones concretos.', negociacion: 'Resuelve objeciones y acuerda una fecha de decisión.', ganada: 'Registra el acuerdo. Después controla cobros y entrega.', perdida: 'Conserva el motivo y lo aprendido; no borres la historia.' };
 export const TASK_KINDS = { seguimiento: 'Seguimiento', llamada: 'Llamada', reunion: 'Reunión', correo: 'Correo', whatsapp: 'WhatsApp', propuesta: 'Preparar propuesta', entrega: 'Entrega', otro: 'Otra tarea' };
 export const PRIORITIES = { alta: 'Alta', media: 'Media', baja: 'Baja' };
@@ -41,12 +45,41 @@ export function safeURL(value) {
 }
 export function websiteHost(value) { try { return new URL(safeURL(value)).hostname.replace(/^www\./, ''); } catch { return ''; } }
 export function whatsapp(phone) { let digits = String(phone || '').replace(/\D/g, ''); if (/^9\d{8}$/.test(digits)) digits = '51' + digits; return /^\d{10,15}$/.test(digits) ? `https://wa.me/${digits}` : ''; }
-export function duplicateCompany(candidate, companies, ignoreId = '') {
- return companies.find(company => {
-  if(company.id===ignoreId)return false;
-  if(candidate.ruc&&company.ruc)return candidate.ruc===company.ruc;
-  return (normalize(candidate.name)===normalize(company.name)&&normalize(candidate.city||'Lima')===normalize(company.city||'Lima'))||(candidate.website&&company.website&&websiteHost(candidate.website)&&websiteHost(candidate.website)===websiteHost(company.website));
- });
+const normalizedPhone = value => {
+  let digits=String(value||'').replace(/\D/g,'').replace(/^00/,'');
+  if (/^9\d{8}$/.test(digits)) digits='51'+digits;
+  return digits.length>=7?digits:'';
+};
+const normalizedName = value => normalize(value).replace(/[^a-z0-9]+/g,' ').trim();
+export function companyDuplicates(candidate,companies,ignoreId='',contacts=[]) {
+  const matches=[];
+  for(const company of companies){
+    if(company.id===ignoreId)continue;
+    const fields=[],linked=contacts.filter(contact=>contact.company_id===company.id);
+    const same=(key,label,normalizer,values=[company[key]])=>{const value=normalizer(candidate[key]);if(value&&values.some(other=>normalizer(other)===value))fields.push({key,label,value:candidate[key]});};
+    same('ruc','RUC',value=>String(value||'').replace(/\D/g,''));
+    same('name','Nombre',normalizedName);
+    same('phone','Teléfono',normalizedPhone,[company.phone,...linked.map(contact=>contact.phone)]);
+    same('email','Correo',value=>String(value||'').trim().toLowerCase(),[company.email,...linked.map(contact=>contact.email)]);
+    // Different RUCs can legitimately share a group website.
+    if(!(candidate.ruc&&company.ruc&&candidate.ruc!==company.ruc))same('website','Página web',websiteHost);
+    if(fields.length)matches.push({company,fields});
+  }
+  return matches;
+}
+export function duplicateCompany(candidate,companies,ignoreId='',contacts=[]) {return companyDuplicates(candidate,companies,ignoreId,contacts)[0]?.company;}
+export function matchesSearch(query,...records) {
+  const needle=normalize(query);if(!needle)return true;
+  const values=[];
+  const collect=value=>{if(Array.isArray(value))value.forEach(collect);else if(value&&typeof value==='object'){for(const [key,item] of Object.entries(value))if(!['id','company_id','deal_id','owner_id','version','created_at','updated_at'].includes(key)){collect(item);if(key==='phone'&&normalizedPhone(item))values.push(normalizedPhone(item));}}else if(typeof value==='string'||typeof value==='number')values.push(String(value));};
+  records.forEach(collect);
+  if(/^[+\d\s().-]+$/.test(needle)){const digits=needle.replace(/\D/g,'');if(digits.length>=3&&values.some(value=>value.replace(/\D/g,'').includes(digits)))return true;}
+  const haystack=normalize(values.join(' '));return needle.split(/\s+/).every(term=>haystack.includes(term));
+}
+export function companyMatchesSearch(query,company,data){return matchesSearch(query,company,companyStatusLabel(company.status),...['contacts','activities','tasks','deals'].map(type=>(data[type]||[]).filter(row=>row.company_id===company.id)));}
+export function pipelineCompanies(data,query=''){
+  const linked=new Set(data.deals.filter(deal=>!deal.archived).map(deal=>deal.company_id));
+  return data.companies.filter(company=>!company.archived&&!linked.has(company.id)&&!['cliente','no_contactar'].includes(companyStatusKey(company.status))&&companyMatchesSearch(query,company,data));
 }
 export function paid(dealId, data) { return data.payments.filter(payment => payment.deal_id === dealId && !payment.voided).reduce((sum, payment) => sum + payment.amount_cents, 0); }
 export function milestonesProgress(dealId, data) { const list = data.milestones.filter(item => item.deal_id === dealId && !item.archived); return { done: list.filter(item => item.done).length, total: list.length, percentage: percent(list.filter(item => item.done).length, list.length) }; }

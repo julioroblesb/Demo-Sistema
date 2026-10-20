@@ -1,4 +1,4 @@
-import { TYPES, escape, id, normalize, safeURL, COMPANY_STATUS, SECTORS, duplicateCompany, validateRecord, calendarEvents } from './domain.js';
+import { TYPES, escape, id, normalize, safeURL, COMPANY_STATUS, SIMPLE_COMPANY_STATUS, SECTORS, companyDuplicates, validateRecord, calendarEvents } from './domain.js';
 
 export function parseCSV(text) {
   text = text.replace(/^\uFEFF/, '');
@@ -22,17 +22,17 @@ export function parseCSV(text) {
   if (!headers.includes('name')) throw new Error('Falta una columna «empresa» o «nombre». Descarga la plantilla.');
   return rows.slice(1).map((cells, index) => ({ line: index + 2, raw: Object.fromEntries(headers.filter(Boolean).map(key => [key, cells[headers.indexOf(key)]?.trim() || ''])) }));
 }
-export function prepareCompanyImport(rows, existing) {
+export function prepareCompanyImport(rows, existing, contacts=[]) {
   const accepted = [], duplicates = [], errors = [];
   for (const { line, raw } of rows) {
     const sector = SECTORS.find(value => normalize(value) === normalize(raw.sector)) || raw.sector || 'Otros alquileres';
-    const status = Object.keys(COMPANY_STATUS).find(key => key === normalize(raw.status) || normalize(COMPANY_STATUS[key]) === normalize(raw.status)) || 'nueva';
+    const status = Object.keys(COMPANY_STATUS).find(key => key === normalize(raw.status) || normalize(COMPANY_STATUS[key]) === normalize(raw.status) || normalize(SIMPLE_COMPANY_STATUS[key]) === normalize(raw.status)) || 'nueva';
     const company = { id: id(), name: raw.name || '', ruc: raw.ruc || '', sector, city: raw.city || 'Lima', district: raw.district || '', address: raw.address || '', website: raw.website ? safeURL(raw.website) : '', phone: raw.phone || '', email: raw.email || '', source_url: raw.source_url ? safeURL(raw.source_url) : '', source: 'Investigación en internet', status, priority: ['alta', 'media', 'baja'].includes(normalize(raw.priority)) ? normalize(raw.priority) : 'media', need: raw.need || '', notes: raw.notes || '', researched_at: '', archived: false };
     try {
       if (raw.website && !company.website || raw.source_url && !company.source_url) throw new Error('Revisa el enlace web o la fuente.');
       validateRecord('companies', company);
-      const duplicate = duplicateCompany(company, [...existing, ...accepted.map(item => item.company)]);
-      if (duplicate) duplicates.push({ line, name: company.name, reason: `Ya existe «${duplicate.name}».` });
+      const match = companyDuplicates(company, [...existing, ...accepted.map(item => item.company)],'',contacts)[0]; const duplicate=match?.company;
+      if (duplicate) duplicates.push({ line, name: company.name, reason: `Ya existe «${duplicate.name}»: coincide ${match.fields.map(field=>field.label).join(", ")}.` });
       else accepted.push({ line, company, contact: raw.contact_name ? { id: id(), company_id: company.id, name: raw.contact_name, role: raw.contact_role || '', phone: company.phone, email: company.email, decision_maker: false } : null });
     } catch (error) { errors.push({ line, name: company.name, reason: error.message }); }
   }
