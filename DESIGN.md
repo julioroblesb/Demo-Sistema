@@ -61,3 +61,11 @@ La portada nombra el servicio y una pregunta de uso. Los objetos se identifican 
 `src/demo-data.json` alimenta la interfaz y los 12 PDF; `scripts/demo/documents.mjs` los regenera. Los documentos se pueden leer en HTML accesible, abrir como PDF y descargar. Nunca exigir un visor PDF para entender el resultado. El recorrido en video es opcional, local, sin descarga inicial y con alternativa textual.
 
 Favicon SVG + ICO + PNG y apple-touch-icon en todas las páginas públicas, incluidas marca, perfiles y estudio. Títulos breves que comienzan por Nexo. La pestaña real depende también del navegador y del espacio disponible.
+
+## CRM: pestañas de las fichas
+
+Las fichas de empresa y oportunidad comparten navegación plana sobre blanco: texto de interfaz de 13 px, contadores separados con numerales tabulares, borde inferior neutro y una línea verde solo en la sección seleccionada. Las pestañas usan su clase propia `detail-tab`; no heredan las variantes de botones de acción. Hover salvia, foco verde y objetivos táctiles de al menos 48 px. En pantallas estrechas la fila permite desplazamiento horizontal y mantiene visible la pestaña enfocada.
+
+Semántica tablist/tab/tabpanel, selección anunciada y un panel visible. Flechas, Inicio y Fin mueven el foco; Intro o Espacio activan la sección. Cambiar de sección conserva el foco en su pestaña, y los borradores siguen sujetos a la confirmación de descarte existente.
+
+Referencia aplicada: [Impeccable](https://github.com/pbakaus/impeccable), SKILL.md y guías polish, craft-floor y operate, commit `dad8dbb3aac21ad1fa236c110315ef4abece23e8`; patrón de pestañas de [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/). Revisión visual en Chromium y prueba de teclado, tacto y accesibilidad en ambas fichas. El detector de Impeccable señaló un borde lateral preexistente en una alerta de cierre; queda fuera del alcance de este ajuste a la navegación.

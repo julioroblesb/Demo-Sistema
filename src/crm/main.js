@@ -33,6 +33,7 @@ function companyDuplicateNotice(){
  const values=Object.fromEntries(new FormData(form));const matches=companyDuplicates(values,state.data.companies,values.id,state.data.contacts);notice.hidden=!matches.length;
  notice.innerHTML=matches.length?`<strong>Estos datos ya aparecen en tu CRM</strong><p>Revisa las coincidencias antes de guardar. Tu borrador se conserva.</p><ul>${matches.map(({company,fields})=>`<li><div><strong>${e(company.name)}${company.archived?' (archivada)':''}</strong><span>${fields.map(field=>e(field.label)+': '+e(field.value)).join(' · ')}</span></div>${action('Ver empresa','open-company',{id:company.id,class:'text-button',icon:'diagonal'})}</li>`).join('')}</ul>`:'';
 }
+function focusDetailTab(){const tab=$('#record-dialog [role="tab"][aria-selected="true"]');if(!tab)return;tab.focus({preventScroll:true});const list=tab.parentElement;const left=tab.offsetLeft-list.offsetLeft;if(left<list.scrollLeft)list.scrollLeft=left;else if(left+tab.offsetWidth>list.scrollLeft+list.clientWidth)list.scrollLeft=left+tab.offsetWidth-list.clientWidth;}
 function currentFormSignature(){const form=$('#dialog-content form');return form?JSON.stringify(Array.from(new FormData(form).entries())):'';}
 function editingDirty(){return initialForm&&currentFormSignature()!==initialForm;}
 function showDialog(html,context={},wide=false){const dialog=$('#record-dialog');if(!dialog.open){trigger=document.activeElement;triggerSelector=trigger?.dataset.action?`#app [data-action="${trigger.dataset.action}"]${trigger.dataset.id?`[data-id="${CSS.escape(trigger.dataset.id)}"]`:''}`:'';}modal=context;$('#dialog-content').innerHTML=html;dialog.classList.toggle('wide',wide);if(!dialog.open)dialog.showModal();dialog.scrollTop=0;initialForm=currentFormSignature();$('#dialog-title')?.focus({preventScroll:true});}
@@ -75,7 +76,7 @@ const actions={
  'new-company':()=>showForm(forms.companyForm()),
  'edit-company':button=>showForm(forms.companyForm(get('companies',button.dataset.id))),
  'open-company':button=>openCompany(button.dataset.id),
- 'company-tab':button=>openCompany(button.dataset.id,button.dataset.type),
+ 'company-tab':button=>{openCompany(button.dataset.id,button.dataset.type);focusDetailTab();},
  'new-contact':button=>showForm(forms.contactForm(state.data,null,button.dataset.id)),
  'edit-contact':button=>showForm(forms.contactForm(state.data,get('contacts',button.dataset.id))),
  'open-contact-company':button=>openCompany(get('contacts',button.dataset.id)?.company_id,'contactos'),
@@ -86,7 +87,7 @@ const actions={
  'edit-deal':button=>showForm(forms.dealForm(state.data,get('deals',button.dataset.id))),
  'open-deal':button=>openDeal(button.dataset.id),
  'open-delivery':button=>openDeal(button.dataset.id,'entrega'),
- 'deal-tab':button=>openDeal(button.dataset.id,button.dataset.type),
+ 'deal-tab':button=>{openDeal(button.dataset.id,button.dataset.type);focusDetailTab();},
  'move-deal':button=>showForm(forms.moveForm(get('deals',button.dataset.id))),
  'set-stage':async button=>{const deal=get('deals',button.dataset.id),stage=button.dataset.type;if(['ganada','perdida'].includes(stage)){showForm(forms.closeDealForm(deal,stage));return;}if(deal.stage==='ganada'&&paid(deal.id,state.data)>0)throw new Error('La venta tiene cobros. Anúlalos antes de reabrirla.');const updated={...deal,stage,closed_date:'',lost_reason:''};await write(closureOperations(updated,deal),`Oportunidad movida a ${STAGES[stage].toLowerCase()}.`);openDeal(deal.id);},
  'win-deal':button=>showForm(forms.closeDealForm(get('deals',button.dataset.id),'ganada')),
@@ -171,6 +172,7 @@ window.addEventListener('hashchange',()=>{if($('#record-dialog').open)closeDialo
 window.addEventListener('online',()=>{if(state.mode==='cloud')toast('Conexión recuperada. Esperando la confirmación del servidor.');});
 window.addEventListener('offline',()=>{state.connected=false;render();});
 window.addEventListener('beforeunload',event=>{if(state.saving||editingDirty()||goalsDraft){event.preventDefault();event.returnValue='';}});
+document.addEventListener('keydown',event=>{const current=event.target.closest('[role="tab"]');if(!current||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const list=current.closest('[role="tablist"]');if(!list)return;event.preventDefault();const tabs=[...list.querySelectorAll('[role="tab"]')],index=tabs.indexOf(current);const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs.forEach((tab,i)=>tab.tabIndex=i===next?0:-1);tabs[next].focus({preventScroll:true});tabs[next].scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});});
 document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'&&state.mode){event.preventDefault();searchDialog();}if(event.key==='Escape'&&state.navOpen){state.navOpen=false;render();}});
 let dragId='';
 document.addEventListener('dragstart',event=>{const card=event.target.closest('[data-deal-drag]');if(card){dragId=card.dataset.dealDrag;event.dataTransfer.setData('text/plain',dragId);event.dataTransfer.effectAllowed='move';card.classList.add('dragging');}});

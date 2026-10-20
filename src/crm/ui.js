@@ -39,3 +39,12 @@ export function taskRow(task, data, compact = false) {
   return `<div class="task-row ${!isPending(task) ? 'done' : ''}"><button type="button" class="task-check" data-action="toggle-task" data-id="${task.id}" aria-label="${isPending(task) ? 'Completar' : 'Reabrir'}: ${e(task.title)}" aria-pressed="${!isPending(task)}">${!isPending(task) ? icon('check') : ''}</button><button type="button" class="task-text" data-action="edit-task" data-id="${task.id}"><strong>${e(task.title)}</strong><span>${e(company?.name || 'Sin empresa')} ${compact ? '' : '· ' + TASK_KINDS[task.kind]}</span></button><div class="task-meta">${!compact ? priorityBadge(task.priority) : ''}<span class="${late ? 'overdue' : ''}">${task.due_date === today() ? 'Hoy' : dateLabel(task.due_date)}${task.due_time ? ' · ' + task.due_time : ''}</span></div></div>`;
 }
 export const progress = (value, total, label, className = '') => `<div class="progress-track ${className}" role="progressbar" aria-label="${e(label)}" aria-valuemin="0" aria-valuemax="${Math.max(total,1)}" aria-valuenow="${Math.min(value,Math.max(total,1))}" aria-valuetext="${value} de ${total}"><span style="width:${total ? Math.min(100,value/total*100) : 0}%"></span></div>`;
+
+// Detail navigation is one component, independent of action-button defaults.
+const detailId=(kind,recordId,key,part)=>`detail-${kind}-${recordId}-${key}-${part}`;
+export function detailTabs(kind,recordId,items,selected) {
+  return `<div class="detail-tabs" role="tablist" aria-label="${kind==='company'?'Información de empresa':'Información de oportunidad'}">${Object.entries(items).map(([key,item])=>`<button type="button" class="detail-tab${selected===key?' selected':''}" role="tab" id="${e(detailId(kind,recordId,key,'tab'))}" aria-selected="${selected===key}" aria-controls="${e(detailId(kind,recordId,key,'panel'))}" tabindex="${selected===key?'0':'-1'}" data-action="${kind}-tab" data-id="${e(recordId)}" data-type="${e(key)}"><span class="detail-tab-label">${e(item.label)}</span>${Number.isInteger(item.count)?`<span class="detail-tab-count">${item.count}</span>`:''}</button>`).join('')}</div>`;
+}
+export function detailPanels(kind,recordId,items,selected,body) {
+  return Object.keys(items).map(key=>`<section class="detail-body" role="tabpanel" id="${e(detailId(kind,recordId,key,'panel'))}" aria-labelledby="${e(detailId(kind,recordId,key,'tab'))}" tabindex="0"${selected===key?'':' hidden'}>${selected===key?body:''}</section>`).join('');
+}
