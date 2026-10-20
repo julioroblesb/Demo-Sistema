@@ -1,0 +1,58 @@
+{
+  "openstax-marketing": {
+    "remote": "https://github.com/openstax/osbooks-principles-marketing.git",
+    "commit": "a6d7372579d13e0a733954953c4613867f018a48"
+  },
+  "openstax-entrepreneurship": {
+    "remote": "https://github.com/openstax/osbooks-entrepreneurship.git",
+    "commit": "a299e6d7bdeff382b3db4dbd1148ea2ec6eb5dd0"
+  },
+  "suitecrm": {
+    "remote": "https://github.com/salesagility/SuiteDocs.git",
+    "commit": "3c467c079b3a86f0b1cfe0331fe73364379544c2"
+  },
+  "odoo": {
+    "remote": "https://github.com/odoo/documentation.git",
+    "commit": "47833777e2c8323b30c74e34f8aedad5d665b56b"
+  },
+  "frappe": {
+    "remote": "https://github.com/frappe/crm.git",
+    "commit": "ffc2458c9e38afd76880864fddcb34f254b228ee"
+  },
+  "atomic": {
+    "remote": "https://github.com/marmelab/atomic-crm.git",
+    "commit": "94818e50154093612345cf6ab5a137f152025f77"
+  },
+  "salesforce-lightning": {
+    "remote": "https://github.com/salesforce-ux/design-system.git",
+    "commit": "9bc6a4046d10d95b4f3fb9cee7c7dc036bf43ad2"
+  },
+  "owasp": {
+    "remote": "https://github.com/OWASP/CheatSheetSeries.git",
+    "commit": "c366393214da5ae186a7a06a27dade7617987304"
+  },
+  "w3c-aria": {
+    "remote": "https://github.com/w3c/aria-practices.git",
+    "commit": "0f765e4dc33e966026114ac12a8380db1de3b787"
+  },
+  "firebase-quickstart": {
+    "remote": "https://github.com/firebase/quickstart-js.git",
+    "commit": "474e779bc3f0af1c620fb9dfa53e933e6aa3edd7"
+  },
+  "firebase-testing": {
+    "remote": "https://github.com/firebase/quickstart-testing.git",
+    "commit": "cb6486e2c779e11539c6abd2e6abe4cc19a59948"
+  },
+  "firebase-sdk": {
+    "remote": "https://github.com/firebase/firebase-js-sdk.git",
+    "commit": "d7bb0e16f2b13ba15f74b690596eb70ef145d4f6"
+  },
+  "w3c-coga": {
+    "remote": "https://github.com/w3c/coga.git",
+    "commit": "f15bbd18d18f2acc32b94fe9b54f4519e2781ec5"
+  },
+  "w3c-wcag": {
+    "remote": "https://github.com/w3c/wcag.git",
+    "commit": "457cece22d8219be32d29c5c1313e71aa6b61eae"
+  }
+}
