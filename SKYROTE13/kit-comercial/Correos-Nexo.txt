@@ -1,0 +1,118 @@
+NEXO · CORREOS PARA CONSEGUIR UNA CONVERSACIÓN
+USO INTERNO. Reemplaza todos los campos entre corchetes antes de enviar. Los horarios deben estar realmente disponibles. No enviar el ZIP ni esta guía a prospectos.
+
+=================================================================
+Primer correo · responsable identificado
+Para gerencia, operaciones, administración o quien controle los alquileres. Sustituye los campos entre corchetes y verifica la observación sobre su negocio.
+
+ASUNTO: [Empresa]: una demo para el control de sus alquileres
+
+Hola, [Nombre]:
+
+Soy Julio, de Nexo. Vi que [Empresa] alquila [tipo de equipos].
+
+Desarrollo sistemas a medida para conectar equipos, clientes, contratos e historial de mantenimiento. Puedo mostrarte una demo de cómo consultar la información de un equipo y sus documentos desde una sola ficha.
+
+Me gustaría conocer cómo lo gestionan hoy y ver si algo así les sería útil. ¿Podemos verlo en una reunión virtual de 15 minutos el [día y hora 1] o el [día y hora 2]? Si prefieren presencial en Lima, podemos coordinarlo.
+
+Saludos,
+Julio | Nexo
+asesoria@nexoamedida.com
++51 936 755 465
+nexoamedida.com
+
+=================================================================
+Primer correo · ventas o buzón general
+Para ventas@, informes@ o contacto@ cuando todavía no sabes quién decide. El objetivo de este mensaje es conseguir la derivación.
+
+ASUNTO: ¿Quién coordina el control de alquileres en [Empresa]?
+
+Hola, equipo de [Empresa]:
+
+Soy Julio, de Nexo. Vi que alquilan [tipo de equipos] y quisiera conversar con la persona que coordina el registro de equipos, contratos y mantenimientos.
+
+Desarrollo sistemas a medida para relacionar esa información y tengo una demo que podría servirles como referencia.
+
+¿Podrían indicarme con quién verlo o reenviarle este mensaje? Me serviría su nombre y correo corporativo para coordinar una breve presentación.
+
+Muchas gracias,
+Julio | Nexo
+asesoria@nexoamedida.com
++51 936 755 465
+nexoamedida.com
+
+=================================================================
+Cuando ya te indicaron a quién escribir
+Menciona a la persona que te orientó únicamente si ocurrió. Si te incluyen en copia con el responsable, continúa en ese mismo hilo.
+
+ASUNTO: [Empresa]: demo sobre equipos, alquileres y mantenimiento
+
+Hola, [Nombre]:
+
+[Nombre de quien te orientó] me indicó que puedo revisar este tema contigo. Soy Julio, de Nexo.
+
+Desarrollo sistemas a medida para conectar la información de equipos, clientes, contratos y mantenimiento. Me gustaría mostrarte una demo y conocer cómo llevan ustedes ese seguimiento.
+
+¿Te acomoda una reunión virtual de 15 minutos el [día y hora 1] o el [día y hora 2]? También podemos coordinar una visita en Lima.
+
+Saludos,
+Julio | Nexo
+asesoria@nexoamedida.com
++51 936 755 465
+nexoamedida.com
+
+=================================================================
+Respuesta a «envíame información»
+Aquí sí adjunta Nexo-Alquileres-Presentacion.pdf. No envíes la guía interna ni el ZIP del kit.
+
+ASUNTO: Nexo · ficha sobre control de equipos y alquileres
+
+Hola, [Nombre]:
+
+Gracias por responder. Te adjunto una ficha de una página con el enfoque de Nexo y lo que podemos revisar en una demo.
+
+El ejemplo relaciona un equipo con su cliente, documentos e historial de mantenimiento. A partir de cómo trabajan ustedes, podemos evaluar qué tendría sentido desarrollar primero.
+
+¿Podemos revisarlo en 15 minutos el [día y hora 1] o el [día y hora 2]? Así puedes verlo funcionando y hacer preguntas sobre su operación.
+
+Saludos,
+Julio | Nexo
+asesoria@nexoamedida.com
++51 936 755 465
+nexoamedida.com
+
+=================================================================
+Seguimiento 1 · después de 3–4 días hábiles
+Responde en el hilo real del primer correo. Si ya te respondieron, adapta la conversación; no sigas esta secuencia automáticamente.
+
+ASUNTO: Mantén el asunto del hilo original
+
+Hola, [Nombre o equipo de Empresa]:
+
+Retomo mi mensaje sobre el seguimiento de sus [tipo de equipos].
+
+Puedo mostrar un ejemplo donde se consulta el cliente de un equipo, sus documentos y su historial de mantenimiento desde una misma ficha.
+
+¿Con quién podría coordinar una presentación virtual de 15 minutos?
+
+Gracias,
+Julio | Nexo
++51 936 755 465
+asesoria@nexoamedida.com
+
+=================================================================
+Seguimiento 2 · después de 7–10 días hábiles desde el primer correo
+Último seguimiento si no hubo respuesta. Después deja la cuenta en pausa; si te piden no escribir, registra No continuar.
+
+ASUNTO: Mantén el asunto del hilo original
+
+Hola, [Nombre o equipo de Empresa]:
+
+Cierro por ahora el seguimiento sobre la demo de Nexo para equipos y alquileres. Si no es una prioridad para ustedes, lo dejamos aquí.
+
+Si lo revisa otra persona, ¿podrías orientarme con quién conversarlo?
+
+Gracias por tu tiempo,
+Julio | Nexo
++51 936 755 465
+asesoria@nexoamedida.com
