@@ -3,17 +3,17 @@
     {
       "id": "responsable",
       "title": "Enviar hoy · Correo",
-      "when": "Adjunta Nexo-Informacion-Conectada.pdf. Personaliza la empresa y ofrece dos horarios disponibles. «Proyecto real» se refiere al proyecto desarrollado que mostrarás; no implica resultados medidos ni un cliente de referencia.",
-      "subject": "[Empresa]: ¿cada área tiene su propio Excel?",
-      "body": "Hola, [Nombre o equipo de Empresa]:\n\nCuando una consulta obliga a abrir varios Excels, revisar carpetas y preguntarle a otra persona, el trabajo de todo el equipo se frena.\n\nSoy Julio, de Nexo. Creamos sistemas a medida para conectar esa información y facilitar el trabajo de todas las áreas: encontrar lo que necesitan más rápido, trabajar con datos actualizados y consultar el historial de cada operación.\n\nQuiero mostrarte un proyecto real que ya desarrollamos en una reunión de 15 minutos y evaluar si podemos resolver algo similar en [Empresa].\n\n¿Te acomoda [día y hora 1] o [día y hora 2]? Puede ser virtual o presencial en Lima. Te adjunto una ficha visual del enfoque.\n\nSi este tema lo ve otra persona, ¿podrías reenviarle el mensaje o ayudarme a contactarla?\n\nSaludos,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465\nnexoamedida.com"
+      "when": "Primer contacto. Adjunta Nexo-Informacion-Conectada.pdf, personaliza la empresa y ofrece dos horarios disponibles, en hora de Lima. «Proyecto real» se refiere al desarrollo que mostrarás; no implica un cliente de referencia ni ahorros medidos. Si no conoces al responsable, usa la frase de orientación final.",
+      "subject": "[Empresa]: menos búsquedas, respuestas más rápidas",
+      "body": "Buen día, [Nombre o equipo de Empresa]:\n\nSoy Julio, de Nexo. Desarrollamos sistemas a medida para que su equipo dedique menos tiempo a buscar información y pueda responder más rápido.\n\nImagine atender una consulta sin revisar varios Excels, buscar documentos en distintas carpetas ni esperar a quien tiene el dato.\n\nMe gustaría mostrarle un proyecto real que ya desarrollamos y revisar si ese enfoque encaja con la operación de [Empresa].\n\nAdjunto una ficha breve. También puede conocernos en https://nexoamedida.com.\n\n¿Le acomoda [día y hora 1] o [día y hora 2] para una demostración virtual de 15 minutos?\n\nSi este tema lo lleva otra persona, agradeceré que me ayude a llegar a ella.\n\nSaludos,\nJulio | Nexo\nasesoria@nexoamedida.com\n+51 936 755 465"
     },
     {
       "id": "whatsapp",
       "channel": "whatsapp",
       "title": "Enviar hoy · WhatsApp",
-      "when": "Envía Nexo-WhatsApp-Informacion.jpg junto con este texto. Sustituye los corchetes. Si ya enviaste el correo, puedes añadir: «También te envié una ficha por correo para que puedas revisarla». Usa esa frase solo cuando realmente lo hayas enviado.",
+      "when": "Primer contacto. Envía Nexo-WhatsApp-Informacion.jpg con este texto. Sustituye los corchetes y usa los mismos horarios del correo, en hora de Lima. Si ya enviaste el correo, puedes añadir «También le envié una ficha por correo para que pueda revisarla». Usa esa frase solo si realmente lo enviaste.",
       "subject": "",
-      "body": "Hola, [Nombre o equipo de Empresa]. Soy Julio, de Nexo.\n\n¿Tienen información repartida entre Excels, carpetas y distintas personas? Cuando pasa, una consulta sencilla termina en varias búsquedas.\n\nCreamos sistemas a medida para conectar esos datos y facilitar el trabajo de todo el equipo.\n\nQuiero mostrarte un proyecto real en una demo de 15 minutos y evaluar si podemos ayudar a [Empresa].\n\n¿Lo vemos [día y hora 1] o [día y hora 2]? Si lo lleva otra persona, ¿me ayudas a contactarla?"
+      "body": "Buen día, [Nombre o equipo de Empresa]. Soy Julio, de Nexo. Creamos sistemas a medida para que su equipo encuentre la información que necesita y responda más rápido.\n\nEl cambio que buscamos: pasar de buscar entre archivos y personas a resolver una consulta con la información a mano.\n\nQuisiera mostrarle un proyecto real que desarrollamos y evaluar si puede servirle a [Empresa].\n\nLe comparto una imagen del enfoque. Puede conocernos en https://nexoamedida.com.\n\n¿Le acomoda [día y hora 1] o [día y hora 2] para una demostración virtual de 15 minutos?\n\nSi lo coordina otra persona, agradeceré su orientación."
     },
     {
       "id": "derivacion",
@@ -52,6 +52,20 @@
     }
   ],
   "guide": [
+    {
+      "title": "Por qué estos mensajes empiezan así",
+      "paragraphs": [
+        "Revisión del 20 de octubre de 2026. Se consultaron capítulos pertinentes de cinco libros abiertos extensos de comunicación empresarial, psicología y marketing. La investigación y sus límites se documentan en Investigacion-copy-Nexo.md. No es una prueba de conversión ni una revisión sistemática de neuromarketing.",
+        "La presentación inicial combina quién escribe, qué hace Nexo y el beneficio para el equipo. La escena posterior ayuda a imaginar el cambio sin afirmar que conocemos sus problemas. El proyecto desarrollado aporta una prueba que pueden evaluar durante la reunión."
+      ],
+      "bullets": [
+        "El asunto expresa un beneficio. No simula una conversación previa ni atribuye un problema a la empresa.",
+        "La web, el PDF y la imagen respaldan el mensaje. La petición principal es coordinar una demostración de 15 minutos; no pedir cuatro acciones distintas.",
+        "La derivación desde ventas o informes es una forma de llegar a esa conversación. Si ya conoces al responsable, puedes omitir la frase de orientación.",
+        "Para personalizar, usa solo información comprobada. No añadas clientes, credenciales o cifras de ahorro que no puedas acreditar.",
+        "Evalúa respuestas útiles, derivaciones y reuniones confirmadas por empresa. No presentes aperturas o visitas como ventas ni atribuyas con certeza la respuesta a un canal si enviaste ambos."
+      ]
+    },
     {
       "title": "Tu siguiente avance: llegar a la persona correcta",
       "paragraphs": [

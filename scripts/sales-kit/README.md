@@ -13,6 +13,15 @@ npm run build
 
 `content.json` contiene los correos y la guía. El generador produce la página interna, una ficha HTML/PDF A4, la guía Word, los correos TXT y un ZIP con carpetas separadas para compartir y para uso interno. CSS y JavaScript del portal se mantienen como archivos fuente en `public/SKYROTE13/kit-comercial/`.
 
+Para revisar únicamente el copy y la guía, conservando los adjuntos visuales ya generados:
+
+```sh
+python3 scripts/sales-kit/generate.py --text-only
+npm run build
+```
+
+Esta opción requiere que el PDF y el JPG ya existan. Ambos modos incluyen el análisis de fuentes en el portal y en el ZIP interno.
+
 ## Publicación
 
 - Consulta: `/SKYROTE13/kit-comercial/`.
@@ -32,3 +41,9 @@ Compilación correcta. Se verificaron las cinco descargas desde Chromium, los bo
 La actualización centra el mensaje en información dispersa entre Excels, carpetas y personas. `campaign.mjs` genera un PDF A4 de una página para correo y un JPG de 1080 × 1350 px para WhatsApp, usando la marca y fuentes existentes. Son documentos y un diagrama tipográfico, sin capturas inventadas ni métricas de ahorro no medidas. La referencia al proyecto real proviene del usuario; no se añaden clientes, testimonios o resultados atribuidos.
 
 Los dos mensajes de hoy aparecen primero en el portal; WhatsApp tiene su propio control de copia sin campo de asunto. La guía, TXT y ZIP incluyen ambos canales. Si se usan el mismo día, se coordinan en un seguimiento único y se continúa por el canal que responda.
+
+## Presentación, persuasión y evidencia
+
+La revisión posterior del mismo día combina identidad, actividad y beneficio desde la apertura; añade una escena concreta, la demostración del proyecto desarrollado y una sola petición principal de reunión. La web y los adjuntos respaldan la presentación. Los primeros mensajes usan un trato de usted y mantienen la petición de orientación para contactos de ventas o informes.
+
+[Investigación y límites](../../docs/comercial/investigacion-copy.md) documenta capítulos consultados de cinco libros abiertos extensos y distingue sus recomendaciones de una prueba de eficacia de estos mensajes. [Versiones de las fuentes](../../docs/comercial/fuentes-copy.json) permite reproducir la consulta. No se presenta como revisión sistemática de neuromarketing ni como texto de conversión garantizada.

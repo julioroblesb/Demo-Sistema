@@ -1,0 +1,22 @@
+{
+  "business-communication": {
+    "url": "https://github.com/saylordotorg/text_business-communication-for-success.git",
+    "commit": "54faa96aee85472a7ac9363a144d091ef4bf0816"
+  },
+  "psychology": {
+    "url": "https://github.com/openstax/osbooks-psychology.git",
+    "commit": "de7e40c91813dabdc2875df9d0709fc4f46080bb"
+  },
+  "social-psychology": {
+    "url": "https://github.com/saylordotorg/text_principles-of-social-psychology.git",
+    "commit": "effd195791bbc61323ec83cdee8a74da9e587d69"
+  },
+  "openstax-marketing": {
+    "url": "https://github.com/openstax/osbooks-principles-marketing.git",
+    "commit": "a6d7372579d13e0a733954953c4613867f018a48"
+  },
+  "saylor-marketing": {
+    "url": "https://github.com/saylordotorg/text_principles-of-marketing-v2.0.git",
+    "commit": "d06e6aead455887d4dbc5f252113c47593f4dc13"
+  }
+}

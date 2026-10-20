@@ -3,43 +3,46 @@ USO INTERNO. Reemplaza todos los campos entre corchetes antes de enviar. Los hor
 
 =================================================================
 Enviar hoy · Correo
-Adjunta Nexo-Informacion-Conectada.pdf. Personaliza la empresa y ofrece dos horarios disponibles. «Proyecto real» se refiere al proyecto desarrollado que mostrarás; no implica resultados medidos ni un cliente de referencia.
+Primer contacto. Adjunta Nexo-Informacion-Conectada.pdf, personaliza la empresa y ofrece dos horarios disponibles, en hora de Lima. «Proyecto real» se refiere al desarrollo que mostrarás; no implica un cliente de referencia ni ahorros medidos. Si no conoces al responsable, usa la frase de orientación final.
 
-ASUNTO: [Empresa]: ¿cada área tiene su propio Excel?
+ASUNTO: [Empresa]: menos búsquedas, respuestas más rápidas
 
-Hola, [Nombre o equipo de Empresa]:
+Buen día, [Nombre o equipo de Empresa]:
 
-Cuando una consulta obliga a abrir varios Excels, revisar carpetas y preguntarle a otra persona, el trabajo de todo el equipo se frena.
+Soy Julio, de Nexo. Desarrollamos sistemas a medida para que su equipo dedique menos tiempo a buscar información y pueda responder más rápido.
 
-Soy Julio, de Nexo. Creamos sistemas a medida para conectar esa información y facilitar el trabajo de todas las áreas: encontrar lo que necesitan más rápido, trabajar con datos actualizados y consultar el historial de cada operación.
+Imagine atender una consulta sin revisar varios Excels, buscar documentos en distintas carpetas ni esperar a quien tiene el dato.
 
-Quiero mostrarte un proyecto real que ya desarrollamos en una reunión de 15 minutos y evaluar si podemos resolver algo similar en [Empresa].
+Me gustaría mostrarle un proyecto real que ya desarrollamos y revisar si ese enfoque encaja con la operación de [Empresa].
 
-¿Te acomoda [día y hora 1] o [día y hora 2]? Puede ser virtual o presencial en Lima. Te adjunto una ficha visual del enfoque.
+Adjunto una ficha breve. También puede conocernos en https://nexoamedida.com.
 
-Si este tema lo ve otra persona, ¿podrías reenviarle el mensaje o ayudarme a contactarla?
+¿Le acomoda [día y hora 1] o [día y hora 2] para una demostración virtual de 15 minutos?
+
+Si este tema lo lleva otra persona, agradeceré que me ayude a llegar a ella.
 
 Saludos,
 Julio | Nexo
 asesoria@nexoamedida.com
 +51 936 755 465
-nexoamedida.com
 
 =================================================================
 Enviar hoy · WhatsApp
-Envía Nexo-WhatsApp-Informacion.jpg junto con este texto. Sustituye los corchetes. Si ya enviaste el correo, puedes añadir: «También te envié una ficha por correo para que puedas revisarla». Usa esa frase solo cuando realmente lo hayas enviado.
+Primer contacto. Envía Nexo-WhatsApp-Informacion.jpg con este texto. Sustituye los corchetes y usa los mismos horarios del correo, en hora de Lima. Si ya enviaste el correo, puedes añadir «También le envié una ficha por correo para que pueda revisarla». Usa esa frase solo si realmente lo enviaste.
 
 CANAL: WhatsApp
 
-Hola, [Nombre o equipo de Empresa]. Soy Julio, de Nexo.
+Buen día, [Nombre o equipo de Empresa]. Soy Julio, de Nexo. Creamos sistemas a medida para que su equipo encuentre la información que necesita y responda más rápido.
 
-¿Tienen información repartida entre Excels, carpetas y distintas personas? Cuando pasa, una consulta sencilla termina en varias búsquedas.
+El cambio que buscamos: pasar de buscar entre archivos y personas a resolver una consulta con la información a mano.
 
-Creamos sistemas a medida para conectar esos datos y facilitar el trabajo de todo el equipo.
+Quisiera mostrarle un proyecto real que desarrollamos y evaluar si puede servirle a [Empresa].
 
-Quiero mostrarte un proyecto real en una demo de 15 minutos y evaluar si podemos ayudar a [Empresa].
+Le comparto una imagen del enfoque. Puede conocernos en https://nexoamedida.com.
 
-¿Lo vemos [día y hora 1] o [día y hora 2]? Si lo lleva otra persona, ¿me ayudas a contactarla?
+¿Le acomoda [día y hora 1] o [día y hora 2] para una demostración virtual de 15 minutos?
+
+Si lo coordina otra persona, agradeceré su orientación.
 
 =================================================================
 Primer correo · ventas o buzón general
