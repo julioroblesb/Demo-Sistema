@@ -6,19 +6,19 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 test('La oferta y ambos resultados se entienden sin reproducir la explicación', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('sistema para tu empresa');
-  await expect(page.locator('.hero-copy')).toContainText('software a medida');
+  await expect(page.locator('h1')).toContainText('Tu empresa en un solo sistema');
+  await expect(page.locator('.hero-copy')).toContainText('Software a medida');
   await expect(page.locator('#before-title')).toBeVisible();
   await expect(page.locator('#after-title')).toBeVisible();
-  await expect(page.locator('.linked-record')).toContainText('Su contrato de alquiler');
+  await expect(page.locator('.linked-record')).toContainText('Contrato asociado');
   await expect(page.locator('#demo-disclosure')).not.toHaveAttribute('open', '');
   await page.locator('.service-bridge a').click();
   await expect(page.locator('#demo-disclosure')).toHaveAttribute('open', '');
   await page.locator('[data-guide="asset"]').click();
-  await expect(page.locator('#detail-title')).toHaveText('Ricoh IM C3000');
+  await expect(page.locator('#detail-title')).toHaveText('Impresora');
   await page.keyboard.press('Escape');
   await page.locator('[data-guide="document"]').click();
-  await expect(page.locator('#detail-title')).toHaveText('Contrato de alquiler');
+  await expect(page.locator('#detail-title')).toHaveText('Reporte de mantenimiento');
 });
 
 test('La explicación puede pausarse, continuar, terminar y repetirse', async ({ page }) => {
@@ -73,10 +73,10 @@ test('Clientes, equipos y documentos conservan sus relaciones y el foco del diá
   await expect(page.locator('.detail-heading h4')).toHaveText('Grupo del Pacífico');
   const trigger = page.locator('[data-asset="EQ-031"]').first();
   await trigger.click();
-  await expect(page.locator('#detail-title')).toHaveText('Canon imageRUNNER');
+  await expect(page.locator('#detail-title')).toHaveText('Tablet');
   await expect(page.locator('.timeline')).toContainText('Grupo del Pacífico');
-  await page.locator('[data-doc="EQ-031"]').click();
-  await expect(page.locator('.fake-document')).toContainText('DEMO-CN031');
+  await page.locator('[data-doc="EQ-031-mantenimiento"]').click();
+  await expect(page.locator('.document-preview')).toContainText('SG-031');
   await page.keyboard.press('Escape');
   await expect(page.locator('#detail-dialog')).not.toBeVisible();
   await expect(trigger).toBeFocused();
@@ -95,7 +95,7 @@ test('La búsqueda tolera tildes, muestra vacío y permite restablecer registros
   await expect(page.locator('.client-card')).toHaveCount(3);
   await page.locator('[data-client="1"]').click();
   await page.locator('[data-client-docs="1"]').click();
-  await expect(page.locator('.asset-row')).toHaveCount(2);
+  await expect(page.locator('.asset-row')).toHaveCount(6);
   await expect(page.locator('#search')).toHaveValue('Constructora Horizonte');
 });
 
@@ -212,4 +212,97 @@ test('Accesibilidad automática en escritorio y móvil, antes y después', async
       expect(violations, `width=${width}, connected=${after}`).toEqual([]);
     }
   }
+});
+
+test('Cada tipo de equipo tiene su mantenimiento, PDF legible y relación correcta', async ({ page }) => {
+  const data = JSON.parse(readFileSync('src/demo-data.json', 'utf8'));
+  await page.goto('/#demo');
+  await page.locator('[data-view="assets"]').click();
+  for (const asset of data.assets) {
+    await page.locator(`[data-asset="${asset.id}"]`).click();
+    await expect(page.locator('#detail-title')).toHaveText(asset.name);
+    await expect(page.locator('.equipment-model-name')).toHaveText(asset.model);
+    await expect(page.locator('.timeline')).toContainText(asset.service);
+    await page.locator(`[data-doc="${asset.id}-mantenimiento"]`).click();
+    await expect(page.locator('.document-preview')).toContainText(asset.finding);
+    for (const item of asset.work) await expect(page.locator('.document-preview')).toContainText(item);
+    const download = page.locator('.document-actions a[download]');
+    await expect(download).toHaveAttribute('href', `/demo/reportes/${asset.id}-mantenimiento.pdf`);
+    const file = await page.request.get(await download.getAttribute('href'));
+    expect(file.ok()).toBe(true);
+    expect((await file.body()).subarray(0, 5).toString()).toBe('%PDF-');
+    await page.locator('.document-back').click();
+    await expect(page.locator('#detail-title')).toHaveText(asset.name);
+    await page.keyboard.press('Escape');
+  }
+  for (const doc of data.documents) {
+    const response = await page.request.get(doc.file);
+    expect(response.status(), doc.file).toBe(200);
+    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
+  }
+});
+
+test('La portada abre la ficha sin registro y restaura el foco al cerrar', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-open-example]').click();
+  await expect(page.locator('#detail-title')).toHaveText('Impresora');
+  await page.locator('[data-doc="EQ-024-mantenimiento"]').click();
+  const downloadEvent = page.waitForEvent('download');
+  await page.locator('.document-actions a[download]').click();
+  const download = await downloadEvent;
+  expect(download.suggestedFilename()).toBe('EQ-024-mantenimiento.pdf');
+  expect(await download.failure()).toBeNull();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-open-example]')).toBeFocused();
+});
+
+test('Favicon y títulos breves en landing, marca, perfiles y contenido', async ({ page }) => {
+  for (const route of ['/', '/brand/', '/brand/perfiles/', '/estudio-6e94b8f2c731/']) {
+    await page.goto(route);
+    expect(await page.title()).toMatch(/^Nexo \| .+/);
+    expect((await page.title()).length).toBeLessThanOrEqual(25);
+    for (const href of ['/favicon.ico', '/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
+      await expect(page.locator(`link[href="${href}"]`)).toHaveCount(1);
+      const response = await page.request.get(href);
+      expect(response.status()).toBe(200);
+      expect((await response.body()).length).toBeGreaterThan(100);
+    }
+  }
+});
+
+test('Video bajo demanda, formato adaptable, reproducción y pausa al cerrar', async ({ page }) => {
+  const mediaRequests = [];
+  page.on('request', req => { if (/recorrido-.*\.mp4/.test(req.url())) mediaRequests.push(req.url()); });
+  for (const [width, format] of [[1440, 'escritorio'], [390, 'vertical']]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    const before = mediaRequests.length;
+    expect(await page.locator('video').count()).toBe(0);
+    await page.locator('#watch-demo').click();
+    await expect(page.locator('video source')).toHaveAttribute('src', `/demo/recorrido-${format}.mp4`);
+    await expect(page.locator('video')).toHaveAttribute('preload', 'none');
+    expect(mediaRequests.length).toBe(before);
+    await page.locator('video').evaluate(video => video.play());
+    await expect.poll(() => page.locator('video').evaluate(video => video.currentTime)).toBeGreaterThan(.1);
+    const duration = await page.locator('video').evaluate(video => video.duration);
+    expect(duration).toBeGreaterThanOrEqual(17.9);
+    expect(duration).toBeLessThanOrEqual(18.2);
+    await page.keyboard.press('Escape');
+    expect(await page.locator('video').evaluate(video => video.paused)).toBe(true);
+    await expect(page.locator('#watch-demo')).toBeFocused();
+  }
+});
+
+test('Accesibilidad de fichas, reportes y video en móvil', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.addScriptTag({ content: axeSource });
+  const check = async () => {
+    const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } })).violations.map(item => ({ id: item.id, nodes: item.nodes.map(node => node.target) })));
+    expect(violations).toEqual([]);
+  };
+  await page.locator('[data-open-example]').click(); await check();
+  await page.locator('[data-doc="EQ-024-mantenimiento"]').click(); await check();
+  await page.keyboard.press('Escape');
+  await page.locator('#watch-demo').click(); await check();
 });

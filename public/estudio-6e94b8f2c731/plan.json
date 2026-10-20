@@ -30,7 +30,7 @@
       ],
       "formatType": "image",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20MAPA%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Tu información existe. ¿Puedes conectarla?. Información repartida entre archivos y personas. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Tu información existe. ¿Puedes conectarla?. Información repartida entre archivos y personas. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P01-imagen-1080x1350.jpg",
       "copyFile": "archivos/P01-copies.txt"
     },
@@ -45,9 +45,9 @@
       "pain": "Reconstruir un caso abriendo varios archivos.",
       "goal": "Mostrar la transformación y generar conversaciones de empresas con ese problema.",
       "hook": "Para entender un equipo, ¿tienes que buscar en tres lugares?",
-      "visual": "Explicación visual animada: archivos separados, relación entre registros y ficha conectada. Recreación editorial con datos ficticios, no grabación del software.",
-      "fb": "Para responder por un equipo, ¿tienes que revisar varios archivos y preguntarle a alguien?\n\nEn este ejemplo ves cómo clientes, equipos, documentos e historial se conectan en un mismo sistema. La implementación se diseña a partir de cómo funciona tu empresa y puede comenzar por un proceso.\n\nEl video es una explicación visual con datos ficticios. Si reconoces este problema en tu operación, escríbenos por WhatsApp con la palabra CONEXIÓN y cuéntanos cómo lo gestionan hoy.",
-      "ig": "Un mismo equipo. Su información, en varios lugares.\n\nMira cómo se conectan cliente, documentos e historial en este ejemplo de Nexo.\n\nSi así funciona tu empresa, escribe CONEXIÓN en el WhatsApp del perfil. Los datos del video son ficticios.\n\n#ProcesosEmpresariales #PymesPeru #GestionDeEquipos",
+      "visual": "Explicación visual animada: archivos separados, relación entre registros y ficha conectada. Recreación editorial con datos de demostración, no grabación del software.",
+      "fb": "Para responder por un equipo, ¿tienes que revisar varios archivos y preguntarle a alguien?\n\nEn este ejemplo ves cómo clientes, equipos, documentos e historial se conectan en un mismo sistema. La implementación se diseña a partir de cómo funciona tu empresa y puede comenzar por un proceso.\n\nEl video es una explicación visual con datos de demostración. Si reconoces este problema en tu operación, escríbenos por WhatsApp con la palabra CONEXIÓN y cuéntanos cómo lo gestionan hoy.",
+      "ig": "Un mismo equipo. Su información, en varios lugares.\n\nMira cómo se conectan cliente, documentos e historial en este ejemplo de Nexo.\n\nSi así funciona tu empresa, escribe CONEXIÓN en el WhatsApp del perfil. Los datos del video son de demostración.\n\n#ProcesosEmpresariales #PymesPeru #GestionDeEquipos",
       "cta": "Escribe CONEXIÓN por WhatsApp y cuéntanos tu proceso.",
       "keyword": "CONEXIÓN",
       "date": "2026-10-20",
@@ -79,7 +79,7 @@
       ],
       "formatType": "video",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20CONEXI%C3%93N%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: De tres escritorios a una historia conectada. Reconstruir un caso abriendo varios archivos. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: De tres escritorios a una historia conectada. Reconstruir un caso abriendo varios archivos. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P02-portada-1080x1350.jpg",
       "copyFile": "archivos/P02-copies.txt"
     },
@@ -133,7 +133,7 @@
       ],
       "formatType": "carousel",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20PROCESO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Así empieza un sistema hecho para tu empresa. Pensar que implementar un sistema exige cambiarlo todo de golpe. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Así empieza un sistema hecho para tu empresa. Pensar que implementar un sistema exige cambiarlo todo de golpe. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P03-lamina-1-1080x1350.jpg",
       "copyFile": "archivos/P03-copies.txt"
     },
@@ -212,7 +212,7 @@
       ],
       "formatType": "carousel",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20CLIENTE%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: ¿Cuántos archivos abres para responder por un cliente?. Información del mismo cliente fragmentada entre áreas. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: ¿Cuántos archivos abres para responder por un cliente?. Información del mismo cliente fragmentada entre áreas. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P04-lamina-1-1080x1350.jpg",
       "copyFile": "archivos/P04-copies.txt"
     },
@@ -227,8 +227,8 @@
       "pain": "Encontrar un PDF sin saber a qué equipo, contrato o cliente corresponde.",
       "goal": "Diferenciar centralizar archivos de relacionar información.",
       "hook": "Encontraste el PDF. ¿A qué operación pertenece?",
-      "visual": "Documento ficticio DEMO con tres conectores: contrato → equipo EQ-024 → cliente Horizonte. Identificador repetido y legible en todos los registros.",
-      "fb": "Encontrar un PDF resuelve una parte de la consulta. Saber a qué cliente, equipo u operación corresponde completa la respuesta.\n\nEn Nexo trabajamos esas relaciones: que un contrato aparezca junto al alquiler al que pertenece y que el equipo conserve el vínculo con su historial.\n\nEste diagrama usa información ficticia para mostrar la idea. ¿Qué tipo de documento cuesta ubicar en tu empresa?",
+      "visual": "Documento de demostración DEMO con tres conectores: contrato → equipo EQ-024 → cliente Horizonte. Identificador repetido y legible en todos los registros.",
+      "fb": "Encontrar un PDF resuelve una parte de la consulta. Saber a qué cliente, equipo u operación corresponde completa la respuesta.\n\nEn Nexo trabajamos esas relaciones: que un contrato aparezca junto al alquiler al que pertenece y que el equipo conserve el vínculo con su historial.\n\nEste diagrama usa información de demostración para mostrar la idea. ¿Qué tipo de documento cuesta ubicar en tu empresa?",
       "ig": "Encontraste el PDF. ¿A qué operación pertenece?\n\nContrato → equipo → cliente. La relación es la que permite entender el archivo.\n\n¿Qué documento suele quedar sin contexto en tu empresa?\n\n#GestionDocumental #ProcesosEmpresariales #PymesPeru",
       "cta": "Comenta qué documento cuesta relacionar.",
       "keyword": "DOCUMENTO",
@@ -246,7 +246,7 @@
       ],
       "formatType": "image",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20DOCUMENTO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: El archivo también necesita contexto. Encontrar un PDF sin saber a qué equipo, contrato o cliente corresponde. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: El archivo también necesita contexto. Encontrar un PDF sin saber a qué equipo, contrato o cliente corresponde. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P05-imagen-1080x1350.jpg",
       "copyFile": "archivos/P05-copies.txt"
     },
@@ -261,9 +261,9 @@
       "pain": "Historial perdido o separado cada vez que se mueve un activo.",
       "goal": "Demostrar trazabilidad con un caso específico.",
       "hook": "Este equipo estuvo en otro cliente. ¿Puedes ver qué pasó?",
-      "visual": "Animación editorial de la ficha EQ-024: devolución, mantenimiento y nuevo alquiler. Datos ficticios; no se presenta como grabación de la aplicación.",
-      "fb": "Un equipo puede pasar por varios clientes, una devolución y un mantenimiento. Consultar solo su ubicación actual deja parte de la historia fuera.\n\nEn este ejemplo recorremos los movimientos del mismo equipo y vemos cómo conserva el vínculo con clientes y documentos.\n\nEs un ejemplo de alquiler de equipos con datos ficticios. La misma lógica puede evaluarse para otros activos y procesos según el funcionamiento de cada negocio.\n\nExplora la demo y piensa qué historial te gustaría consultar así.",
-      "ig": "Un equipo cambia de cliente. Su historial lo acompaña.\n\nDevolución, mantenimiento y nuevo alquiler: mira las tres fechas de EQ-024 en este ejemplo con datos ficticios.\n\nEncuentra la demo en el perfil.\n\n#Trazabilidad #GestionDeActivos #AlquilerDeEquipos",
+      "visual": "Animación editorial de la ficha EQ-024: devolución, mantenimiento y nuevo alquiler. Datos de demostración; no se presenta como grabación de la aplicación.",
+      "fb": "Un equipo puede pasar por varios clientes, una devolución y un mantenimiento. Consultar solo su ubicación actual deja parte de la historia fuera.\n\nEn este ejemplo recorremos los movimientos del mismo equipo y vemos cómo conserva el vínculo con clientes y documentos.\n\nEs un ejemplo de alquiler de equipos con datos de demostración. La misma lógica puede evaluarse para otros activos y procesos según el funcionamiento de cada negocio.\n\nExplora la demo y piensa qué historial te gustaría consultar así.",
+      "ig": "Un equipo cambia de cliente. Su historial lo acompaña.\n\nDevolución, mantenimiento y nuevo alquiler: mira las tres fechas de EQ-024 en este ejemplo con datos de demostración.\n\nEncuentra la demo en el perfil.\n\n#Trazabilidad #GestionDeActivos #AlquilerDeEquipos",
       "cta": "Explora el historial en la demo.",
       "keyword": "EQUIPO",
       "date": "2026-10-22",
@@ -295,7 +295,7 @@
       ],
       "formatType": "video",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20EQUIPO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: El equipo cambia de cliente. El historial lo acompaña.. Historial perdido o separado cada vez que se mueve un activo. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: El equipo cambia de cliente. El historial lo acompaña.. Historial perdido o separado cada vez que se mueve un activo. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P06-portada-1080x1350.jpg",
       "copyFile": "archivos/P06-copies.txt"
     },
@@ -349,7 +349,7 @@
       ],
       "formatType": "carousel",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20CONTEXTO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Cuando la respuesta depende de una persona. Consultas operativas que dependen de la memoria o archivos personales. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Cuando la respuesta depende de una persona. Consultas operativas que dependen de la memoria o archivos personales. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P07-lamina-1-1080x1350.jpg",
       "copyFile": "archivos/P07-copies.txt"
     },
@@ -365,7 +365,7 @@
       "goal": "Creatividad alternativa para comparar comprensión y calidad de consultas.",
       "hook": "¿Quién lo tiene? ¿Dónde estuvo? ¿Qué documento corresponde?",
       "visual": "Tres acciones reales en la demo: abrir cliente, abrir equipo y abrir contrato. Un resultado por toma. Cierre con nombre de servicio y WhatsApp.",
-      "fb": "¿Quién tiene este equipo? ¿Dónde estuvo antes? ¿Qué contrato le corresponde?\n\nEn este ejemplo respondemos las tres preguntas recorriendo registros relacionados. El valor está en conservar el contexto entre clientes, equipos, movimientos y documentos.\n\nDiseñamos el sistema según el proceso de cada empresa. Si estas consultas hoy requieren buscar en varios lugares, escribe HISTORIA por WhatsApp y cuéntanos qué necesitas conectar.\n\nDemostración con datos ficticios.",
+      "fb": "¿Quién tiene este equipo? ¿Dónde estuvo antes? ¿Qué contrato le corresponde?\n\nEn este ejemplo respondemos las tres preguntas recorriendo registros relacionados. El valor está en conservar el contexto entre clientes, equipos, movimientos y documentos.\n\nDiseñamos el sistema según el proceso de cada empresa. Si estas consultas hoy requieren buscar en varios lugares, escribe HISTORIA por WhatsApp y cuéntanos qué necesitas conectar.\n\nDemostración con datos de demostración.",
       "ig": "Tres preguntas. Un recorrido conectado.\n\n¿Quién lo tiene?\n¿Dónde estuvo?\n¿Qué contrato corresponde?\n\nMira la demo. Para revisar un proceso de tu empresa, escribe HISTORIA en el WhatsApp del perfil.\n\n#TrazabilidadOperativa #SistemasAMedida #PymesPeru",
       "cta": "Escribe HISTORIA por WhatsApp.",
       "keyword": "HISTORIA",
@@ -398,7 +398,7 @@
       ],
       "formatType": "video",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20HISTORIA%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Tres preguntas que una ficha conectada puede responder. No poder reconstruir relaciones desde registros aislados. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Tres preguntas que una ficha conectada puede responder. No poder reconstruir relaciones desde registros aislados. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P08-portada-1080x1350.jpg",
       "copyFile": "archivos/P08-copies.txt"
     },
@@ -432,7 +432,7 @@
       ],
       "formatType": "image",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20PRIMERA%20ETAPA%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Puedes comenzar por un proceso concreto. Temor a un proyecto de software amplio e indefinido. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Puedes comenzar por un proceso concreto. Temor a un proyecto de software amplio e indefinido. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P09-imagen-1080x1350.jpg",
       "copyFile": "archivos/P09-copies.txt"
     },
@@ -486,7 +486,7 @@
       ],
       "formatType": "carousel",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20EXCEL%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Tus Excels son el punto de partida. Pensar que hay que empezar desde cero o que cualquier archivo se importa sin revisión. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Tus Excels son el punto de partida. Pensar que hay que empezar desde cero o que cualquier archivo se importa sin revisión. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P10-lamina-1-1080x1350.jpg",
       "copyFile": "archivos/P10-copies.txt"
     },
@@ -520,7 +520,7 @@
       ],
       "formatType": "image",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20N%C3%9ACLEO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Primero el núcleo. Después, las ampliaciones.. Confundir la propuesta con campañas de WhatsApp o automatizaciones sueltas. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Primero el núcleo. Después, las ampliaciones.. Confundir la propuesta con campañas de WhatsApp o automatizaciones sueltas. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P11-imagen-1080x1350.jpg",
       "copyFile": "archivos/P11-copies.txt"
     },
@@ -569,7 +569,7 @@
       ],
       "formatType": "video",
       "whatsapp": "https://wa.me/51936755465?text=Hola%2C%20vi%20MI%20PROCESO%20de%20Nexo.%20Quiero%20revisar%20un%20proceso%20de%20mi%20empresa.",
-      "alt": "Pieza de Nexo: Muéstranos el proceso que quieres ordenar. No saber cómo iniciar una conversación sobre un sistema a medida. Ejemplo ilustrativo con datos ficticios.",
+      "alt": "Pieza de Nexo: Muéstranos el proceso que quieres ordenar. No saber cómo iniciar una conversación sobre un sistema a medida. Ejemplo ilustrativo con datos de demostración.",
       "preview": "archivos/P12-portada-1080x1350.jpg",
       "copyFile": "archivos/P12-copies.txt"
     }
@@ -584,7 +584,7 @@
       [
         "Dónde vive cada dato",
         "Clientes, equipos, documentos y operaciones: identificamos sus fuentes.",
-        "Cuatro fuentes etiquetadas, con datos ficticios."
+        "Cuatro fuentes etiquetadas, con datos de demostración."
       ],
       [
         "Qué debe quedar relacionado",
@@ -626,7 +626,7 @@
       [
         "¿Así funciona hoy tu empresa?",
         "Escribe CLIENTE por WhatsApp y cuéntanos cómo hacen esa consulta.",
-        "Logo y CTA. URL visible corta: nexoamedida.com. Datos ficticios."
+        "Logo y CTA. URL visible corta: nexoamedida.com. Datos de demostración."
       ]
     ],
     "P07": [
@@ -746,7 +746,7 @@
         "19–24 s",
         "Captura de historial y dirección de la demo.",
         "Explora la demo en el perfil",
-        "Mira el recorrido con datos ficticios en la demo de Nexo."
+        "Mira el recorrido con datos de demostración en la demo de Nexo."
       ]
     ],
     "P08": [
@@ -848,7 +848,7 @@
       "S04",
       "Mostrar trazabilidad",
       "1: Mismo equipo, cliente anterior.\n2: Mantenimiento.\n3: Cliente actual y enlace a la demo.",
-      "Enlace a la demo; marcar “Datos ficticios”.",
+      "Enlace a la demo; marcar “Datos de demostración”.",
       "Misma secuencia; CTA al botón de WhatsApp."
     ],
     [
@@ -959,7 +959,7 @@
     ],
     [
       "Prueba comercial",
-      "Usar exclusivamente datos ficticios y marcarlo. No publicar datos del sistema de LR ni inventar testimonios, clientes, cifras de ahorro o garantías de resultados."
+      "Usar exclusivamente datos de demostración y marcarlo. No publicar datos del sistema de LR ni inventar testimonios, clientes, cifras de ahorro o garantías de resultados."
     ],
     [
       "Alcance de esta entrega",
@@ -1170,7 +1170,7 @@
       "time": "18:30",
       "title": "Mostrar trazabilidad",
       "content": "1: Mismo equipo, cliente anterior.\n2: Mantenimiento.\n3: Cliente actual y enlace a la demo.",
-      "ig": "Enlace a la demo; marcar “Datos ficticios”.",
+      "ig": "Enlace a la demo; marcar “Datos de demostración”.",
       "fb": "Misma secuencia; CTA al botón de WhatsApp.",
       "assets": [
         {

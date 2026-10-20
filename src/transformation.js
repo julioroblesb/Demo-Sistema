@@ -5,9 +5,9 @@ const caption = document.querySelector('#story-caption');
 const status = document.querySelector('#story-status');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const steps = [
-  '1. El cliente: de una fila en Excel a una ficha con sus equipos.',
-  '2. El contrato: del PDF en una carpeta al documento de ese equipo.',
-  '3. El historial: de notas separadas a servicios y movimientos relacionados.',
+  '1. El cliente y sus equipos, en una misma ficha.',
+  '2. El contrato, junto al equipo correcto.',
+  '3. El historial: cada mantenimiento con su reporte PDF.',
 ];
 let current = -1;
 let running = false;
@@ -75,7 +75,7 @@ function schedule() {
       running = false;
       finished = true;
       root.dataset.step = 'complete';
-      caption.textContent = 'El resultado: sabes qué tiene cada cliente y qué pasó con cada equipo.';
+      caption.textContent = 'Sabes qué tiene el cliente y qué se hizo al equipo.';
       status.textContent = 'Explicación terminada. Puedes repetirla o probar la demo.';
       updateControl();
     }

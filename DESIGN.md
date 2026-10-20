@@ -5,7 +5,7 @@ Este documento fija las decisiones para futuras iteraciones. La petición del us
 ## Elementos de marca que se conservan
 
 - Nombre: Nexo. Dominio: `https://nexoamedida.com/`.
-- Logo maestro: `public/brand/nexo-logo.svg`. Las formas, el punto y el isotipo de ocho direcciones no se redibujan. Se usa el mismo archivo entregado en el kit de identidad, también en cabecera y pie.
+- Logo maestro: `public/brand/nexo-logo.svg`. Se conservan las letras y el isotipo de ocho direcciones. Por petición expresa del usuario (20 oct 2026), el punto pasa de cuadrado a círculo, manteniendo su posición, tamaño exterior y color. Se usa el mismo archivo entregado en el kit de identidad, también en cabecera y pie.
 - Verde Nexo `#247459`; tinta `#202730`; blanco niebla `#FAFBFC`; blanco `#FFFFFF`.
 - Apoyos existentes: tinta bosque `#20352B`, salvia `#EEF2EE`, texto secundario `#607168`, borde `#E4E8E8`, hover `#195940`, foco `#66B493`.
 - Manrope para marca y títulos; DM Sans para texto e interfaz. Archivos locales, sin llamadas a Google Fonts.
@@ -22,7 +22,7 @@ Contacto autorizado: WhatsApp +51 936 755 465 y `asesoria@nexoamedida.com`. Dire
 
 ## Composición y comprensión (revisión de octubre de 2026)
 
-La primera visita debe responder qué vendemos antes de pedir explorar. El título nombra el cambio de Excels y carpetas a un sistema para la empresa, y el párrafo identifica el servicio como software a medida.
+La primera visita debe responder qué vendemos antes de pedir explorar. El título dice «Tu empresa en un solo sistema»; el párrafo identifica el servicio como software a medida y lo relaciona con dejar de buscar entre Excels. La comparación parte de «¿Cuándo se revisó esta impresora?».
 
 Una única comparación de portada muestra **Antes** y **Después, con Nexo** simultáneamente. La lectura del resultado no depende de reproducir animación ni de recordar un estado anterior. Cliente, contrato e historial son los tres puntos del relato. Las fichas ilustradas son estáticas y no se presentan como botones.
 
@@ -53,3 +53,11 @@ No añadir testimonios, logotipos de supuestos clientes, cifras de ahorro ni gar
 `npm test` compila producción y ejecuta las pruebas en `tests/landing.spec.js`. Incluye estados, interrupción, búsqueda, relaciones, teclado, contacto sin envío real, recursos del dominio, varias dimensiones y auditoría automática con axe.
 
 Las pruebas automáticas no equivalen a una certificación WCAG ni a ensayos en teléfonos físicos. Se complementan con capturas y revisión visual en Chromium.
+
+## Revisión de comprensión y evidencia (20 oct 2026)
+
+La portada nombra el servicio y una pregunta de uso. Los objetos se identifican como Impresora, Monitor o Tablet antes de indicar marca/modelo. La demo identifica su contexto una vez; no repite «ficticio» en cada registro. Sus datos son ilustrativos y no son testimonios ni resultados comerciales.
+
+`src/demo-data.json` alimenta la interfaz y los 12 PDF; `scripts/demo/documents.mjs` los regenera. Los documentos se pueden leer en HTML accesible, abrir como PDF y descargar. Nunca exigir un visor PDF para entender el resultado. El recorrido en video es opcional, local, sin descarga inicial y con alternativa textual.
+
+Favicon SVG + ICO + PNG y apple-touch-icon en todas las páginas públicas, incluidas marca, perfiles y estudio. Títulos breves que comienzan por Nexo. La pestaña real depende también del navegador y del espacio disponible.

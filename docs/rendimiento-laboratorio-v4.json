@@ -1,0 +1,54 @@
+{
+  "capturedAt": "2026-10-20T02:00:53.058Z",
+  "environment": "Chromium local headless; network simulation 1.6 Mbps/100 ms; no real-user telemetry. Frame intervals are rAF scheduling, not compositor dropped-frame counts.",
+  "results": [
+    {
+      "config": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000,
+        "cpu": 1
+      },
+      "initial": {
+        "lcpMs": 604,
+        "resourceBytes": 101251,
+        "resourceRequests": 9,
+        "videoRequested": false
+      },
+      "lab": {
+        "totalLayoutShiftWithoutRecentInput": 0.0007533059353298612,
+        "longTaskCount": 1,
+        "longestTaskMs": 91,
+        "longestObservedEventMs": 24,
+        "frameIntervalP95Ms": 16.7,
+        "frameIntervalsOver50ms": 0,
+        "frameSamples": 198
+      },
+      "errors": []
+    },
+    {
+      "config": {
+        "name": "mobile-4x",
+        "width": 390,
+        "height": 844,
+        "cpu": 4
+      },
+      "initial": {
+        "lcpMs": 864,
+        "resourceBytes": 101251,
+        "resourceRequests": 9,
+        "videoRequested": false
+      },
+      "lab": {
+        "totalLayoutShiftWithoutRecentInput": 0,
+        "longTaskCount": 2,
+        "longestTaskMs": 227,
+        "longestObservedEventMs": 72,
+        "frameIntervalP95Ms": 16.7,
+        "frameIntervalsOver50ms": 0,
+        "frameSamples": 198
+      },
+      "errors": []
+    }
+  ]
+}

@@ -12,13 +12,13 @@ for p in data['posts']:
  p['assets']=[]
  p['formatType']='carousel' if p['id'] in data['slides'] else 'video' if p['id'] in data['scripts'] else 'image'
  if p['id']=='P06':
-  p['visual']='Animación editorial de la ficha EQ-024: devolución, mantenimiento y nuevo alquiler. Datos ficticios; no se presenta como grabación de la aplicación.'
+  p['visual']='Animación editorial de la ficha EQ-024: devolución, mantenimiento y nuevo alquiler. Datos de demostración; no se presenta como grabación de la aplicación.'
   p['ig']=p['ig'].replace('recorre las tres fechas de EQ-024 en esta demo','mira las tres fechas de EQ-024 en este ejemplo')
- if p['id']=='P02':p['visual']='Explicación visual animada: archivos separados, relación entre registros y ficha conectada. Recreación editorial con datos ficticios, no grabación del software.'
- p['fb']=p['fb'].replace('En esta demo','En este ejemplo').replace('Los datos del video son ficticios.','El video es una explicación visual con datos ficticios.')
+ if p['id']=='P02':p['visual']='Explicación visual animada: archivos separados, relación entre registros y ficha conectada. Recreación editorial con datos de demostración, no grabación del software.'
+ p['fb']=p['fb'].replace('En esta demo','En este ejemplo').replace('Los datos del video son de demostración.','El video es una explicación visual con datos de demostración.')
  p['ig']=p['ig'].replace('en la demo de Nexo','en este ejemplo de Nexo')
  p['whatsapp']='https://wa.me/51936755465?text='+__import__('urllib.parse',fromlist=['quote']).quote('Hola, vi '+p['keyword']+' de Nexo. Quiero revisar un proceso de mi empresa.')
- p['alt']='Pieza de Nexo: '+p['title']+'. '+p['pain']+' Ejemplo ilustrativo con datos ficticios.'
+ p['alt']='Pieza de Nexo: '+p['title']+'. '+p['pain']+' Ejemplo ilustrativo con datos de demostración.'
 # Specific visual headlines avoid the ambiguity of the previous landing.
 data['posts'][0]['title']='De Excels y carpetas a un sistema para tu empresa'
 data['posts'][0]['fb']='Creamos software a medida para conectar clientes, equipos, documentos e historial.\n\nSi para responder una consulta tienes que abrir varios Excels, revisar carpetas y preguntarle a alguien, podemos revisar ese proceso contigo.\n\nEmpezamos por entender cómo trabaja tu empresa y acordar una primera etapa.\n\nMira el ejemplo en https://nexoamedida.com o escríbenos por WhatsApp: https://wa.me/51936755465'

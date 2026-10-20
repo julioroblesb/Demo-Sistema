@@ -1,0 +1,374 @@
+{
+  "clients": [
+    {
+      "id": 1,
+      "name": "Constructora Horizonte",
+      "initials": "CH",
+      "color": "purple",
+      "sector": "Construcción",
+      "contact": "Lucía Mendoza",
+      "assets": [
+        "EQ-024",
+        "EQ-018"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Grupo del Pacífico",
+      "initials": "GP",
+      "color": "blue",
+      "sector": "Servicios empresariales",
+      "contact": "Diego Torres",
+      "assets": [
+        "EQ-031"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Estudio Norte",
+      "initials": "EN",
+      "color": "orange",
+      "sector": "Arquitectura",
+      "contact": "Valeria Ríos",
+      "assets": [
+        "EQ-042"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "EQ-024",
+      "name": "Impresora",
+      "model": "Ricoh IM C3000",
+      "serial": "RC-024",
+      "client": 1,
+      "kind": "impresora",
+      "date": "12 oct 2026",
+      "location": "Oficina de administración",
+      "metric": "42 580 páginas",
+      "metricLabel": "Contador de impresión",
+      "service": "Limpieza de rodillos y prueba de impresión",
+      "finding": "Atascos ocasionales al imprimir documentos de varias páginas.",
+      "work": [
+        "Limpieza de rodillos de alimentación y bandejas.",
+        "Revisión del recorrido del papel y ajuste de guías.",
+        "Prueba de 20 páginas a doble cara, sin atascos."
+      ],
+      "next": "Revisar la alimentación de papel en el próximo mantenimiento.",
+      "delivery": "02 sep 2026",
+      "events": [
+        {
+          "date": "12 oct 2026",
+          "title": "Limpieza de rodillos y prueba de impresión",
+          "description": "Equipo operativo después del servicio.",
+          "document": "EQ-024-mantenimiento"
+        },
+        {
+          "date": "02 sep 2026",
+          "title": "Entrega a Constructora Horizonte",
+          "description": "Instalado en oficina de administración.",
+          "document": "EQ-024-entrega"
+        }
+      ]
+    },
+    {
+      "id": "EQ-018",
+      "name": "Monitor",
+      "model": "Dell P2422H",
+      "serial": "DL-018",
+      "client": 1,
+      "kind": "monitor",
+      "date": "08 oct 2026",
+      "location": "Área de proyectos",
+      "metric": "24 pulgadas",
+      "metricLabel": "Pantalla",
+      "service": "Revisión de imagen y conexiones",
+      "finding": "La imagen se interrumpía al mover el cable de conexión.",
+      "work": [
+        "Inspección de los puertos HDMI y DisplayPort.",
+        "Sustitución del cable de conexión.",
+        "Prueba de imagen, brillo y estabilidad durante 30 minutos."
+      ],
+      "next": "Mantener el cable sin tensión detrás del escritorio.",
+      "delivery": "05 sep 2026",
+      "events": [
+        {
+          "date": "08 oct 2026",
+          "title": "Revisión de imagen y conexiones",
+          "description": "Equipo operativo después del servicio.",
+          "document": "EQ-018-mantenimiento"
+        },
+        {
+          "date": "05 sep 2026",
+          "title": "Entrega a Constructora Horizonte",
+          "description": "Instalado en área de proyectos.",
+          "document": "EQ-018-entrega"
+        }
+      ]
+    },
+    {
+      "id": "EQ-031",
+      "name": "Tablet",
+      "model": "Samsung Galaxy Tab A9+",
+      "serial": "SG-031",
+      "client": 2,
+      "kind": "tablet",
+      "date": "05 oct 2026",
+      "location": "Equipo de visitas comerciales",
+      "metric": "11 pulgadas",
+      "metricLabel": "Pantalla",
+      "service": "Revisión de carga y actualización",
+      "finding": "La carga se interrumpía al conectar el cargador.",
+      "work": [
+        "Limpieza del puerto de carga y revisión del cable.",
+        "Prueba con cargador compatible.",
+        "Actualización del sistema y verificación de conexión Wi-Fi."
+      ],
+      "next": "Utilizar el cargador asignado y revisar el conector al entregar el equipo.",
+      "delivery": "10 sep 2026",
+      "events": [
+        {
+          "date": "05 oct 2026",
+          "title": "Revisión de carga y actualización",
+          "description": "Equipo operativo después del servicio.",
+          "document": "EQ-031-mantenimiento"
+        },
+        {
+          "date": "10 sep 2026",
+          "title": "Entrega a Grupo del Pacífico",
+          "description": "Instalado en equipo de visitas comerciales.",
+          "document": "EQ-031-entrega"
+        }
+      ]
+    },
+    {
+      "id": "EQ-042",
+      "name": "Impresora",
+      "model": "HP LaserJet Pro 4003dn",
+      "serial": "HP-042",
+      "client": 3,
+      "kind": "impresora",
+      "date": "02 oct 2026",
+      "location": "Oficina principal",
+      "metric": "12 670 páginas",
+      "metricLabel": "Contador de impresión",
+      "service": "Cambio de tóner y calibración",
+      "finding": "Las impresiones presentaban zonas de baja intensidad.",
+      "work": [
+        "Revisión del cartucho y sustitución del tóner.",
+        "Limpieza exterior y del área de acceso al cartucho.",
+        "Prueba de legibilidad de texto y calibración de impresión."
+      ],
+      "next": "Revisar el nivel de tóner antes de imprimir lotes extensos.",
+      "delivery": "15 sep 2026",
+      "events": [
+        {
+          "date": "02 oct 2026",
+          "title": "Cambio de tóner y calibración",
+          "description": "Equipo operativo después del servicio.",
+          "document": "EQ-042-mantenimiento"
+        },
+        {
+          "date": "15 sep 2026",
+          "title": "Entrega a Estudio Norte",
+          "description": "Instalado en oficina principal.",
+          "document": "EQ-042-entrega"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "EQ-024-mantenimiento",
+      "asset": "EQ-024",
+      "kind": "mantenimiento",
+      "title": "Reporte de mantenimiento",
+      "date": "12 oct 2026",
+      "summary": "Atascos ocasionales al imprimir documentos de varias páginas.",
+      "items": [
+        "Limpieza de rodillos de alimentación y bandejas.",
+        "Revisión del recorrido del papel y ajuste de guías.",
+        "Prueba de 20 páginas a doble cara, sin atascos."
+      ],
+      "result": "Equipo operativo",
+      "next": "Revisar la alimentación de papel en el próximo mantenimiento.",
+      "file": "/demo/reportes/EQ-024-mantenimiento.pdf"
+    },
+    {
+      "id": "EQ-024-entrega",
+      "asset": "EQ-024",
+      "kind": "entrega",
+      "title": "Acta de entrega",
+      "date": "02 sep 2026",
+      "summary": "Entrega del equipo al cliente y verificación de su estado.",
+      "items": [
+        "Ubicación: Oficina de administración.",
+        "Encendido y funcionamiento revisados durante la entrega.",
+        "Accesorios y estado del equipo registrados para seguimiento."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-024-entrega.pdf"
+    },
+    {
+      "id": "EQ-024-contrato",
+      "asset": "EQ-024",
+      "kind": "contrato",
+      "title": "Resumen del contrato",
+      "date": "02 sep 2026",
+      "summary": "Referencia del acuerdo de alquiler vinculado al cliente y al equipo.",
+      "items": [
+        "Equipo asignado: Impresora Ricoh IM C3000.",
+        "Fecha de asignación: 02 sep 2026.",
+        "El contrato se consulta desde la ficha del cliente o del equipo."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-024-contrato.pdf"
+    },
+    {
+      "id": "EQ-018-mantenimiento",
+      "asset": "EQ-018",
+      "kind": "mantenimiento",
+      "title": "Reporte de mantenimiento",
+      "date": "08 oct 2026",
+      "summary": "La imagen se interrumpía al mover el cable de conexión.",
+      "items": [
+        "Inspección de los puertos HDMI y DisplayPort.",
+        "Sustitución del cable de conexión.",
+        "Prueba de imagen, brillo y estabilidad durante 30 minutos."
+      ],
+      "result": "Equipo operativo",
+      "next": "Mantener el cable sin tensión detrás del escritorio.",
+      "file": "/demo/reportes/EQ-018-mantenimiento.pdf"
+    },
+    {
+      "id": "EQ-018-entrega",
+      "asset": "EQ-018",
+      "kind": "entrega",
+      "title": "Acta de entrega",
+      "date": "05 sep 2026",
+      "summary": "Entrega del equipo al cliente y verificación de su estado.",
+      "items": [
+        "Ubicación: Área de proyectos.",
+        "Encendido y funcionamiento revisados durante la entrega.",
+        "Accesorios y estado del equipo registrados para seguimiento."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-018-entrega.pdf"
+    },
+    {
+      "id": "EQ-018-contrato",
+      "asset": "EQ-018",
+      "kind": "contrato",
+      "title": "Resumen del contrato",
+      "date": "05 sep 2026",
+      "summary": "Referencia del acuerdo de alquiler vinculado al cliente y al equipo.",
+      "items": [
+        "Equipo asignado: Monitor Dell P2422H.",
+        "Fecha de asignación: 05 sep 2026.",
+        "El contrato se consulta desde la ficha del cliente o del equipo."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-018-contrato.pdf"
+    },
+    {
+      "id": "EQ-031-mantenimiento",
+      "asset": "EQ-031",
+      "kind": "mantenimiento",
+      "title": "Reporte de mantenimiento",
+      "date": "05 oct 2026",
+      "summary": "La carga se interrumpía al conectar el cargador.",
+      "items": [
+        "Limpieza del puerto de carga y revisión del cable.",
+        "Prueba con cargador compatible.",
+        "Actualización del sistema y verificación de conexión Wi-Fi."
+      ],
+      "result": "Equipo operativo",
+      "next": "Utilizar el cargador asignado y revisar el conector al entregar el equipo.",
+      "file": "/demo/reportes/EQ-031-mantenimiento.pdf"
+    },
+    {
+      "id": "EQ-031-entrega",
+      "asset": "EQ-031",
+      "kind": "entrega",
+      "title": "Acta de entrega",
+      "date": "10 sep 2026",
+      "summary": "Entrega del equipo al cliente y verificación de su estado.",
+      "items": [
+        "Ubicación: Equipo de visitas comerciales.",
+        "Encendido y funcionamiento revisados durante la entrega.",
+        "Accesorios y estado del equipo registrados para seguimiento."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-031-entrega.pdf"
+    },
+    {
+      "id": "EQ-031-contrato",
+      "asset": "EQ-031",
+      "kind": "contrato",
+      "title": "Resumen del contrato",
+      "date": "10 sep 2026",
+      "summary": "Referencia del acuerdo de alquiler vinculado al cliente y al equipo.",
+      "items": [
+        "Equipo asignado: Tablet Samsung Galaxy Tab A9+.",
+        "Fecha de asignación: 10 sep 2026.",
+        "El contrato se consulta desde la ficha del cliente o del equipo."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-031-contrato.pdf"
+    },
+    {
+      "id": "EQ-042-mantenimiento",
+      "asset": "EQ-042",
+      "kind": "mantenimiento",
+      "title": "Reporte de mantenimiento",
+      "date": "02 oct 2026",
+      "summary": "Las impresiones presentaban zonas de baja intensidad.",
+      "items": [
+        "Revisión del cartucho y sustitución del tóner.",
+        "Limpieza exterior y del área de acceso al cartucho.",
+        "Prueba de legibilidad de texto y calibración de impresión."
+      ],
+      "result": "Equipo operativo",
+      "next": "Revisar el nivel de tóner antes de imprimir lotes extensos.",
+      "file": "/demo/reportes/EQ-042-mantenimiento.pdf"
+    },
+    {
+      "id": "EQ-042-entrega",
+      "asset": "EQ-042",
+      "kind": "entrega",
+      "title": "Acta de entrega",
+      "date": "15 sep 2026",
+      "summary": "Entrega del equipo al cliente y verificación de su estado.",
+      "items": [
+        "Ubicación: Oficina principal.",
+        "Encendido y funcionamiento revisados durante la entrega.",
+        "Accesorios y estado del equipo registrados para seguimiento."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-042-entrega.pdf"
+    },
+    {
+      "id": "EQ-042-contrato",
+      "asset": "EQ-042",
+      "kind": "contrato",
+      "title": "Resumen del contrato",
+      "date": "15 sep 2026",
+      "summary": "Referencia del acuerdo de alquiler vinculado al cliente y al equipo.",
+      "items": [
+        "Equipo asignado: Impresora HP LaserJet Pro 4003dn.",
+        "Fecha de asignación: 15 sep 2026.",
+        "El contrato se consulta desde la ficha del cliente o del equipo."
+      ],
+      "result": "Registro vinculado al equipo",
+      "next": "",
+      "file": "/demo/reportes/EQ-042-contrato.pdf"
+    }
+  ]
+}
