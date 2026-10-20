@@ -38,3 +38,7 @@ Para la ruta de directorio usar la vista de producción (`npm run build` y `npm 
 `tests/content-studio.spec.js`: aislamiento de la landing, noindex, conteo y filtros, navegación, copia, persistencia local, ZIP, todos los archivos anunciados, calendario, reproducción MP4, GIF bajo demanda, tamaños 320/390/820/1440 y axe. Se mantienen las pruebas de la landing. Resultado: 29 pruebas superadas. FFprobe verificó los ocho MP4: H.264, dimensiones correctas y duración de 23,92–24,00 s. Los ZIP se verificaron con `testzip`.
 
 Revisión visual: JPG de lanzamiento y carrusel, fotogramas de video, portal y detalle de pieza en móvil y escritorio. Las pruebas automáticas no certifican toda la accesibilidad ni equivalen a revisión en teléfonos físicos.
+
+## Nueva colección de seis carruseles cuadrados
+
+`/estudio-6e94b8f2c731/soluciones/` incorpora 30 láminas JPG 1080 × 1080 y descripciones para seis rubros: alquileres, distribución, servicio técnico, construcción, servicios y academias. Su generación, paquetes y visor se mantienen en [soluciones/README.md](soluciones/README.md). El enlace se añade al estudio conservando sus doce publicaciones y archivos anteriores.

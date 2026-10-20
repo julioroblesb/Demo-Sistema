@@ -1,0 +1,631 @@
+{
+  "title": "Seis procesos que merecen un nexo",
+  "size": [
+    1080,
+    1080
+  ],
+  "slidesPerPost": 5,
+  "posts": [
+    {
+      "id": "C01",
+      "slug": "alquileres",
+      "sector": "Alquiler de equipos",
+      "title": "Cotizar con disponibilidad clara",
+      "keyword": "ALQUILER",
+      "theme": "white",
+      "symbol": "rental",
+      "focus": "Disponibilidad, reservas y mantenimiento",
+      "ig": "El cliente pide un equipo para mañana. Para responder, ventas pregunta al almacén, revisa una hoja y confirma si ya salió del taller.\n\nLa solución empieza por relacionar cada equipo con sus reservas, alquileres, devoluciones y mantenimientos. Un cambio de estado actualiza la información que consulta el equipo comercial.\n\nAsí se puede cotizar con más claridad y detectar cruces de fechas antes de comprometer una entrega. Un equipo devuelto entra a revisión; vuelve a estar disponible cuando se libera para uso.\n\nEn Nexo desarrollamos sistemas a medida alrededor de estos procesos. Podemos mostrarte un proyecto desarrollado y revisar cómo adaptar el enfoque a tu operación.\n\nEscríbenos ALQUILER para coordinar una conversación de 15 minutos. Web y WhatsApp en el perfil.\n\n#AlquilerDeEquipos #PymesPeru #SoftwareAMedida",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "¿Lo puedes alquilar\no sigue en revisión?",
+          "lead": "Responde al cliente con la disponibilidad a mano.",
+          "visualTitle": "El estado del equipo importa.",
+          "visualNote": "Reservas · Alquileres · Mantenimiento",
+          "file": "archivos/C01-alquileres/01-1080x1080.jpg",
+          "alt": "Nexo. Alquiler de equipos. ¿Lo puedes alquilar o sigue en revisión?. Responde al cliente con la disponibilidad a mano.. El estado del equipo importa.. Reservas · Alquileres · Mantenimiento."
+        },
+        {
+          "kind": "friction",
+          "title": "La respuesta pasa\npor tres personas.",
+          "lead": "Cada área tiene una parte de la información. La cotización espera.",
+          "steps": [
+            [
+              "Ventas",
+              "Revisa sus reservas."
+            ],
+            [
+              "Almacén",
+              "Confirma si el equipo está."
+            ],
+            [
+              "Técnico",
+              "Indica si ya puede salir."
+            ]
+          ],
+          "note": "Estar en almacén no significa estar listo para alquilar.",
+          "file": "archivos/C01-alquileres/02-1080x1080.jpg",
+          "alt": "Nexo. Alquiler de equipos. La respuesta pasa por tres personas.. Cada área tiene una parte de la información. La cotización espera.. Ventas. Revisa sus reservas.. Almacén. Confirma si el equipo está.. Técnico. Indica si ya puede salir.. Estar en almacén no significa estar listo para alquilar.."
+        },
+        {
+          "kind": "flow",
+          "title": "Una reserva conectada\ncon toda la operación.",
+          "lead": "El programa relaciona el equipo con fechas, cliente, contrato y estado.",
+          "steps": [
+            [
+              "Reservar",
+              "Valida las fechas."
+            ],
+            [
+              "Entregar",
+              "Registra la salida."
+            ],
+            [
+              "Devolver",
+              "Pasa a revisión."
+            ],
+            [
+              "Liberar",
+              "Vuelve a estar listo."
+            ]
+          ],
+          "note": "Ventas y operaciones consultan el mismo registro.",
+          "file": "archivos/C01-alquileres/03-1080x1080.jpg",
+          "alt": "Nexo. Alquiler de equipos. Una reserva conectada con toda la operación.. El programa relaciona el equipo con fechas, cliente, contrato y estado.. Reservar. Valida las fechas.. Entregar. Registra la salida.. Devolver. Pasa a revisión.. Liberar. Vuelve a estar listo.. Ventas y operaciones consultan el mismo registro.."
+        },
+        {
+          "kind": "data",
+          "title": "Cuenta los equipos\nque sí pueden salir.",
+          "lead": "Revisa los estados y las reservas de las fechas solicitadas.",
+          "numbers": [
+            [
+              "6",
+              "Equipos en total"
+            ],
+            [
+              "− 2",
+              "En alquiler o reservados"
+            ],
+            [
+              "− 1",
+              "En revisión"
+            ]
+          ],
+          "result": [
+            "3",
+            "Disponibles en esas fechas"
+          ],
+          "note": "Un equipo en revisión no está disponible.",
+          "file": "archivos/C01-alquileres/04-1080x1080.jpg",
+          "alt": "Nexo. Alquiler de equipos. Cuenta los equipos que sí pueden salir.. Revisa los estados y las reservas de las fechas solicitadas.. 6. Equipos en total. − 2. En alquiler o reservados. − 1. En revisión. 3. Disponibles en esas fechas. Un equipo en revisión no está disponible.."
+        },
+        {
+          "kind": "close",
+          "title": "Cotiza con claridad.\nCoordina la entrega.",
+          "lead": "Un sistema a medida conecta lo que ventas promete con lo que la operación puede entregar.",
+          "before": "Preguntar a cada área para confirmar.",
+          "after": "Consultar disponibilidad y fechas.",
+          "cta": "Escríbenos ALQUILER",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C01-alquileres/05-1080x1080.jpg",
+          "alt": "Nexo. Alquiler de equipos. Cotiza con claridad. Coordina la entrega.. Un sistema a medida conecta lo que ventas promete con lo que la operación puede entregar.. Preguntar a cada área para confirmar.. Consultar disponibilidad y fechas.. Escríbenos ALQUILER. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "El cliente pide un equipo para mañana. Para responder, ventas pregunta al almacén, revisa una hoja y confirma si ya salió del taller.\n\nLa solución empieza por relacionar cada equipo con sus reservas, alquileres, devoluciones y mantenimientos. Un cambio de estado actualiza la información que consulta el equipo comercial.\n\nAsí se puede cotizar con más claridad y detectar cruces de fechas antes de comprometer una entrega. Un equipo devuelto entra a revisión; vuelve a estar disponible cuando se libera para uso.\n\nEn Nexo desarrollamos sistemas a medida alrededor de estos procesos. Podemos mostrarte un proyecto desarrollado y revisar cómo adaptar el enfoque a tu operación.\n\nEscríbenos ALQUILER para coordinar una conversación de 15 minutos. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#AlquilerDeEquipos #PymesPeru #SoftwareAMedida"
+    },
+    {
+      "id": "C02",
+      "slug": "distribucion",
+      "sector": "Distribución y comercio",
+      "title": "Del pedido a la entrega, sin perder el hilo",
+      "keyword": "PEDIDOS",
+      "theme": "forest",
+      "symbol": "dispatch",
+      "focus": "Ventas, almacén y despacho",
+      "ig": "Vender el pedido es el comienzo. Todavía hay que prepararlo, asignar el despacho y confirmar que llegó.\n\nCuando esos pasos se coordinan entre chats y hojas distintas, el cliente vuelve a preguntar y nadie tiene el estado completo.\n\nUn sistema a medida conecta ventas, almacén y reparto sobre el mismo pedido. Cada etapa tiene un responsable; la entrega queda vinculada a su constancia. Si hay una entrega parcial, el saldo por entregar sigue pendiente.\n\nRegistrar las horas de pedido, preparación y entrega ayuda a identificar dónde se acumula la espera. El beneficio: responder con contexto y coordinar el siguiente paso con claridad.\n\nEn Nexo desarrollamos sistemas para conectar estos flujos. Escríbenos PEDIDOS y coordinamos 15 minutos para revisar el tuyo. Web y WhatsApp en el perfil.\n\n#Distribucion #GestionDePedidos #EmpresasPeruanas",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "El pedido se vendió.\n¿Quién lo entrega?",
+          "lead": "Conecta ventas, almacén y reparto para seguir cada compromiso.",
+          "visualTitle": "Un pedido. La historia completa.",
+          "visualNote": "Venta → Preparación → Entrega",
+          "file": "archivos/C02-distribucion/01-1080x1080.jpg",
+          "alt": "Nexo. Distribución y comercio. El pedido se vendió. ¿Quién lo entrega?. Conecta ventas, almacén y reparto para seguir cada compromiso.. Un pedido. La historia completa.. Venta → Preparación → Entrega."
+        },
+        {
+          "kind": "friction",
+          "title": "El cliente pregunta.\nLa respuesta se busca.",
+          "lead": "El pedido avanza, pero su estado queda repartido.",
+          "steps": [
+            [
+              "Ventas",
+              "Tiene el pedido en su hoja."
+            ],
+            [
+              "Almacén",
+              "Confirma por otro chat."
+            ],
+            [
+              "Reparto",
+              "Guarda la constancia en el celular."
+            ]
+          ],
+          "note": "Atender la consulta exige reconstruir lo que pasó.",
+          "file": "archivos/C02-distribucion/02-1080x1080.jpg",
+          "alt": "Nexo. Distribución y comercio. El cliente pregunta. La respuesta se busca.. El pedido avanza, pero su estado queda repartido.. Ventas. Tiene el pedido en su hoja.. Almacén. Confirma por otro chat.. Reparto. Guarda la constancia en el celular.. Atender la consulta exige reconstruir lo que pasó.."
+        },
+        {
+          "kind": "flow",
+          "title": "Un pedido,\nun siguiente paso claro.",
+          "lead": "El programa conserva el código del pedido y relaciona cada cambio de estado.",
+          "steps": [
+            [
+              "Ventas",
+              "Registra el compromiso."
+            ],
+            [
+              "Almacén",
+              "Confirma preparación."
+            ],
+            [
+              "Reparto",
+              "Adjunta la constancia."
+            ]
+          ],
+          "note": "Cada etapa tiene responsable y fecha. Una entrega parcial conserva lo pendiente.",
+          "file": "archivos/C02-distribucion/03-1080x1080.jpg",
+          "alt": "Nexo. Distribución y comercio. Un pedido, un siguiente paso claro.. El programa conserva el código del pedido y relaciona cada cambio de estado.. Ventas. Registra el compromiso.. Almacén. Confirma preparación.. Reparto. Adjunta la constancia.. Cada etapa tiene responsable y fecha. Una entrega parcial conserva lo pendiente.."
+        },
+        {
+          "kind": "data",
+          "title": "Registra las horas.\nEncuentra la espera.",
+          "lead": "Tres momentos permiten revisar dónde se detiene el pedido.",
+          "milestones": [
+            [
+              "01",
+              "Pedido recibido"
+            ],
+            [
+              "02",
+              "Preparación lista"
+            ],
+            [
+              "03",
+              "Entrega confirmada"
+            ]
+          ],
+          "formula": "Tiempo total = entrega − pedido",
+          "note": "Separa el tiempo de preparación del tiempo hasta la entrega. Mejora con datos de tu operación.",
+          "file": "archivos/C02-distribucion/04-1080x1080.jpg",
+          "alt": "Nexo. Distribución y comercio. Registra las horas. Encuentra la espera.. Tres momentos permiten revisar dónde se detiene el pedido.. 01. Pedido recibido. 02. Preparación lista. 03. Entrega confirmada. Separa el tiempo de preparación del tiempo hasta la entrega. Mejora con datos de tu operación.. Tiempo total = entrega − pedido."
+        },
+        {
+          "kind": "close",
+          "title": "Que atender al cliente\nno sea rastrear el pedido.",
+          "lead": "Estado, responsable y constancia en una misma consulta.",
+          "before": "Buscar la respuesta entre varios chats.",
+          "after": "Ver qué pasó y qué falta entregar.",
+          "cta": "Escríbenos PEDIDOS",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C02-distribucion/05-1080x1080.jpg",
+          "alt": "Nexo. Distribución y comercio. Que atender al cliente no sea rastrear el pedido.. Estado, responsable y constancia en una misma consulta.. Buscar la respuesta entre varios chats.. Ver qué pasó y qué falta entregar.. Escríbenos PEDIDOS. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "Vender el pedido es el comienzo. Todavía hay que prepararlo, asignar el despacho y confirmar que llegó.\n\nCuando esos pasos se coordinan entre chats y hojas distintas, el cliente vuelve a preguntar y nadie tiene el estado completo.\n\nUn sistema a medida conecta ventas, almacén y reparto sobre el mismo pedido. Cada etapa tiene un responsable; la entrega queda vinculada a su constancia. Si hay una entrega parcial, el saldo por entregar sigue pendiente.\n\nRegistrar las horas de pedido, preparación y entrega ayuda a identificar dónde se acumula la espera. El beneficio: responder con contexto y coordinar el siguiente paso con claridad.\n\nEn Nexo desarrollamos sistemas para conectar estos flujos. Escríbenos PEDIDOS y coordinamos 15 minutos para revisar el tuyo. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#Distribucion #GestionDePedidos #EmpresasPeruanas"
+    },
+    {
+      "id": "C03",
+      "slug": "servicio-tecnico",
+      "sector": "Talleres y servicio técnico",
+      "title": "El historial acompaña a cada equipo",
+      "keyword": "SERVICIO",
+      "theme": "sage",
+      "symbol": "service",
+      "focus": "Órdenes de trabajo, repuestos y reportes",
+      "ig": "La impresora vuelve al taller. Antes de diagnosticar, el técnico necesita saber qué falla presentó, qué se cambió y quién la atendió.\n\nSi esa historia está repartida entre notas, chats y PDFs, hay que reconstruirla antes de continuar.\n\nLa solución es relacionar cada orden de trabajo con la serie del equipo. El diagnóstico, los repuestos utilizados y el reporte permanecen asociados a ese mismo registro.\n\nSe puede comenzar revisando los archivos actuales y cargando el historial validado. Después, cada nueva atención continúa la historia del equipo y conserva a la persona responsable.\n\nEl beneficio es tomar decisiones con antecedentes a mano y explicar al cliente qué se hizo, con respaldo documental.\n\nEscríbenos SERVICIO para revisar cómo ordenar este proceso en tu taller. Coordinamos una conversación de 15 minutos. Web y WhatsApp en el perfil.\n\n#ServicioTecnico #GestionDeMantenimiento #SoftwareAMedida",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "El equipo vuelve.\n¿Su historial también?",
+          "lead": "Atiende con los antecedentes a mano y explica qué se hizo.",
+          "visualTitle": "Cada atención deja una historia.",
+          "visualNote": "Diagnóstico · Repuesto · Reporte",
+          "file": "archivos/C03-servicio-tecnico/01-1080x1080.jpg",
+          "alt": "Nexo. Talleres y servicio técnico. El equipo vuelve. ¿Su historial también?. Atiende con los antecedentes a mano y explica qué se hizo.. Cada atención deja una historia.. Diagnóstico · Repuesto · Reporte."
+        },
+        {
+          "kind": "friction",
+          "title": "Antes de reparar,\nhay que reconstruir.",
+          "lead": "La atención anterior quedó en lugares distintos.",
+          "steps": [
+            [
+              "La falla",
+              "Está en un chat."
+            ],
+            [
+              "El repuesto",
+              "Figura en una nota."
+            ],
+            [
+              "El reporte",
+              "Quedó en otra carpeta."
+            ]
+          ],
+          "note": "Sin antecedentes a mano, la siguiente atención empieza con preguntas pendientes.",
+          "file": "archivos/C03-servicio-tecnico/02-1080x1080.jpg",
+          "alt": "Nexo. Talleres y servicio técnico. Antes de reparar, hay que reconstruir.. La atención anterior quedó en lugares distintos.. La falla. Está en un chat.. El repuesto. Figura en una nota.. El reporte. Quedó en otra carpeta.. Sin antecedentes a mano, la siguiente atención empieza con preguntas pendientes.."
+        },
+        {
+          "kind": "flow",
+          "title": "La serie del equipo\nconecta cada atención.",
+          "lead": "El programa relaciona la orden de trabajo, el técnico y los documentos.",
+          "steps": [
+            [
+              "Recibir",
+              "Identifica modelo y serie."
+            ],
+            [
+              "Atender",
+              "Registra diagnóstico y repuestos."
+            ],
+            [
+              "Cerrar",
+              "Adjunta el reporte del servicio."
+            ]
+          ],
+          "note": "El historial validado de tus archivos puede incorporarse al mismo registro.",
+          "file": "archivos/C03-servicio-tecnico/03-1080x1080.jpg",
+          "alt": "Nexo. Talleres y servicio técnico. La serie del equipo conecta cada atención.. El programa relaciona la orden de trabajo, el técnico y los documentos.. Recibir. Identifica modelo y serie.. Atender. Registra diagnóstico y repuestos.. Cerrar. Adjunta el reporte del servicio.. El historial validado de tus archivos puede incorporarse al mismo registro.."
+        },
+        {
+          "kind": "data",
+          "title": "Un equipo.\nSu historia completa.",
+          "lead": "El modelo identifica el tipo. La serie distingue la unidad que atendiste.",
+          "record": [
+            [
+              "Equipo",
+              "Impresora Epson EcoTank L3250"
+            ],
+            [
+              "Identificación",
+              "N.º de serie del fabricante"
+            ],
+            [
+              "Cada atención",
+              "Fecha · Técnico · Diagnóstico"
+            ],
+            [
+              "Respaldo",
+              "Repuestos · Reporte PDF"
+            ]
+          ],
+          "note": "La siguiente orden consulta los antecedentes de esa misma unidad.",
+          "file": "archivos/C03-servicio-tecnico/04-1080x1080.jpg",
+          "alt": "Nexo. Talleres y servicio técnico. Un equipo. Su historia completa.. El modelo identifica el tipo. La serie distingue la unidad que atendiste.. Equipo. Impresora Epson EcoTank L3250. Identificación. N.º de serie del fabricante. Cada atención. Fecha · Técnico · Diagnóstico. Respaldo. Repuestos · Reporte PDF. La siguiente orden consulta los antecedentes de esa misma unidad.."
+        },
+        {
+          "kind": "close",
+          "title": "Atiende con contexto.\nResponde con respaldo.",
+          "lead": "El técnico continúa la historia del equipo y el cliente puede conocer lo realizado.",
+          "before": "Volver a preguntar qué se hizo.",
+          "after": "Consultar el historial y su reporte.",
+          "cta": "Escríbenos SERVICIO",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C03-servicio-tecnico/05-1080x1080.jpg",
+          "alt": "Nexo. Talleres y servicio técnico. Atiende con contexto. Responde con respaldo.. El técnico continúa la historia del equipo y el cliente puede conocer lo realizado.. Volver a preguntar qué se hizo.. Consultar el historial y su reporte.. Escríbenos SERVICIO. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "La impresora vuelve al taller. Antes de diagnosticar, el técnico necesita saber qué falla presentó, qué se cambió y quién la atendió.\n\nSi esa historia está repartida entre notas, chats y PDFs, hay que reconstruirla antes de continuar.\n\nLa solución es relacionar cada orden de trabajo con la serie del equipo. El diagnóstico, los repuestos utilizados y el reporte permanecen asociados a ese mismo registro.\n\nSe puede comenzar revisando los archivos actuales y cargando el historial validado. Después, cada nueva atención continúa la historia del equipo y conserva a la persona responsable.\n\nEl beneficio es tomar decisiones con antecedentes a mano y explicar al cliente qué se hizo, con respaldo documental.\n\nEscríbenos SERVICIO para revisar cómo ordenar este proceso en tu taller. Coordinamos una conversación de 15 minutos. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#ServicioTecnico #GestionDeMantenimiento #SoftwareAMedida"
+    },
+    {
+      "id": "C04",
+      "slug": "compras-por-obra",
+      "sector": "Construcción y contratistas",
+      "title": "Aprobar compras con el presupuesto a mano",
+      "keyword": "OBRAS",
+      "theme": "white",
+      "symbol": "build",
+      "focus": "Solicitudes, aprobaciones y recepción",
+      "ig": "La obra necesita materiales. La solicitud está en un chat, la aprobación en otro y el presupuesto en una hoja que alguien tiene que actualizar.\n\nUn programa a medida conecta cada solicitud con su obra, responsable y presupuesto. La aprobación queda registrada antes de emitir la orden de compra; al recibir el material, se adjunta la constancia correspondiente.\n\nPara decidir, importa distinguir el gasto ya registrado de los compromisos que todavía están pendientes. Así se evita volver a contar una compra cuando cambia de estado.\n\nEl beneficio: saber quién debe actuar, revisar qué monto queda disponible y conservar el respaldo de cada decisión.\n\nEn Nexo podemos revisar este flujo y definir una primera etapa ajustada a tu empresa. Escríbenos OBRAS para coordinar 15 minutos. Web y WhatsApp en el perfil.\n\n#GestionDeObras #Compras #ConstructorasPeru",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "La obra necesita material.\n¿Quién aprueba la compra?",
+          "lead": "Conecta la solicitud con el responsable y el presupuesto de la obra.",
+          "visualTitle": "La compra conserva su contexto.",
+          "visualNote": "Obra · Presupuesto · Aprobación",
+          "file": "archivos/C04-compras-por-obra/01-1080x1080.jpg",
+          "alt": "Nexo. Construcción y contratistas. La obra necesita material. ¿Quién aprueba la compra?. Conecta la solicitud con el responsable y el presupuesto de la obra.. La compra conserva su contexto.. Obra · Presupuesto · Aprobación."
+        },
+        {
+          "kind": "friction",
+          "title": "La solicitud avanza.\nEl contexto se pierde.",
+          "lead": "Aprobar exige reunir información que está separada.",
+          "steps": [
+            [
+              "Residente",
+              "Pide material por chat."
+            ],
+            [
+              "Administración",
+              "Busca el presupuesto."
+            ],
+            [
+              "Compras",
+              "Pregunta si ya se aprobó."
+            ]
+          ],
+          "note": "La obra espera mientras el equipo confirma lo que falta.",
+          "file": "archivos/C04-compras-por-obra/02-1080x1080.jpg",
+          "alt": "Nexo. Construcción y contratistas. La solicitud avanza. El contexto se pierde.. Aprobar exige reunir información que está separada.. Residente. Pide material por chat.. Administración. Busca el presupuesto.. Compras. Pregunta si ya se aprobó.. La obra espera mientras el equipo confirma lo que falta.."
+        },
+        {
+          "kind": "flow",
+          "title": "Cada compra conserva\nsu obra y su aprobación.",
+          "lead": "El programa relaciona la solicitud con la decisión y su respaldo.",
+          "steps": [
+            [
+              "Solicitar",
+              "Obra, material y monto."
+            ],
+            [
+              "Aprobar",
+              "Responsable y decisión."
+            ],
+            [
+              "Comprar",
+              "Orden y compromiso."
+            ],
+            [
+              "Recibir",
+              "Constancia y gasto."
+            ]
+          ],
+          "note": "Las reglas de aprobación se definen con tu empresa.",
+          "file": "archivos/C04-compras-por-obra/03-1080x1080.jpg",
+          "alt": "Nexo. Construcción y contratistas. Cada compra conserva su obra y su aprobación.. El programa relaciona la solicitud con la decisión y su respaldo.. Solicitar. Obra, material y monto.. Aprobar. Responsable y decisión.. Comprar. Orden y compromiso.. Recibir. Constancia y gasto.. Las reglas de aprobación se definen con tu empresa.."
+        },
+        {
+          "kind": "data",
+          "title": "Mira lo disponible\nantes de aprobar.",
+          "lead": "Gastos y compromisos pendientes deben contarse por separado.",
+          "numbers": [
+            [
+              "S/20 000",
+              "Presupuesto asignado"
+            ],
+            [
+              "− S/12 000",
+              "Gastos registrados"
+            ],
+            [
+              "− S/3 500",
+              "Compromisos pendientes"
+            ]
+          ],
+          "result": [
+            "S/4 500",
+            "Disponibles para decidir"
+          ],
+          "note": "El gasto registrado deja de ser un compromiso pendiente.",
+          "file": "archivos/C04-compras-por-obra/04-1080x1080.jpg",
+          "alt": "Nexo. Construcción y contratistas. Mira lo disponible antes de aprobar.. Gastos y compromisos pendientes deben contarse por separado.. S/20 000. Presupuesto asignado. − S/12 000. Gastos registrados. − S/3 500. Compromisos pendientes. S/4 500. Disponibles para decidir. El gasto registrado deja de ser un compromiso pendiente.."
+        },
+        {
+          "kind": "close",
+          "title": "Una compra trazable.\nUna decisión con contexto.",
+          "lead": "Solicitante, aprobación, monto y recepción relacionados con la obra.",
+          "before": "Preguntar por chat si ya se aprobó.",
+          "after": "Ver quién decide y qué falta recibir.",
+          "cta": "Escríbenos OBRAS",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C04-compras-por-obra/05-1080x1080.jpg",
+          "alt": "Nexo. Construcción y contratistas. Una compra trazable. Una decisión con contexto.. Solicitante, aprobación, monto y recepción relacionados con la obra.. Preguntar por chat si ya se aprobó.. Ver quién decide y qué falta recibir.. Escríbenos OBRAS. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "La obra necesita materiales. La solicitud está en un chat, la aprobación en otro y el presupuesto en una hoja que alguien tiene que actualizar.\n\nUn programa a medida conecta cada solicitud con su obra, responsable y presupuesto. La aprobación queda registrada antes de emitir la orden de compra; al recibir el material, se adjunta la constancia correspondiente.\n\nPara decidir, importa distinguir el gasto ya registrado de los compromisos que todavía están pendientes. Así se evita volver a contar una compra cuando cambia de estado.\n\nEl beneficio: saber quién debe actuar, revisar qué monto queda disponible y conservar el respaldo de cada decisión.\n\nEn Nexo podemos revisar este flujo y definir una primera etapa ajustada a tu empresa. Escríbenos OBRAS para coordinar 15 minutos. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#GestionDeObras #Compras #ConstructorasPeru"
+    },
+    {
+      "id": "C05",
+      "slug": "cobranzas",
+      "sector": "Consultorías y servicios",
+      "title": "Del servicio entregado al saldo por cobrar",
+      "keyword": "COBROS",
+      "theme": "green",
+      "symbol": "invoice",
+      "focus": "Servicios, documentos, pagos y vencimientos",
+      "ig": "El servicio ya se entregó. La factura se emitió. El pago quedó para después y la próxima llamada sigue sin fecha.\n\nLa cobranza necesita conectar información: qué se entregó, qué documento se emitió, cuánto se pagó y quién hará el siguiente seguimiento.\n\nUn sistema a medida puede relacionar la factura de tu herramienta actual con el servicio, los pagos verificados y el vencimiento. Registrar un abono actualiza el saldo de ese documento.\n\nEl beneficio es preparar cada conversación con el importe correcto, dar continuidad al seguimiento y ver qué compromisos de pago siguen pendientes.\n\nEn Nexo empezamos por revisar ese recorrido contigo. Escríbenos COBROS y coordinamos 15 minutos para entender tu proceso. Web y WhatsApp en el perfil.\n\n#Cobranzas #ServiciosProfesionales #GestionEmpresarial",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "El trabajo terminó.\n¿El cobro también?",
+          "lead": "Relaciona el servicio con su factura, pagos y próxima acción.",
+          "visualTitle": "Terminar el trabajo no cierra el cobro.",
+          "visualNote": "Servicio → Factura → Seguimiento",
+          "file": "archivos/C05-cobranzas/01-1080x1080.jpg",
+          "alt": "Nexo. Consultorías y servicios. El trabajo terminó. ¿El cobro también?. Relaciona el servicio con su factura, pagos y próxima acción.. Terminar el trabajo no cierra el cobro.. Servicio → Factura → Seguimiento."
+        },
+        {
+          "kind": "friction",
+          "title": "El cobro depende\nde volver a preguntar.",
+          "lead": "Cada persona tiene un dato distinto del mismo servicio.",
+          "steps": [
+            [
+              "Operaciones",
+              "Confirmó la entrega."
+            ],
+            [
+              "Administración",
+              "Emitió la factura."
+            ],
+            [
+              "Comercial",
+              "No tiene el saldo actualizado."
+            ]
+          ],
+          "note": "Sin una próxima acción asignada, el seguimiento se diluye.",
+          "file": "archivos/C05-cobranzas/02-1080x1080.jpg",
+          "alt": "Nexo. Consultorías y servicios. El cobro depende de volver a preguntar.. Cada persona tiene un dato distinto del mismo servicio.. Operaciones. Confirmó la entrega.. Administración. Emitió la factura.. Comercial. No tiene el saldo actualizado.. Sin una próxima acción asignada, el seguimiento se diluye.."
+        },
+        {
+          "kind": "flow",
+          "title": "El saldo y el seguimiento\nquedan relacionados.",
+          "lead": "El programa conecta el servicio con la factura emitida en tu herramienta actual.",
+          "steps": [
+            [
+              "Registrar",
+              "Vencimiento y responsable."
+            ],
+            [
+              "Validar",
+              "Abonos y comprobantes."
+            ],
+            [
+              "Dar seguimiento",
+              "Fecha y próxima acción."
+            ]
+          ],
+          "note": "Cada pago verificado actualiza el saldo de su documento.",
+          "file": "archivos/C05-cobranzas/03-1080x1080.jpg",
+          "alt": "Nexo. Consultorías y servicios. El saldo y el seguimiento quedan relacionados.. El programa conecta el servicio con la factura emitida en tu herramienta actual.. Registrar. Vencimiento y responsable.. Validar. Abonos y comprobantes.. Dar seguimiento. Fecha y próxima acción.. Cada pago verificado actualiza el saldo de su documento.."
+        },
+        {
+          "kind": "data",
+          "title": "El saldo correcto,\nsin recalcular desde cero.",
+          "lead": "Total de la factura menos los pagos que ya fueron registrados.",
+          "numbers": [
+            [
+              "S/2 400",
+              "Total de factura"
+            ],
+            [
+              "− S/900",
+              "Abonos registrados"
+            ]
+          ],
+          "result": [
+            "S/1 500",
+            "Saldo por cobrar"
+          ],
+          "note": "Completa la consulta con vencimiento, compromiso de pago y responsable.",
+          "file": "archivos/C05-cobranzas/04-1080x1080.jpg",
+          "alt": "Nexo. Consultorías y servicios. El saldo correcto, sin recalcular desde cero.. Total de la factura menos los pagos que ya fueron registrados.. S/2 400. Total de factura. − S/900. Abonos registrados. S/1 500. Saldo por cobrar. Completa la consulta con vencimiento, compromiso de pago y responsable.."
+        },
+        {
+          "kind": "close",
+          "title": "Continúa el seguimiento\ncon el dato correcto.",
+          "lead": "Saber qué se debe, por qué servicio y cuál es la próxima acción.",
+          "before": "Buscar el abono en chats y hojas.",
+          "after": "Consultar el saldo y su seguimiento.",
+          "cta": "Escríbenos COBROS",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C05-cobranzas/05-1080x1080.jpg",
+          "alt": "Nexo. Consultorías y servicios. Continúa el seguimiento con el dato correcto.. Saber qué se debe, por qué servicio y cuál es la próxima acción.. Buscar el abono en chats y hojas.. Consultar el saldo y su seguimiento.. Escríbenos COBROS. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "El servicio ya se entregó. La factura se emitió. El pago quedó para después y la próxima llamada sigue sin fecha.\n\nLa cobranza necesita conectar información: qué se entregó, qué documento se emitió, cuánto se pagó y quién hará el siguiente seguimiento.\n\nUn sistema a medida puede relacionar la factura de tu herramienta actual con el servicio, los pagos verificados y el vencimiento. Registrar un abono actualiza el saldo de ese documento.\n\nEl beneficio es preparar cada conversación con el importe correcto, dar continuidad al seguimiento y ver qué compromisos de pago siguen pendientes.\n\nEn Nexo empezamos por revisar ese recorrido contigo. Escríbenos COBROS y coordinamos 15 minutos para entender tu proceso. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#Cobranzas #ServiciosProfesionales #GestionEmpresarial"
+    },
+    {
+      "id": "C06",
+      "slug": "matriculas",
+      "sector": "Academias y capacitación",
+      "title": "De la inscripción a la matrícula confirmada",
+      "keyword": "MATRICULAS",
+      "theme": "sage",
+      "symbol": "academy",
+      "focus": "Inscripciones, pagos validados y cupos",
+      "ig": "La persona completó el formulario y envió su comprobante. Aun así, vuelve a escribir para preguntar si ya quedó inscrita.\n\nCuando admisión, caja y coordinación usan listas separadas, la confirmación depende de varias conversaciones.\n\nLa solución es relacionar la inscripción con el pago verificado, el grupo y la matrícula. Admisión registra; caja valida; coordinación consulta la confirmación y el cupo actualizado.\n\nEl comprobante recibido queda pendiente hasta su validación. Después, la misma matrícula conserva alumno, curso, horario y estado, para continuar con asistencia y seguimiento.\n\nEl beneficio es responder con claridad y evitar pedir los mismos datos a la persona varias veces.\n\nEscríbenos MATRICULAS para coordinar 15 minutos y revisar cómo conectar este proceso en tu academia. Web y WhatsApp en el perfil.\n\n#GestionAcademica #AcademiasPeru #SoftwareAMedida",
+      "slides": [
+        {
+          "kind": "cover",
+          "title": "Pagó y envió sus datos.\n¿Ya tiene su matrícula?",
+          "lead": "Conecta admisión, caja y coordinación para confirmar con claridad.",
+          "visualTitle": "La inscripción necesita continuidad.",
+          "visualNote": "Inscripción · Pago validado · Grupo",
+          "file": "archivos/C06-matriculas/01-1080x1080.jpg",
+          "alt": "Nexo. Academias y capacitación. Pagó y envió sus datos. ¿Ya tiene su matrícula?. Conecta admisión, caja y coordinación para confirmar con claridad.. La inscripción necesita continuidad.. Inscripción · Pago validado · Grupo."
+        },
+        {
+          "kind": "friction",
+          "title": "La confirmación\nse queda entre áreas.",
+          "lead": "La persona espera mientras el equipo compara listas.",
+          "steps": [
+            [
+              "Admisión",
+              "Tiene el formulario."
+            ],
+            [
+              "Caja",
+              "Recibió el comprobante."
+            ],
+            [
+              "Coordinación",
+              "Revisa otra lista del grupo."
+            ]
+          ],
+          "note": "La persona vuelve a enviar lo que el equipo ya recibió.",
+          "file": "archivos/C06-matriculas/02-1080x1080.jpg",
+          "alt": "Nexo. Academias y capacitación. La confirmación se queda entre áreas.. La persona espera mientras el equipo compara listas.. Admisión. Tiene el formulario.. Caja. Recibió el comprobante.. Coordinación. Revisa otra lista del grupo.. La persona vuelve a enviar lo que el equipo ya recibió.."
+        },
+        {
+          "kind": "flow",
+          "title": "Un registro acompaña\ntoda la matrícula.",
+          "lead": "El programa relaciona alumno, inscripción, pago y grupo.",
+          "steps": [
+            [
+              "Inscribir",
+              "Datos del alumno y curso."
+            ],
+            [
+              "Verificar",
+              "Caja valida el pago."
+            ],
+            [
+              "Confirmar",
+              "Matrícula y cupo del grupo."
+            ]
+          ],
+          "note": "Recibir un comprobante no equivale a tener un pago validado.",
+          "file": "archivos/C06-matriculas/03-1080x1080.jpg",
+          "alt": "Nexo. Academias y capacitación. Un registro acompaña toda la matrícula.. El programa relaciona alumno, inscripción, pago y grupo.. Inscribir. Datos del alumno y curso.. Verificar. Caja valida el pago.. Confirmar. Matrícula y cupo del grupo.. Recibir un comprobante no equivale a tener un pago validado.."
+        },
+        {
+          "kind": "data",
+          "title": "El cupo se consulta\ncon las matrículas al día.",
+          "lead": "Cada confirmación actualiza el grupo correspondiente.",
+          "numbers": [
+            [
+              "20",
+              "Cupos del grupo"
+            ],
+            [
+              "− 14",
+              "Matrículas confirmadas"
+            ]
+          ],
+          "result": [
+            "6",
+            "Cupos disponibles"
+          ],
+          "note": "El registro conserva curso, horario, estado del pago y fecha de confirmación.",
+          "file": "archivos/C06-matriculas/04-1080x1080.jpg",
+          "alt": "Nexo. Academias y capacitación. El cupo se consulta con las matrículas al día.. Cada confirmación actualiza el grupo correspondiente.. 20. Cupos del grupo. − 14. Matrículas confirmadas. 6. Cupos disponibles. El registro conserva curso, horario, estado del pago y fecha de confirmación.."
+        },
+        {
+          "kind": "close",
+          "title": "Confirma con claridad.\nContinúa la atención.",
+          "lead": "La persona recibe una respuesta y el equipo trabaja con la misma matrícula.",
+          "before": "Comparar listas para confirmar.",
+          "after": "Consultar matrícula, grupo y pago.",
+          "cta": "Escríbenos MATRICULAS",
+          "subcta": "Conversemos 15 minutos sobre tu operación.",
+          "file": "archivos/C06-matriculas/05-1080x1080.jpg",
+          "alt": "Nexo. Academias y capacitación. Confirma con claridad. Continúa la atención.. La persona recibe una respuesta y el equipo trabaja con la misma matrícula.. Comparar listas para confirmar.. Consultar matrícula, grupo y pago.. Escríbenos MATRICULAS. Conversemos 15 minutos sobre tu operación.."
+        }
+      ],
+      "fb": "La persona completó el formulario y envió su comprobante. Aun así, vuelve a escribir para preguntar si ya quedó inscrita.\n\nCuando admisión, caja y coordinación usan listas separadas, la confirmación depende de varias conversaciones.\n\nLa solución es relacionar la inscripción con el pago verificado, el grupo y la matrícula. Admisión registra; caja valida; coordinación consulta la confirmación y el cupo actualizado.\n\nEl comprobante recibido queda pendiente hasta su validación. Después, la misma matrícula conserva alumno, curso, horario y estado, para continuar con asistencia y seguimiento.\n\nEl beneficio es responder con claridad y evitar pedir los mismos datos a la persona varias veces.\n\nEscríbenos MATRICULAS para coordinar 15 minutos y revisar cómo conectar este proceso en tu academia. Conoce Nexo: https://nexoamedida.com\nWhatsApp: https://wa.me/51936755465\n\n#GestionAcademica #AcademiasPeru #SoftwareAMedida"
+    }
+  ]
+}

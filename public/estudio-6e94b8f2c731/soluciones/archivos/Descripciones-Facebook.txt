@@ -1,0 +1,93 @@
+C01 · Alquiler de equipos
+
+El cliente pide un equipo para mañana. Para responder, ventas pregunta al almacén, revisa una hoja y confirma si ya salió del taller.
+
+La solución empieza por relacionar cada equipo con sus reservas, alquileres, devoluciones y mantenimientos. Un cambio de estado actualiza la información que consulta el equipo comercial.
+
+Así se puede cotizar con más claridad y detectar cruces de fechas antes de comprometer una entrega. Un equipo devuelto entra a revisión; vuelve a estar disponible cuando se libera para uso.
+
+En Nexo desarrollamos sistemas a medida alrededor de estos procesos. Podemos mostrarte un proyecto desarrollado y revisar cómo adaptar el enfoque a tu operación.
+
+Escríbenos ALQUILER para coordinar una conversación de 15 minutos. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#AlquilerDeEquipos #PymesPeru #SoftwareAMedida
+
+C02 · Distribución y comercio
+
+Vender el pedido es el comienzo. Todavía hay que prepararlo, asignar el despacho y confirmar que llegó.
+
+Cuando esos pasos se coordinan entre chats y hojas distintas, el cliente vuelve a preguntar y nadie tiene el estado completo.
+
+Un sistema a medida conecta ventas, almacén y reparto sobre el mismo pedido. Cada etapa tiene un responsable; la entrega queda vinculada a su constancia. Si hay una entrega parcial, el saldo por entregar sigue pendiente.
+
+Registrar las horas de pedido, preparación y entrega ayuda a identificar dónde se acumula la espera. El beneficio: responder con contexto y coordinar el siguiente paso con claridad.
+
+En Nexo desarrollamos sistemas para conectar estos flujos. Escríbenos PEDIDOS y coordinamos 15 minutos para revisar el tuyo. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#Distribucion #GestionDePedidos #EmpresasPeruanas
+
+C03 · Talleres y servicio técnico
+
+La impresora vuelve al taller. Antes de diagnosticar, el técnico necesita saber qué falla presentó, qué se cambió y quién la atendió.
+
+Si esa historia está repartida entre notas, chats y PDFs, hay que reconstruirla antes de continuar.
+
+La solución es relacionar cada orden de trabajo con la serie del equipo. El diagnóstico, los repuestos utilizados y el reporte permanecen asociados a ese mismo registro.
+
+Se puede comenzar revisando los archivos actuales y cargando el historial validado. Después, cada nueva atención continúa la historia del equipo y conserva a la persona responsable.
+
+El beneficio es tomar decisiones con antecedentes a mano y explicar al cliente qué se hizo, con respaldo documental.
+
+Escríbenos SERVICIO para revisar cómo ordenar este proceso en tu taller. Coordinamos una conversación de 15 minutos. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#ServicioTecnico #GestionDeMantenimiento #SoftwareAMedida
+
+C04 · Construcción y contratistas
+
+La obra necesita materiales. La solicitud está en un chat, la aprobación en otro y el presupuesto en una hoja que alguien tiene que actualizar.
+
+Un programa a medida conecta cada solicitud con su obra, responsable y presupuesto. La aprobación queda registrada antes de emitir la orden de compra; al recibir el material, se adjunta la constancia correspondiente.
+
+Para decidir, importa distinguir el gasto ya registrado de los compromisos que todavía están pendientes. Así se evita volver a contar una compra cuando cambia de estado.
+
+El beneficio: saber quién debe actuar, revisar qué monto queda disponible y conservar el respaldo de cada decisión.
+
+En Nexo podemos revisar este flujo y definir una primera etapa ajustada a tu empresa. Escríbenos OBRAS para coordinar 15 minutos. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#GestionDeObras #Compras #ConstructorasPeru
+
+C05 · Consultorías y servicios
+
+El servicio ya se entregó. La factura se emitió. El pago quedó para después y la próxima llamada sigue sin fecha.
+
+La cobranza necesita conectar información: qué se entregó, qué documento se emitió, cuánto se pagó y quién hará el siguiente seguimiento.
+
+Un sistema a medida puede relacionar la factura de tu herramienta actual con el servicio, los pagos verificados y el vencimiento. Registrar un abono actualiza el saldo de ese documento.
+
+El beneficio es preparar cada conversación con el importe correcto, dar continuidad al seguimiento y ver qué compromisos de pago siguen pendientes.
+
+En Nexo empezamos por revisar ese recorrido contigo. Escríbenos COBROS y coordinamos 15 minutos para entender tu proceso. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#Cobranzas #ServiciosProfesionales #GestionEmpresarial
+
+C06 · Academias y capacitación
+
+La persona completó el formulario y envió su comprobante. Aun así, vuelve a escribir para preguntar si ya quedó inscrita.
+
+Cuando admisión, caja y coordinación usan listas separadas, la confirmación depende de varias conversaciones.
+
+La solución es relacionar la inscripción con el pago verificado, el grupo y la matrícula. Admisión registra; caja valida; coordinación consulta la confirmación y el cupo actualizado.
+
+El comprobante recibido queda pendiente hasta su validación. Después, la misma matrícula conserva alumno, curso, horario y estado, para continuar con asistencia y seguimiento.
+
+El beneficio es responder con claridad y evitar pedir los mismos datos a la persona varias veces.
+
+Escríbenos MATRICULAS para coordinar 15 minutos y revisar cómo conectar este proceso en tu academia. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#GestionAcademica #AcademiasPeru #SoftwareAMedida
