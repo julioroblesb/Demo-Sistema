@@ -46,6 +46,21 @@ Enlaces a las secciones originales consultadas:
 
 Si el receptor es un buzón de ventas o informes y no se conoce al responsable, la derivación es un paso del mismo objetivo. La frase final pide orientación; no presupone que quien lee toma la decisión.
 
+## Aplicación al PDF y a la imagen de WhatsApp
+
+La revisión visual de los dos adjuntos mostró un cumplimiento parcial: mantenían la marca, incluían beneficios y ofrecían una demostración, pero la presentación de la actividad era secundaria, el diagrama terminaba en un genérico «sistema a medida» y la invitación no explicaba cómo coordinarla. La pregunta «¿Cada área tiene su propio Excel?» del JPG centraba la apertura en una herramienta y pedía al receptor reconocerse en un problema antes de conocer la propuesta.
+
+La nueva versión conserva logotipo, colores y tipografías. Estas son decisiones editoriales apoyadas en los criterios anteriores, pendientes de evaluación comercial:
+
+| Criterio | Cambio aplicado |
+|---|---|
+| Beneficio y presentación | «Menos búsquedas. Más respuestas.» seguido de qué desarrolla Nexo y para qué le sirve al equipo. La referencia a empresas de alquiler corresponde al segmento de esta campaña. |
+| Escena concreta | Una consulta sobre el contrato de un equipo muestra el contraste entre revisar archivos y preguntar a otras personas, y consultar información relacionada del equipo, cliente y contrato. Se presenta como una escena ilustrativa; no como un diagnóstico de la empresa destinataria ni como un resultado medido. |
+| Prueba y siguiente paso | Se invita a ver un proyecto desarrollado, funcionando, y evaluar su pertinencia. El PDF incorpora un enlace real de WhatsApp con texto inicial para coordinar y mantiene los contactos de Julio. El JPG pide responder al mensaje, una acción posible en el canal donde se comparte. |
+| Lectura según el formato | El PDF conserva una página A4, tres beneficios y una reunión concreta. El JPG acorta la explicación y aumenta el tamaño del texto para verlo en el teléfono. La comparación y la invitación se mantienen completas, sin depender de un bloque de texto pequeño. |
+
+El contraste de «antes» y «con Nexo» explica una propuesta de organización de información; no ofrece una reducción de tiempo cuantificada ni una implantación idéntica para todos los destinatarios. La respuesta por empresa y las reuniones confirmadas siguen siendo la validación relevante.
+
 ## Qué no permite concluir esta investigación
 
 No hay en las lecturas una prueba directa que compare estas dos versiones de Nexo en correo y WhatsApp con empresas peruanas. No se afirma que el orden propuesto sea universal, que un número exacto de palabras maximice la respuesta ni que una técnica de neuromarketing garantice reuniones. La recomendación final combina criterios documentados con juicio aplicado al caso.
