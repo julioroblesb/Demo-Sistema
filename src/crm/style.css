@@ -158,3 +158,39 @@ dialog{border:1px solid #c8d7cc;border-radius:9px;background:white;color:var(--i
  .response-picker>label{padding:15px 13px}
 }
 @media(max-width:370px){.channel-options .icon{display:none}.company-table .contact-summary.contacted{display:flex;align-items:flex-start}}
+
+/* A reviewed image and caption share one persistent WhatsApp attempt. */
+.wa-connection{border:1px solid #d8e4da;border-radius:7px;padding:15px 17px;background:#f3f7f2;margin:20px 0}
+.wa-connection>div:first-child{display:flex;align-items:center;gap:9px;color:#315b42;font-size:13px}
+.wa-connection>.icon,.wa-connection .icon{width:17px;height:17px}
+.wa-connection>p{font-size:12px;line-height:1.8;color:#52675b;margin-top:8px}
+.wa-connection>div:last-child{display:flex;flex-wrap:wrap;gap:6px 19px;margin-top:7px}
+.wa-connection .text-button,.wa-connection .text-link{font-size:11px;min-height:36px}
+.wa-fields{margin:0;padding:0;border:0;min-width:0}
+.wa-sender{display:flex;flex-wrap:wrap;align-items:center;gap:7px;font-size:12px;line-height:1.7;padding:11px 0 20px;color:#52675b}
+.wa-sender>.icon{width:17px;height:17px}.wa-sender>strong{color:#20352b;font-weight:600}
+.wa-preview{display:grid;grid-template-columns:165px minmax(0,1fr);gap:20px;align-items:start;margin-block:23px}
+.wa-preview>img{width:100%;height:auto;border:1px solid #dce6dc;border-radius:6px;background:#fff}
+.wa-preview-label{display:block;font-size:11px;line-height:1.8;color:#52675b;margin:0 0 10px}
+.wa-preview textarea{min-height:270px;font-size:13px;line-height:1.8}
+.wa-preview output{display:block;text-align:right;font-size:10px;color:#607168;margin-top:8px}
+.wa-confirmations{border-top:1px solid #e1e7e3;padding-top:18px;display:flex;flex-direction:column;gap:11px}
+.wa-confirmations>label{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.9}
+.wa-confirmations>label>input{margin:4px 0 0;width:17px;height:17px;flex-shrink:0}
+.wa-confirmations>small{font-size:11px;line-height:1.8;color:#607168}
+.wa-confirmations>.field{margin-block:5px}
+.wa-notice{font-size:12px;line-height:1.9;background:#fcf6e8;border:1px solid #e4d8b7;border-radius:5px;padding:12px 14px;margin:14px 0;color:#69521f}
+.wa-error{display:block;margin:15px 0}
+#whatsapp-send-form .form-footer{flex-wrap:wrap;gap:10px}
+#whatsapp-send-form .form-footer .button{font-size:11px}
+.wa-history{border-top:1px solid #e1e7e3;margin-top:28px;padding-top:22px}
+.wa-history>h3{font-size:15px;margin-bottom:17px}
+.wa-job{padding:16px;border:1px solid #dce5db;border-radius:6px;margin-block:12px}
+.wa-job>div:first-child{display:flex;flex-direction:column;gap:5px}
+.wa-job strong{font-size:13px}.wa-job small{font-size:11px;color:#607168}
+.wa-job>p:not(.wa-notice){font-size:12px;line-height:1.8;color:#52675b;margin-top:10px}
+.wa-job.sent{background:#f0f7f0;border-color:#c8deca}
+.wa-job.uncertain{background:#fcf6e8;border-color:#e4d8b7}
+.wa-job-actions{display:flex;flex-wrap:wrap;gap:7px 15px;margin-top:7px}
+.wa-job-actions .text-button{font-size:11px;min-height:38px}
+@media(max-width:650px){.wa-preview{grid-template-columns:1fr;gap:17px}.wa-preview>img{width:190px;justify-self:center}.wa-preview textarea{font-size:16px;min-height:290px}.wa-connection{padding:14px}.wa-connection>div:first-child{font-size:12px}.wa-confirmations>label{font-size:12px}.wa-fields>.field>select{font-size:15px}#whatsapp-send-form .form-footer{display:flex;flex-direction:column;align-items:stretch}#whatsapp-send-form .form-footer .button{font-size:12px;width:100%;min-height:45px}.wa-job{padding:14px}.wa-job small{overflow-wrap:anywhere}}

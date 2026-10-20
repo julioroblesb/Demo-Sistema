@@ -1,0 +1,6 @@
+export const MAX_CAPTION_LENGTH=1024;
+export const JOB_LABELS={prepared:'Listo para revisar',validating:'Validando sin enviar',validated:'Validación correcta · sin envío',submitting:'Solicitando envío',queued:'En cola',processing:'Procesando',sent:'Enviado a WhatsApp',failed:'No se pudo enviar',uncertain:'Resultado por verificar',cancelled:'Cancelado'};
+export const ACTIVE_JOBS=['prepared','validating','validated','submitting','queued','processing','uncertain'];
+export function normalizeWhatsAppPhone(value){let digits=String(value||'').replace(/\D/g,'').replace(/^00/,'');if(/^9\d{8}$/.test(digits))digits='51'+digits;return /^[1-9]\d{7,14}$/.test(digits)?'+'+digits:'';}
+export function recipientChoices(data,company){return [{id:'',name:'Teléfono de la empresa',phone:normalizeWhatsAppPhone(company.phone)},...data.contacts.filter(row=>row.company_id===company.id).map(row=>({id:row.id,name:row.name,phone:normalizeWhatsAppPhone(row.phone)}))].filter(row=>row.phone);}
+export function priorEmail(data,companyId){return data.activities.filter(row=>row.company_id===companyId&&(row.kind==='correo'||row.kind==='contacto'&&row.channels?.includes('correo'))).sort((a,b)=>(b.occurred_at||b.created_at||b.date||'').localeCompare(a.occurred_at||a.created_at||a.date||''))[0]||null;}

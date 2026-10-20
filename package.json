@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "node scripts/sales-kit/export-outreach.mjs && node scripts/sales-kit/prepare-whatsapp-server.mjs && node scripts/sales-kit/package-whatsapp.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "npm run build && npm run test:crm:unit && npm run test:crm:rules && playwright test",
-    "test:crm:unit": "node --test checks/crm/domain.test.mjs checks/crm/prospecting.test.mjs",
-    "test:crm:rules": "node --test checks/crm/database.test.mjs"
+    "test:crm:unit": "node --test checks/crm/domain.test.mjs checks/crm/prospecting.test.mjs checks/crm/outreach-templates.test.mjs checks/crm/lr-client.test.mjs checks/crm/whatsapp-service.test.mjs checks/crm/whatsapp-http.test.mjs",
+    "test:crm:rules": "node --test checks/crm/database.test.mjs checks/crm/whatsapp-database.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",

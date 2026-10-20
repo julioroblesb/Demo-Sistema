@@ -3,6 +3,7 @@ import {stageOperations,contactOperations,responseOperations,saleCompanyOperatio
 import { icon, action, options, empty } from './ui.js';
 import { shell, viewFor, settingsFor, NAV } from './views.js';
 import * as forms from './forms.js';
+import {WhatsAppDialog} from './whatsapp.js';
 import { gate, connection } from './onboarding.js';
 import { DemoRepository, CONFIG_KEY, createCloud, parseConnection, ConflictError } from './repository.js';
 import { parseCSV, prepareCompanyImport, toCSV, companyCSVFields, download, backup, parseBackup, toICS } from './import-export.js';
@@ -12,6 +13,7 @@ const state={data:emptyData(),mode:null,config:null,cloud:null,repo:null,authUns
 let goalsDraft=null,modal=null,trigger=null,triggerSelector='',initialForm='',importPlan=null,restorePlan=null,gateError='',syncError=false;
 const get=(type,recordId)=>state.data[type].find(row=>row.id===recordId);
 const op=(type,record,expected=record.version||0)=>({type,record,expected});
+const whatsappDialog=new WhatsAppDialog({show:showForm,isActive:companyId=>modal?.kind==='whatsapp'&&modal.companyId===companyId,isDemo:()=>state.mode==='demo',invoke:(action,payload)=>{if(state.mode!=='cloud'||!state.cloud)throw new Error('Inicia sesión en el CRM para enviar mensajes.');return state.cloud.whatsapp(action,payload);},refreshData:async()=>{await state.repo?.load?.();}});
 function toast(message,tone='success') { const item=document.createElement('div');item.className=`toast ${tone}`;item.setAttribute('role',tone==='error'?'alert':'status');item.innerHTML=`${icon(tone==='error'?'alert':'check')}<span>${e(message)}</span>`;$('#toast-region').append(item);setTimeout(()=>item.remove(),tone==='error'?9000:5500); }
 function friendly(error) { const code=error?.code||'';if(/invalid-credential|invalid_credentials|wrong-password|user-not-found|invalid-email/.test(code)||/Invalid login credentials/.test(error?.message||''))return 'Revisa el correo y la contraseña de tu cuenta.';if(/too-many-requests/.test(code))return 'Hubo demasiados intentos. Espera unos minutos y vuelve a intentar.';if(/network-request-failed|unavailable/.test(code))return 'No se pudo conectar. Revisa internet y vuelve a intentarlo.';if(/permission-denied/.test(code))return 'La cuenta no tiene acceso a los datos. Autoriza tu UUID desde SQL Editor de Supabase.';return error?.message||'No se pudo completar la operación. Tus cambios no se han confirmado.'; }
 function preserveFocus() {const active=document.activeElement;if(!$('#app').contains(active))return null;return {id:active.id,filter:active.dataset.filter,action:active.dataset.action,recordId:active.dataset.id,start:active.selectionStart,end:active.selectionEnd};}
@@ -38,8 +40,8 @@ function focusDetailTab(){const tab=$('#record-dialog [role="tab"][aria-selected
 function currentFormSignature(){const form=$('#dialog-content form');return form?JSON.stringify(Array.from(new FormData(form).entries())):'';}
 function editingDirty(){return initialForm&&currentFormSignature()!==initialForm;}
 function showDialog(html,context={},wide=false){const dialog=$('#record-dialog');if(!dialog.open){trigger=document.activeElement;triggerSelector=trigger?.dataset.action?`#app [data-action="${trigger.dataset.action}"]${trigger.dataset.id?`[data-id="${CSS.escape(trigger.dataset.id)}"]`:''}`:'';}modal=context;$('#dialog-content').innerHTML=html;dialog.classList.toggle('wide',wide);if(!dialog.open)dialog.showModal();dialog.scrollTop=0;initialForm=currentFormSignature();$('#dialog-title')?.focus({preventScroll:true});}
-function closeDialog(){initialForm='';$('#record-dialog').close();modal=null;}
-async function requestClose(){if(state.importing){toast('Espera a que termine el bloque de importación antes de cerrar.','error');return;}if(editingDirty()&&!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes seguir editando o cerrar esta ventana.','Descartar cambios'))return;closeDialog();}
+function closeDialog(){whatsappDialog.close();initialForm='';$('#record-dialog').close();modal=null;}
+async function requestClose(){if(modal?.kind==='whatsapp'&&whatsappDialog.busy){toast('Espera a que se confirme el intento de WhatsApp.','error');return;}if(state.importing){toast('Espera a que termine el bloque de importación antes de cerrar.','error');return;}if(editingDirty()&&!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes seguir editando o cerrar esta ventana.','Descartar cambios'))return;closeDialog();}
 async function confirmDialog(title,description,confirm='Confirmar'){const dialog=$('#confirm-dialog');$('#confirm-content').innerHTML=`<h2 id="confirm-title">${e(title)}</h2><p>${e(description)}</p><div class="form-footer"><button class="button secondary" data-confirm="cancel" type="button">Seguir aquí</button><button class="button" data-confirm="yes" type="button">${e(confirm)}</button></div>`;dialog.showModal();return new Promise(resolve=>{const click=event=>{const button=event.target.closest('[data-confirm]');if(button){cleanup();dialog.close();resolve(button.dataset.confirm==='yes')}};const cancel=event=>{event.preventDefault();cleanup();dialog.close();resolve(false)};function cleanup(){dialog.removeEventListener('click',click);dialog.removeEventListener('cancel',cancel)}dialog.addEventListener('click',click);dialog.addEventListener('cancel',cancel);dialog.querySelector('[data-confirm="cancel"]').focus();});}
 function openCompany(recordId,tab='resumen'){const row=get('companies',recordId);if(row)showDialog(forms.companyDetail(state.data,row,tab),{kind:'company',id:recordId,tab},true);}
 function openDeal(recordId,tab='resumen'){const row=get('deals',recordId);if(row)showDialog(forms.dealDetail(state.data,row,tab),{kind:'deal',id:recordId,tab},true);}
@@ -100,6 +102,11 @@ const actions={
  'new-company':()=>showForm(forms.companyForm()),
  'edit-company':button=>showForm(forms.companyForm(get('companies',button.dataset.id),state.data)),
  'open-company':button=>openCompany(button.dataset.id),
+ 'open-whatsapp':button=>whatsappDialog.open(state.data,get('companies',button.dataset.id)),
+ 'wa-reload':()=>whatsappDialog.reload($('#whatsapp-send-form')),
+ 'wa-refresh':button=>whatsappDialog.jobAction('refresh',button.dataset.id),
+ 'wa-recover':button=>whatsappDialog.jobAction('recover',button.dataset.id),
+ 'wa-cancel':button=>whatsappDialog.jobAction('cancel',button.dataset.id),
  'company-tab':button=>{openCompany(button.dataset.id,button.dataset.type);focusDetailTab();},
  'new-contact':button=>showForm(forms.contactForm(state.data,null,button.dataset.id)),
  'edit-contact':button=>showForm(forms.contactForm(state.data,get('contacts',button.dataset.id))),
@@ -169,7 +176,7 @@ const actions={
 };
 function shiftMonth(change){const [year,month]=state.calendarDate.split('-').map(Number);const date=new Date(Date.UTC(year,month-1+change,1,12));state.calendarDate=date.toISOString().slice(0,10);render();}
 
-document.addEventListener('click',async event=>{const button=event.target.closest('[data-action]');if(!button||button.disabled)return;const handler=actions[button.dataset.action];if(!handler)return;if($('#record-dialog').open&&editingDirty()&&!['cancel-form','copy-rules','copy-schema','export-connection'].includes(button.dataset.action)){if(!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes continuar editando o realizar la otra acción.','Descartar cambios'))return;initialForm='';}document.querySelectorAll('.create-menu[open]').forEach(element=>element.open=false);try{await handler(button);}catch(error){toast(friendly(error),'error');}});
+document.addEventListener('click',async event=>{const button=event.target.closest('[data-action]');if(!button||button.disabled)return;const handler=actions[button.dataset.action];if(!handler)return;if($('#record-dialog').open&&editingDirty()&&!['cancel-form','copy-rules','copy-schema','export-connection','wa-reload','wa-refresh','wa-recover','wa-cancel'].includes(button.dataset.action)){if(!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes continuar editando o realizar la otra acción.','Descartar cambios'))return;initialForm='';}document.querySelectorAll('.create-menu[open]').forEach(element=>element.open=false);try{await handler(button);}catch(error){toast(friendly(error),'error');}});
 let filterTimer;
 document.addEventListener('input',event=>{const input=event.target;if(input.id==='global-search'){searchResults(input.value);return;}if(!input.dataset.filter||input.tagName==='SELECT')return;state[input.dataset.filter]=input.value;state.page=1;clearTimeout(filterTimer);filterTimer=setTimeout(render,120);});
 document.addEventListener('input',event=>{if(event.target.closest('#company-form')&&['name','phone','email','ruc','website'].includes(event.target.name))companyDuplicateNotice();if(event.target.closest('#goals-form'))event.target.closest('#goals-form').dataset.dirty='true';});
@@ -178,6 +185,7 @@ document.addEventListener('change',async event=>{const input=event.target;if(inp
 document.addEventListener('submit',async event=>{
  const form=event.target;const formId=form.getAttribute('id');if(!formId)return;event.preventDefault();if(state.saving){toast('Espera a que termine el guardado actual.','error');return;}const button=form.querySelector('[type="submit"]');if(button?.disabled)return;const formData=new FormData(form);const values=Object.fromEntries(formData);const errorElement=form.querySelector('.form-error');if(errorElement){errorElement.hidden=true;errorElement.textContent='';}if(button)button.disabled=true;
  try{
+  if(formId==='whatsapp-send-form'){await whatsappDialog.submit(form,event.submitter?.value!=='send');return;}
   if(formId==='login-form'){if(!state.cloud)throw new Error('Configura primero la conexión.');await state.cloud.login(values.email.trim(),values.password,values.remember==='on');return;}
   if(formId==='connection-form'){const config=parseConnection(values.supabase_config);localStorage.setItem(CONFIG_KEY,JSON.stringify(config));sessionStorage.removeItem('nexo-crm-demo-active');state.mode=null;state.data=emptyData();state.repo?.stop();initialForm='';closeDialog();gateError='';await initializeCloud(config);render();toast('Conexión guardada. Inicia sesión con tu cuenta.');return;}
   if(formId==='goals-form'){const previous=assertVersion('settings','preferences',values.version);const record={...DEFAULT_SETTINGS,...previous,id:'preferences',display_name:values.display_name.trim(),target_companies:Number(values.target_companies),target_sales:Number(values.target_sales||0),target_amount_cents:values.target_amount?toCents(values.target_amount):0,currency:values.currency,deadline:values.deadline,daily_contacts:Number(values.daily_contacts)};if(!record.display_name||record.target_companies<1||record.daily_contacts<1||!Number.isInteger(record.target_companies)||!Number.isInteger(record.daily_contacts))throw new Error('Revisa tu nombre y las metas numéricas.');await write([op('settings',record,Number(values.version))],'Metas actualizadas.');goalsDraft=null;if($('#goals-form'))$('#goals-form').dataset.dirty='false';render();return;}
@@ -202,9 +210,10 @@ $('#record-dialog').addEventListener('close',()=>{if(trigger?.isConnected)trigge
 window.addEventListener('hashchange',()=>{if($('#record-dialog').open)closeDialog();route(location.hash.slice(1));});
 window.addEventListener('online',()=>{if(state.mode==='cloud')toast('Conexión recuperada. Esperando la confirmación del servidor.');});
 window.addEventListener('offline',()=>{state.connected=false;render();});
-window.addEventListener('beforeunload',event=>{if(state.saving||editingDirty()||goalsDraft){event.preventDefault();event.returnValue='';}});
+window.addEventListener('beforeunload',event=>{if(state.saving||whatsappDialog.busy||editingDirty()||goalsDraft){event.preventDefault();event.returnValue='';}});
 document.addEventListener('keydown',event=>{const current=event.target.closest('[role="tab"]');if(!current||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const list=current.closest('[role="tablist"]');if(!list)return;event.preventDefault();const tabs=[...list.querySelectorAll('[role="tab"]')],index=tabs.indexOf(current);const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs.forEach((tab,i)=>tab.tabIndex=i===next?0:-1);tabs[next].focus({preventScroll:true});tabs[next].scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});});
 document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'&&state.mode){event.preventDefault();searchDialog();}if(event.key==='Escape'&&state.navOpen){state.navOpen=false;render();}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')whatsappDialog.poll();});
 let dragId='';
 document.addEventListener('dragstart',event=>{const card=event.target.closest('[data-company-drag]');if(card){dragId=card.dataset.companyDrag;event.dataTransfer.setData('text/plain',dragId);event.dataTransfer.effectAllowed='move';card.classList.add('dragging');}});
 document.addEventListener('dragover',event=>{const column=event.target.closest('[data-drop-stage]');if(column&&dragId){event.preventDefault();event.dataTransfer.dropEffect='move';column.classList.add('drag-target');}});

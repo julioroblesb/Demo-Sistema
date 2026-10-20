@@ -1,0 +1,10 @@
+NEXO · PLANTILLAS DE PROSPECCIÓN
+
+Correo reconstruido con el texto y diseño de las capturas de Julio. Reemplazar [Empresa] en asunto y saludo.
+
+Adjunto del correo: https://nexoamedida.com/presentacion/Nexo-Informacion-Conectada.pdf
+Imagen de WhatsApp: https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg
+
+WhatsApp conserva el texto proporcionado. Usarlo después de enviar realmente el correo mencionado.
+
+Estado: contenido preparado. El envío automático todavía no está conectado. Falta habilitar el puente de LR y configurar la función privada de Nexo. También debe comprobarse el acceso permitido por el plan gratuito de Zoho. No hay claves, contraseñas ni datos de prospectos en estos archivos.

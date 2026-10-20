@@ -15,6 +15,17 @@ Comandos ejecutados: `npm run build`, `npm run test:crm:unit`, `npm run test:crm
 
 ## Alcance de las comprobaciones
 
-Las pruebas utilizan registros de prueba locales y respuestas HTTP simuladas; no modifican los registros reales del propietario. La compatibilidad SQL se verifica ejecutando el esquema existente en PostgreSQL local. No equivale a una comprobación del proyecto remoto ni de Realtime en producción. El entorno bloquea HTTP directo al proveedor; no se usaron ni publicaron contraseñas ni credenciales administrativas. Esta actualización no requiere reinstalar tablas ni cambiar permisos en Supabase.
+Las pruebas utilizan registros de prueba locales y respuestas HTTP simuladas; no modifican los registros reales del propietario. La compatibilidad SQL se verifica ejecutando el esquema existente en PostgreSQL local. No equivale a una comprobación del proyecto remoto ni de Realtime en producción. El entorno bloquea HTTP directo al proveedor; no se usaron ni publicaron contraseñas ni credenciales administrativas. La actualización del pipeline no requiere reinstalar tablas ni cambiar permisos en Supabase; la integración de WhatsApp descrita abajo sí añade su propia tabla y función.
 
 Los campos opcionales nuevos y la interpretación de registros anteriores se documentan en `pipeline-simple.md`. No se realizan escrituras masivas al cargar las empresas existentes.
+
+## Integración de WhatsApp y plantillas
+
+La actualización añade una vista de envío con la imagen y texto proporcionados, historial persistente de intentos, comprobación del destinatario, confirmación del correo previo y autorización exigida por el contrato LR. Se conserva el pipeline existente.
+
+- 83 pruebas unitarias aprobadas: dominio anterior, plantillas, cliente LR, autenticación, aislamiento, idempotencia, concurrencia, recuperación, límites de cuota y registro del contacto únicamente tras envío confirmado.
+- 6 pruebas PostgreSQL local aprobadas: 3 del esquema CRM y 3 adicionales para permisos de la cola, consentimiento obligatorio, idempotencia, reclamos exclusivos, plazo de reintento, cambios de teléfono y empresas cerradas.
+- 69 recorridos de navegador aprobados: 61 anteriores y 8 para WhatsApp, doble clic, validación sin envío, incertidumbre, conexión pendiente, accesibilidad y formatos móviles, además de plantilla y descargas.
+- La entrada TypeScript de la función se compiló con esbuild. Esto no equivale a ejecutar el entorno Deno remoto. La revisión visual incluye la vista WhatsApp a 1440 y 390 px y el correo a 390 px.
+
+El ZIP recibido contiene el contrato y cliente del puente LR, pero no el servidor habilitado ni credenciales. No se instalaron migraciones ni funciones en Supabase remoto, no se confirmó acceso API/SMTP de la cuenta gratuita Zoho y no se enviaron mensajes reales. Las pruebas de proveedor son simulaciones. La activación requiere habilitar LR e instalar la migración adicional y función con sus secretos, incluida la vinculación al UUID de la cuenta personal.
