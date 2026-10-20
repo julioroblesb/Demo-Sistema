@@ -2,24 +2,44 @@ NEXO · CORREOS PARA CONSEGUIR UNA CONVERSACIÓN
 USO INTERNO. Reemplaza todos los campos entre corchetes antes de enviar. Los horarios deben estar realmente disponibles. No enviar el ZIP ni esta guía a prospectos.
 
 =================================================================
-Primer correo · responsable identificado
-Para gerencia, operaciones, administración o quien controle los alquileres. Sustituye los campos entre corchetes y verifica la observación sobre su negocio.
+Enviar hoy · Correo
+Adjunta Nexo-Informacion-Conectada.pdf. Personaliza la empresa y ofrece dos horarios disponibles. «Proyecto real» se refiere al proyecto desarrollado que mostrarás; no implica resultados medidos ni un cliente de referencia.
 
-ASUNTO: [Empresa]: una demo para el control de sus alquileres
+ASUNTO: [Empresa]: ¿cada área tiene su propio Excel?
 
-Hola, [Nombre]:
+Hola, [Nombre o equipo de Empresa]:
 
-Soy Julio, de Nexo. Vi que [Empresa] alquila [tipo de equipos].
+Cuando una consulta obliga a abrir varios Excels, revisar carpetas y preguntarle a otra persona, el trabajo de todo el equipo se frena.
 
-Desarrollo sistemas a medida para conectar equipos, clientes, contratos e historial de mantenimiento. Puedo mostrarte una demo de cómo consultar la información de un equipo y sus documentos desde una sola ficha.
+Soy Julio, de Nexo. Creamos sistemas a medida para conectar esa información y facilitar el trabajo de todas las áreas: encontrar lo que necesitan más rápido, trabajar con datos actualizados y consultar el historial de cada operación.
 
-Me gustaría conocer cómo lo gestionan hoy y ver si algo así les sería útil. ¿Podemos verlo en una reunión virtual de 15 minutos el [día y hora 1] o el [día y hora 2]? Si prefieren presencial en Lima, podemos coordinarlo.
+Quiero mostrarte un proyecto real que ya desarrollamos en una reunión de 15 minutos y evaluar si podemos resolver algo similar en [Empresa].
+
+¿Te acomoda [día y hora 1] o [día y hora 2]? Puede ser virtual o presencial en Lima. Te adjunto una ficha visual del enfoque.
+
+Si este tema lo ve otra persona, ¿podrías reenviarle el mensaje o ayudarme a contactarla?
 
 Saludos,
 Julio | Nexo
 asesoria@nexoamedida.com
 +51 936 755 465
 nexoamedida.com
+
+=================================================================
+Enviar hoy · WhatsApp
+Envía Nexo-WhatsApp-Informacion.jpg junto con este texto. Sustituye los corchetes. Si ya enviaste el correo, puedes añadir: «También te envié una ficha por correo para que puedas revisarla». Usa esa frase solo cuando realmente lo hayas enviado.
+
+CANAL: WhatsApp
+
+Hola, [Nombre o equipo de Empresa]. Soy Julio, de Nexo.
+
+¿Tienen información repartida entre Excels, carpetas y distintas personas? Cuando pasa, una consulta sencilla termina en varias búsquedas.
+
+Creamos sistemas a medida para conectar esos datos y facilitar el trabajo de todo el equipo.
+
+Quiero mostrarte un proyecto real en una demo de 15 minutos y evaluar si podemos ayudar a [Empresa].
+
+¿Lo vemos [día y hora 1] o [día y hora 2]? Si lo lleva otra persona, ¿me ayudas a contactarla?
 
 =================================================================
 Primer correo · ventas o buzón general
@@ -63,15 +83,15 @@ nexoamedida.com
 
 =================================================================
 Respuesta a «envíame información»
-Aquí sí adjunta Nexo-Alquileres-Presentacion.pdf. No envíes la guía interna ni el ZIP del kit.
+Si te piden información, envía Nexo-Informacion-Conectada.pdf y propón revisar el proyecto desarrollado. La guía y el ZIP son de uso interno.
 
 ASUNTO: Nexo · ficha sobre control de equipos y alquileres
 
 Hola, [Nombre]:
 
-Gracias por responder. Te adjunto una ficha de una página con el enfoque de Nexo y lo que podemos revisar en una demo.
+Gracias por responder. Te adjunto una ficha visual de una página con el enfoque de Nexo y lo que podemos revisar en una demo.
 
-El ejemplo relaciona un equipo con su cliente, documentos e historial de mantenimiento. A partir de cómo trabajan ustedes, podemos evaluar qué tendría sentido desarrollar primero.
+El enfoque conecta la información que hoy puede estar repartida entre archivos, carpetas y distintas áreas. A partir de cómo trabajan ustedes, podemos evaluar qué tendría sentido desarrollar primero.
 
 ¿Podemos revisarlo en 15 minutos el [día y hora 1] o el [día y hora 2]? Así puedes verlo funcionando y hacer preguntas sobre su operación.
 
