@@ -1,0 +1,14 @@
+La persona completó el formulario y envió su comprobante. Aun así, vuelve a escribir para preguntar si ya quedó inscrita.
+
+Cuando admisión, caja y coordinación usan listas separadas, la confirmación depende de varias conversaciones.
+
+La solución es relacionar la inscripción con el pago verificado, el grupo y la matrícula. Admisión registra; caja valida; coordinación consulta la confirmación y el cupo actualizado.
+
+El comprobante recibido queda pendiente hasta su validación. Después, la misma matrícula conserva alumno, curso, horario y estado, para continuar con asistencia y seguimiento.
+
+El beneficio es responder con claridad y evitar pedir los mismos datos a la persona varias veces.
+
+Escríbenos MATRICULAS para coordinar 15 minutos y revisar cómo conectar este proceso en tu academia. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#GestionAcademica #AcademiasPeru #SoftwareAMedida

@@ -1,0 +1,12 @@
+La obra necesita materiales. La solicitud está en un chat, la aprobación en otro y el presupuesto en una hoja que alguien tiene que actualizar.
+
+Un programa a medida conecta cada solicitud con su obra, responsable y presupuesto. La aprobación queda registrada antes de emitir la orden de compra; al recibir el material, se adjunta la constancia correspondiente.
+
+Para decidir, importa distinguir el gasto ya registrado de los compromisos que todavía están pendientes. Así se evita volver a contar una compra cuando cambia de estado.
+
+El beneficio: saber quién debe actuar, revisar qué monto queda disponible y conservar el respaldo de cada decisión.
+
+En Nexo podemos revisar este flujo y definir una primera etapa ajustada a tu empresa. Escríbenos OBRAS para coordinar 15 minutos. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#GestionDeObras #Compras #ConstructorasPeru

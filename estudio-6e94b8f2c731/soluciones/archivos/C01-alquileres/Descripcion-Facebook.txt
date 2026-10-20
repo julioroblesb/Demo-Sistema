@@ -1,0 +1,12 @@
+El cliente pide un equipo para mañana. Para responder, ventas pregunta al almacén, revisa una hoja y confirma si ya salió del taller.
+
+La solución empieza por relacionar cada equipo con sus reservas, alquileres, devoluciones y mantenimientos. Un cambio de estado actualiza la información que consulta el equipo comercial.
+
+Así se puede cotizar con más claridad y detectar cruces de fechas antes de comprometer una entrega. Un equipo devuelto entra a revisión; vuelve a estar disponible cuando se libera para uso.
+
+En Nexo desarrollamos sistemas a medida alrededor de estos procesos. Podemos mostrarte un proyecto desarrollado y revisar cómo adaptar el enfoque a tu operación.
+
+Escríbenos ALQUILER para coordinar una conversación de 15 minutos. Conoce Nexo: https://nexoamedida.com
+WhatsApp: https://wa.me/51936755465
+
+#AlquilerDeEquipos #PymesPeru #SoftwareAMedida

@@ -1,0 +1,11 @@
+Vender el pedido es el comienzo. Todavía hay que prepararlo, asignar el despacho y confirmar que llegó.
+
+Cuando esos pasos se coordinan entre chats y hojas distintas, el cliente vuelve a preguntar y nadie tiene el estado completo.
+
+Un sistema a medida conecta ventas, almacén y reparto sobre el mismo pedido. Cada etapa tiene un responsable; la entrega queda vinculada a su constancia. Si hay una entrega parcial, el saldo por entregar sigue pendiente.
+
+Registrar las horas de pedido, preparación y entrega ayuda a identificar dónde se acumula la espera. El beneficio: responder con contexto y coordinar el siguiente paso con claridad.
+
+En Nexo desarrollamos sistemas para conectar estos flujos. Escríbenos PEDIDOS y coordinamos 15 minutos para revisar el tuyo. Web y WhatsApp en el perfil.
+
+#Distribucion #GestionDePedidos #EmpresasPeruanas

@@ -1,0 +1,14 @@
+LÁMINA 1
+Nexo. Alquiler de equipos. ¿Lo puedes alquilar o sigue en revisión?. Responde al cliente con la disponibilidad a mano.. El estado del equipo importa.. Reservas · Alquileres · Mantenimiento.
+
+LÁMINA 2
+Nexo. Alquiler de equipos. La respuesta pasa por tres personas.. Cada área tiene una parte de la información. La cotización espera.. Ventas. Revisa sus reservas.. Almacén. Confirma si el equipo está.. Técnico. Indica si ya puede salir.. Estar en almacén no significa estar listo para alquilar..
+
+LÁMINA 3
+Nexo. Alquiler de equipos. Una reserva conectada con toda la operación.. El programa relaciona el equipo con fechas, cliente, contrato y estado.. Reservar. Valida las fechas.. Entregar. Registra la salida.. Devolver. Pasa a revisión.. Liberar. Vuelve a estar listo.. Ventas y operaciones consultan el mismo registro..
+
+LÁMINA 4
+Nexo. Alquiler de equipos. Cuenta los equipos que sí pueden salir.. Revisa los estados y las reservas de las fechas solicitadas.. 6. Equipos en total. − 2. En alquiler o reservados. − 1. En revisión. 3. Disponibles en esas fechas. Un equipo en revisión no está disponible..
+
+LÁMINA 5
+Nexo. Alquiler de equipos. Cotiza con claridad. Coordina la entrega.. Un sistema a medida conecta lo que ventas promete con lo que la operación puede entregar.. Preguntar a cada área para confirmar.. Consultar disponibilidad y fechas.. Escríbenos ALQUILER. Conversemos 15 minutos sobre tu operación..
