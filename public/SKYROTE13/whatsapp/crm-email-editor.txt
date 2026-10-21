@@ -1,0 +1,157 @@
+// Nexo: función privada crm-email. Pegar todo el contenido en index.ts del editor de Supabase.
+// No contiene secretos.
+
+// supabase/functions/crm-email/index.ts
+import { createClient } from "npm:@supabase/supabase-js@2.118.0";
+
+// supabase/functions/_shared/whatsapp-core.mjs
+import { createHash as createHash2 } from "node:crypto";
+
+// supabase/functions/_shared/crm/domain.js
+var TYPES = ["companies", "contacts", "deals", "tasks", "activities", "payments", "milestones", "settings"];
+var emptyData = () => Object.fromEntries(TYPES.map((type) => [type, []]));
+
+// supabase/functions/_shared/lr-whatsapp-client.mjs
+import { createHash } from "node:crypto";
+import { Buffer } from "node:buffer";
+var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+// supabase/functions/_shared/whatsapp-core.mjs
+var OutboundError = class extends Error {
+  constructor(code, message, status = 400) {
+    super(message);
+    this.code = code;
+    this.status = status;
+  }
+};
+
+// supabase/functions/_shared/whatsapp-http.mjs
+async function authenticateSupabase(authorization, { service, makeUser }) {
+  if (!/^Bearer \S+$/i.test(authorization || "")) throw new OutboundError("UNAUTHENTICATED", "Inicia sesi\xF3n para acceder a los env\xEDos.", 401);
+  const { data, error } = await service.auth.getUser(authorization.replace(/^Bearer /i, ""));
+  if (error || !data?.user) throw new OutboundError("UNAUTHENTICATED", "La sesi\xF3n no es v\xE1lida. Vuelve a iniciar sesi\xF3n.", 401);
+  const user = makeUser(authorization);
+  const { data: member, error: membershipError } = await user.from("crm_members").select("user_id").eq("user_id", data.user.id).maybeSingle();
+  if (membershipError || !member) throw new OutboundError("NOT_AUTHORIZED", "Esta cuenta no est\xE1 autorizada en Nexo CRM.", 403);
+  return { service, user, owner: data.user.id };
+}
+
+// supabase/functions/_shared/templates.mjs
+var OUTREACH = Object.freeze({
+  senderName: "Julio Robles",
+  senderEmail: "asesoria@nexoamedida.com",
+  phone: "+51 936 755 465",
+  website: "https://nexoamedida.com",
+  demoUrl: "https://nexoamedida.com/#demo",
+  logoUrl: "https://nexoamedida.com/brand/nexo-logo-email.png",
+  whatsappImage: "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",
+  emailAttachment: "https://nexoamedida.com/presentacion/Nexo-Informacion-Conectada.pdf"
+});
+function companyName(value) {
+  if (typeof value !== "string" || /[\r\n\u0000]/.test(value) || !value.trim() || value.trim().length > 180) throw new Error("Indica el nombre de la empresa en una sola l\xEDnea, con hasta 180 caracteres.");
+  return value.trim();
+}
+function emailSubject(name) {
+  return `${companyName(name)}: menos b\xFAsquedas, respuestas m\xE1s r\xE1pidas`;
+}
+
+// supabase/functions/_shared/outreach-templates.mjs
+var ZOHO_DEFAULTS = Object.freeze({
+  accountsUrl: "https://accounts.zoho.com/oauth/v2/token",
+  apiUrl: "https://mail.zoho.com/api/accounts"
+});
+function prepareZohoEmail(companyName2, to, templateId = "") {
+  if (typeof to !== "string" || !/^\S+@\S+\.\S+$/.test(to.trim())) throw new Error("Registra un correo v\xE1lido para esta empresa.");
+  if (!templateId) throw new Error("Falta identificar la plantilla guardada de Zoho.");
+  return { fromAddress: OUTREACH.senderEmail, toAddress: to.trim(), subject: emailSubject(companyName2), templateId, templateParams: { empresa: companyName2 } };
+}
+
+// supabase/functions/_shared/email-core.mjs
+var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var fail = (code, message, status = 400) => {
+  throw new OutboundError(code, message, status);
+};
+var ZohoMailClient = class {
+  constructor({ clientId, clientSecret, refreshToken, accountId, fromAddress, templateId, fetcher = fetch }) {
+    Object.assign(this, { clientId, clientSecret, refreshToken, accountId, fromAddress, templateId, fetcher });
+  }
+  get configured() {
+    return [this.clientId, this.clientSecret, this.refreshToken, this.accountId, this.fromAddress].every(Boolean);
+  }
+  async token() {
+    if (!this.configured) fail("ZOHO_NOT_CONFIGURED", "Falta autorizar Zoho Mail en el servidor.", 503);
+    const body = new URLSearchParams({ grant_type: "refresh_token", client_id: this.clientId, client_secret: this.clientSecret, refresh_token: this.refreshToken });
+    const response = await this.fetcher("https://accounts.zoho.com/oauth/v2/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
+    if (!response.ok) fail("ZOHO_AUTH_FAILED", "Zoho no autoriz\xF3 el env\xEDo.", 503);
+    const result = await response.json();
+    if (typeof result.access_token !== "string") fail("ZOHO_AUTH_FAILED", "Zoho no devolvi\xF3 una autorizaci\xF3n v\xE1lida.", 503);
+    return result.access_token;
+  }
+  async send(input) {
+    if (!UUID.test(input.sendId || "")) fail("INVALID_REQUEST", "Identificador de correo inv\xE1lido.");
+    const token = await this.token();
+    if (!this.templateId) fail("ZOHO_TEMPLATE_NOT_CONFIGURED", "Falta el identificador de la plantilla de Zoho.", 503);
+    const body = JSON.stringify({ fromAddress: this.fromAddress, toAddress: input.toAddress, subject: input.subject, templateId: this.templateId, templateParams: JSON.stringify(input.templateParams || {}) });
+    const url = `https://mail.zoho.com/api/accounts/${encodeURIComponent(this.accountId)}/messages`;
+    const response = await this.fetcher(url, { method: "POST", headers: { Authorization: `Zoho-oauthtoken ${token}`, "Content-Type": "application/json" }, body });
+    if (!response.ok) {
+      if (response.status === 429) fail("RATE_LIMITED", "Zoho pidi\xF3 esperar antes de volver a intentar.", 429);
+      fail("ZOHO_SEND_FAILED", "Zoho no acept\xF3 el correo. Revisa la autorizaci\xF3n o la plantilla.", 503);
+    }
+    const result = await response.json().catch(() => ({}));
+    return { providerId: String(result.messageId || result.data?.messageId || "").slice(0, 200), status: "sent" };
+  }
+};
+var EmailService = class {
+  constructor({ store, provider, enabled = false }) {
+    Object.assign(this, { store, provider, enabled });
+  }
+  async context(companyId) {
+    const data = await this.store.loadData(), company = data.companies.find((row) => row.id === companyId);
+    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    return { configured: this.provider.configured && !!this.provider.templateId, enabled: this.enabled, fromAddress: this.provider.fromAddress || "", recipient: company.email || data.contacts.find((row) => row.company_id === companyId && row.email)?.email || "", message: this.provider.templateId ? "Plantilla de Zoho lista para usar." : "Falta identificar la plantilla guardada de Zoho." };
+  }
+  async send(input) {
+    if (input.dryRun !== true && input.dryRun !== false) fail("INVALID_REQUEST", "Indica si deseas validar o enviar.");
+    const data = await this.store.loadData(), company = data.companies.find((row) => row.id === input.companyId);
+    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    const recipient = input.toAddress || company.email || data.contacts.find((row) => row.company_id === company.id && row.email)?.email;
+    if (!recipient) fail("EMAIL_REQUIRED", "Registra un correo para esta empresa.");
+    const prepared = prepareZohoEmail(company.name, recipient, this.provider.templateId);
+    if (input.dryRun) return { status: "validated", toAddress: recipient, subject: prepared.subject };
+    if (!this.enabled) fail("SENDING_DISABLED", "El env\xEDo de Zoho todav\xEDa no est\xE1 activado.", 503);
+    const result = await this.provider.send({ ...prepared, sendId: input.sendId });
+    return { status: "sent", toAddress: recipient, subject: prepared.subject, providerId: result.providerId };
+  }
+};
+
+// supabase/functions/crm-email/index.ts
+var reply = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Access-Control-Allow-Origin": "https://nexoamedida.com", "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS", "Cache-Control": "no-store", "Content-Type": "application/json" } });
+var loadData = async (user) => {
+  const result = emptyData();
+  const { data, error } = await user.from("crm_records").select("*").order("kind").order("id");
+  if (error) throw new OutboundError("DATABASE_ERROR", "No se pudo leer el CRM.", 503);
+  for (const row of data || []) if (result[row.kind]) result[row.kind].push({ ...row.data, id: row.id, version: row.version });
+  return result;
+};
+Deno.serve(async (request) => {
+  try {
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": "https://nexoamedida.com", "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS" } });
+    if (request.method !== "POST") return reply({ error: { code: "METHOD_NOT_ALLOWED", message: "Usa POST." } }, 405);
+    if (request.headers.get("origin") && request.headers.get("origin") !== "https://nexoamedida.com") return reply({ error: { code: "ORIGIN_DENIED", message: "Origen no autorizado." } }, 403);
+    const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !serviceKey || !anonKey) throw new OutboundError("BACKEND_NOT_CONFIGURED", "Falta la configuraci\xF3n interna de Supabase.", 503);
+    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const identity = await authenticateSupabase(request.headers.get("authorization") || "", { service, makeUser: (header) => createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: header } } }) });
+    const input = await request.json();
+    const userData = await loadData(identity.user);
+    const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), accountId: Deno.env.get("ZOHO_ACCOUNT_ID"), templateId: Deno.env.get("ZOHO_TEMPLATE_ID"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" });
+    const api = new EmailService({ store: { loadData: async () => userData }, provider, enabled: Deno.env.get("ZOHO_MAIL_ENABLED") === "true" });
+    if (input.action === "context") return reply(await api.context(input.companyId));
+    if (input.action === "send") return reply({ email: await api.send(input) });
+    throw new OutboundError("INVALID_REQUEST", "Acci\xF3n no disponible.");
+  } catch (error) {
+    const problem = error instanceof OutboundError ? error : new OutboundError("EMAIL_INTEGRATION_ERROR", "No se pudo completar el correo.", 503);
+    return reply({ error: { code: problem.code, message: problem.message } }, problem.status);
+  }
+});

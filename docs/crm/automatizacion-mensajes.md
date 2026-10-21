@@ -40,7 +40,7 @@ La interfaz y los materiales pueden publicarse en GitHub Pages. La función, el 
 
 ## Zoho gratuito y entregabilidad
 
-Julio confirmó la versión gratuita, MX/SPF/DKIM verificados y una prueba de correo satisfactoria. La disponibilidad efectiva de API/OAuth o SMTP en esa cuenta no está comprobada; no se presupone por tener acceso web. No se creó una aplicación OAuth ni se solicitaron contraseñas en el chat. El correo permanece manual durante esta fase; su contenido ya está preparado para una futura conexión.
+Julio confirmó la versión gratuita, MX/SPF/DKIM verificados y una prueba de correo satisfactoria. La disponibilidad efectiva de API/OAuth o SMTP en esa cuenta todavía debe confirmarse al autorizar la aplicación. No se solicita ni se guarda la contraseña de Zoho; la integración espera un refresh token limitado.
 
 La automatización posterior reutilizará el remitente Zoho e incluirá límites del proveedor, duplicados, bloqueo de contactos que pidieron no recibir mensajes y tratamiento de rebotes/rechazos disponibles. No se promete evitar spam: también intervienen autenticación/alineación, reputación, contenido y calidad de las direcciones. El envío individual de Nexo no modifica las condiciones del proveedor ni garantiza un costo o capacidad ilimitados.
 
@@ -49,3 +49,7 @@ La automatización posterior reutilizará el remitente Zoho e incluirá límites
 Si los secretos ya están configurados, la función puede instalarse sin terminal desde Edge Functions → Deploy a new function → Via Editor. El archivo `/SKYROTE13/whatsapp/crm-whatsapp-editor.txt`, generado con esbuild a partir de la entrada original, reúne módulos, plantilla de imagen y lógica de autenticación. Se pega completo en `index.ts`, usando el nombre exacto `crm-whatsapp`. No incorpora valores de variables de entorno. Solo permanecen imports externos `npm:` y `node:`, compatibles con el runtime objetivo.
 
 La opción Verify JWT with legacy secret se desactiva para reproducir `verify_jwt=false` del paquete CLI. La función sigue validando la sesión mediante getUser, membresía y vinculación al propietario. La nueva prueba ejecuta el archivo generado con el registro Deno simulado y SDK Supabase instalado; comprueba OPTIONS, método, rechazo de sesión ausente y falta de configuración interna. No equivale a ejecutar Deno ni a desplegarlo. Pasa la compilación y las 85 pruebas unitarias, además de los nueve recorridos existentes de WhatsApp. No se modificaron tablas ni se guardaron secretos.
+
+## Correo desde la plantilla de Zoho
+
+La ficha de empresa añade «Enviar correo». Nexo no reconstruye el HTML ni vuelve a adjuntar el PDF: solicita a Zoho la plantilla guardada, cambia el destinatario y el asunto con el nombre de la empresa y envía el valor de empresa para el marcador del saludo. La función privada `crm-email` usa OAuth con refresh token y mantiene los secretos en Supabase. Requiere `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_ACCOUNT_ID`, `ZOHO_TEMPLATE_ID`, `ZOHO_FROM_ADDRESS` y `ZOHO_MAIL_ENABLED`. La cuenta gratuita debe permitir el alcance de creación de mensajes; el botón permanece bloqueado hasta que Zoho confirme esa autorización. No se guarda la contraseña de Zoho. El identificador y el marcador de plantilla deben ser compatibles con la API de Zoho; si el plan no admite sustitución de variables, se detiene antes de enviar.
