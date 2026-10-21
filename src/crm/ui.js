@@ -10,7 +10,7 @@ const paths = {
  settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1zM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
  plus:'M12 5v14M5 12h14', search:'M21 21l-5-5m2-6a7 7 0 1 1-14 0 7 7 0 0 1 14 0',
  arrow:'M5 12h14m-6-6 6 6-6 6', diagonal:'M7 17 17 7M7 7h10v10', chevron:'m9 5 7 7-7 7', left:'m15 5-7 7 7 7',
- check:'m5 12 4 4L19 6', download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5', upload:'M12 16V4m-5 5 5-5 5 5M4 16v5h16v-5',
+ check:'m5 12 4 4L19 6', send:'M22 2 11 13M22 2l-7 20-4-9-9-4z', download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5', upload:'M12 16V4m-5 5 5-5 5 5M4 16v5h16v-5',
  close:'m6 6 12 12M6 18 18 6', more:'M5 12h.01M12 12h.01M19 12h.01', menu:'M4 6h16M4 12h16M4 18h16',
  clock:'M12 8v5l3 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0', mail:'M3 5h18v14H3zM3 5l9 8 9-8',
  phone:'M7 3 3 5c0 9 7 16 16 16l2-4-5-3-2 2c-3-1-5-3-6-6l2-2z', chat:'M21 11a8 8 0 0 1-8 8H6l-4 3 1-6a8 8 0 1 1 18-5',
