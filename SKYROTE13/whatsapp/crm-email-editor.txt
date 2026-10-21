@@ -8,20 +8,469 @@ import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 import { createHash as createHash2 } from "node:crypto";
 
 // supabase/functions/_shared/crm/domain.js
+var ZONE = "America/Lima";
 var TYPES = ["companies", "contacts", "deals", "tasks", "activities", "payments", "milestones", "settings"];
+var STAGES = { diagnostico: "Filtrado", demo: "Contactado", propuesta: "Seguimiento", ganada: "Ganado", perdida: "Perdido" };
+var STAGE_STATUS = { diagnostico: "nueva", demo: "contactada", propuesta: "conversacion", ganada: "cliente", perdida: "no_contactar" };
+var CONTACT_CHANNELS = { correo: "Correo", whatsapp: "WhatsApp", llamada: "Llamada", instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn", presencial: "Presencial", otro: "Otro canal" };
 var emptyData = () => Object.fromEntries(TYPES.map((type) => [type, []]));
+var id = () => crypto.randomUUID();
+function today(now = /* @__PURE__ */ new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now);
+  const get = (type) => parts.find((part) => part.type === type).value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+function localTime(now = /* @__PURE__ */ new Date()) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: ZONE, hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
+}
+var isOpen = (deal) => !["ganada", "perdida"].includes(deal.stage) && !deal.archived;
+var isPending = (task) => !["hecha", "cancelada"].includes(task.status);
+function dealStageKey(deal) {
+  const row = typeof deal === "string" ? { stage: deal } : deal;
+  return row?.stage === "negociacion" || row?.stage === "demo" && row.pipeline_version !== 2 ? "propuesta" : row?.stage;
+}
+function activityTime(activity) {
+  const value = activity.occurred_at || (["contacto", "respuesta"].includes(activity.kind) ? activity.created_at : "") || (activity.date ? `${activity.date}T${activity.time || "12:00"}:00-05:00` : activity.created_at);
+  return value && !Number.isNaN(Date.parse(value)) ? new Date(value).toISOString() : "";
+}
+function contactHistory(companyId, data) {
+  const rows = (data.activities || []).filter((row) => row.company_id === companyId);
+  const attempts = rows.filter((row) => row.kind === "contacto" || ["correo", "whatsapp", "llamada", "reunion", "presencial"].includes(row.kind));
+  attempts.sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+  const contact = attempts[0];
+  if (!contact) {
+    const responses2 = rows.filter((row) => row.kind === "respuesta").sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+    return { contact: null, at: "", channels: [], response: responses2[0] || null };
+  }
+  const at = activityTime(contact);
+  const group = attempts.filter((row) => activityTime(row) === at);
+  const channels = [...new Set(group.flatMap((row) => row.kind === "contacto" ? row.channels || [] : [row.kind === "reunion" ? "presencial" : row.kind]))].filter((key) => CONTACT_CHANNELS[key]);
+  const responses = rows.filter((row) => row.kind === "respuesta" && (row.contact_id === contact.id || !row.contact_id && activityTime(row) >= at));
+  responses.push(...group.filter((row) => ["conversacion", "no_interes", "no_contactar"].includes(row.outcome)));
+  responses.sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+  return { contact, at, channels, response: responses[0] || null };
+}
+function companyStage(company, data) {
+  if (STAGES[company.pipeline_stage]) return company.pipeline_stage;
+  if (["no_contactar", "no_encaja"].includes(company.status)) return "perdida";
+  const deals = (data.deals || []).filter((row) => row.company_id === company.id && !row.archived);
+  const open = deals.filter(isOpen);
+  if (open.some((row) => dealStageKey(row) === "propuesta")) return "propuesta";
+  if (!open.length && (deals.some((row) => row.stage === "ganada") || company.status === "cliente")) return "ganada";
+  if (!open.length && deals.some((row) => row.stage === "perdida")) return "perdida";
+  if (["conversacion", "calificada"].includes(company.status)) return "propuesta";
+  const history = contactHistory(company.id, data);
+  if (history.response?.outcome === "conversacion") return "propuesta";
+  if (history.response && ["no_interes", "no_contactar"].includes(history.response.outcome)) return "perdida";
+  if (history.contact || company.status === "contactada" || open.some((row) => dealStageKey(row) === "demo")) return "demo";
+  return "diagnostico";
+}
+
+// supabase/functions/_shared/crm/prospecting.js
+var op = (type, record) => ({ type, record, expected: record.version || 0 });
+var stamp = (now) => ({ occurred_at: now.toISOString(), date: today(now), time: localTime(now) });
+var companyUpdate = (company, stage) => ({ ...company, status: STAGE_STATUS[stage], pipeline_stage: stage });
+var log = (company, body, now) => op("activities", { id: id(), company_id: company.id, deal_id: "", kind: "sistema", outcome: "comentario", body, ...stamp(now) });
+var assertSize = (operations) => {
+  if (operations.length > 180) throw new Error("Esta empresa tiene demasiadas tareas vinculadas para cerrar todo de una vez. Reduce las tareas pendientes antes de volver a intentarlo.");
+  return operations;
+};
+function stageOperations(data, company, stage, { reason = "", now = /* @__PURE__ */ new Date(), allowContact = false } = {}) {
+  if (!STAGES[stage]) throw new Error("Elige una etapa v\xE1lida.");
+  if (stage === "demo" && !allowContact) throw new Error("Registra los canales antes de pasar a Contactado.");
+  if (stage === "ganada") throw new Error("Registra el importe y la fecha para confirmar una venta ganada.");
+  if (stage === "perdida" && !reason.trim()) throw new Error("Indica el motivo del cierre.");
+  const operations = [op("companies", companyUpdate(company, stage))];
+  const open = data.deals.filter((deal) => deal.company_id === company.id && isOpen(deal));
+  for (const deal of open) operations.push(op("deals", { ...deal, stage, pipeline_version: 2, closed_date: stage === "perdida" ? today(now) : "", lost_reason: stage === "perdida" ? reason.trim() : "", next_step: stage === "perdida" ? "" : deal.next_step || "", next_action_date: stage === "perdida" ? "" : deal.next_action_date || "" }));
+  if (stage === "perdida") {
+    for (const task of data.tasks.filter((task2) => task2.company_id === company.id && isPending(task2))) {
+      const deal = data.deals.find((deal2) => deal2.id === task.deal_id);
+      if (deal?.stage === "ganada" || task.kind === "entrega") continue;
+      operations.push(op("tasks", { ...task, status: "cancelada", cancel_reason: reason.trim() }));
+    }
+  }
+  operations.push(log(company, `${STAGES[stage]}${reason ? ": " + reason.trim() : ""}`, now));
+  return assertSize(operations);
+}
+function contactOperations(data, company, channels, { body = "", move = false, allowReopen = false, now = /* @__PURE__ */ new Date() } = {}) {
+  if (!Array.isArray(channels) || channels.some((key) => !CONTACT_CHANNELS[key])) throw new Error("Revisa los canales seleccionados.");
+  const chosen = Object.keys(CONTACT_CHANNELS).filter((key) => channels.includes(key));
+  if (!chosen.length) throw new Error("Elige al menos un canal de contacto.");
+  const current = companyStage(company, data);
+  if (current === "perdida" && !allowReopen) throw new Error("El seguimiento est\xE1 cerrado. Reabre la empresa antes de contactarla.");
+  const stage = move || current === "diagnostico" ? "demo" : current;
+  let operations;
+  if (stage !== current || move) operations = stageOperations(data, company, stage, { allowContact: true, now });
+  else operations = [op("companies", companyUpdate(company, stage))];
+  const contact = { id: id(), company_id: company.id, deal_id: "", kind: "contacto", channels: chosen, outcome: "sin_respuesta", body: body.trim() || `Contacto realizado por ${chosen.map((key) => CONTACT_CHANNELS[key]).join(" y ")}.`, ...stamp(now) };
+  operations.push(op("activities", contact));
+  return assertSize(operations);
+}
+
+// supabase/functions/_shared/whatsapp-domain.mjs
+function normalizeWhatsAppPhone(value) {
+  let digits = String(value || "").replace(/\D/g, "").replace(/^00/, "");
+  if (/^9\d{8}$/.test(digits)) digits = "51" + digits;
+  return /^[1-9]\d{7,14}$/.test(digits) ? "+" + digits : "";
+}
+function recipientChoices(data, company) {
+  return [{ id: "", name: "Tel\xE9fono de la empresa", phone: normalizeWhatsAppPhone(company.phone) }, ...data.contacts.filter((row) => row.company_id === company.id).map((row) => ({ id: row.id, name: row.name, phone: normalizeWhatsAppPhone(row.phone) }))].filter((row) => row.phone);
+}
+function priorEmail(data, companyId) {
+  return data.activities.filter((row) => row.company_id === companyId && (row.kind === "correo" || row.kind === "contacto" && row.channels?.includes("correo"))).sort((a, b) => (b.occurred_at || b.created_at || b.date || "").localeCompare(a.occurred_at || a.created_at || a.date || ""))[0] || null;
+}
 
 // supabase/functions/_shared/lr-whatsapp-client.mjs
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
 var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+var MAX_CAPTION_LENGTH = 1024;
+var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var MESSAGE_STATES = /* @__PURE__ */ new Set(["queued", "processing", "sent", "failed", "uncertain", "cancelled"]);
+var LrApiError = class extends Error {
+  constructor(status, code, message, retryAfter = null) {
+    super(message);
+    this.name = "LrApiError";
+    this.status = status;
+    this.code = code;
+    this.retryAfter = retryAfter;
+  }
+};
+var LrTransportError = class extends Error {
+  constructor(phase, mayHaveBeenAccepted) {
+    super(mayHaveBeenAccepted ? "No se pudo confirmar la respuesta. Consulta o repite con la MISMA clave de idempotencia." : "No se pudo completar la conexi\xF3n con LR. Conserva el mismo identificador al reintentar.");
+    this.name = "LrTransportError";
+    this.phase = phase;
+    this.mayHaveBeenAccepted = mayHaveBeenAccepted;
+  }
+};
+function ensure(condition, message) {
+  if (!condition) throw new TypeError(message);
+}
+function imageMime(bytes) {
+  if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
+  if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return "image/png";
+  if (bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP") return "image/webp";
+  return null;
+}
+function validateSend(input) {
+  ensure(UUID.test(input.sendId), "sendId debe ser un UUID persistido para este env\xEDo.");
+  ensure(typeof input.to === "string" && /^\+[1-9][0-9]{7,14}$/.test(input.to), "Usa tel\xE9fono internacional, por ejemplo +51 seguido del celular.");
+  ensure(typeof input.caption === "string" && input.caption.trim().length > 0, "Escribe el texto del mensaje.");
+  ensure(input.caption.length <= MAX_CAPTION_LENGTH, "El texto con imagen admite hasta 1024 unidades UTF-16.");
+  ensure(Buffer.isBuffer(input.image), "image debe ser un Buffer.");
+  ensure(input.image.length > 0 && input.image.length <= MAX_IMAGE_BYTES, "La imagen debe pesar como m\xE1ximo 5 MiB.");
+  ensure(imageMime(input.image) === input.mime && ["image/jpeg", "image/png", "image/webp"].includes(input.mime), "El archivo no coincide con el tipo JPEG, PNG o WebP indicado.");
+  ensure(typeof input.externalContactId === "string" && input.externalContactId.length > 0 && input.externalContactId.length <= 128, "Indica el identificador del contacto en tu CRM.");
+  ensure(input.consent?.confirmed === true, "Debes confirmar autorizaci\xF3n del destinatario.");
+  ensure(typeof input.consent.source === "string" && input.consent.source.trim().length > 0 && input.consent.source.length <= 200, "Indica el origen de la autorizaci\xF3n.");
+  const consentDate = input.consent.capturedAt;
+  ensure(typeof consentDate === "string" && /^\d{4}-\d\d-\d\dT/.test(consentDate) && Number.isFinite(Date.parse(consentDate)) && Date.parse(consentDate) <= Date.now() + 3e5, "capturedAt debe ser una fecha ISO real, no futura.");
+  ensure(input.dryRun === void 0 || typeof input.dryRun === "boolean", "dryRun debe ser booleano.");
+}
+var LrWhatsAppClient = class {
+  constructor({ token, endpoint = "https://www.sistemalr.com/api/bot-action?externalWhatsApp=v1", fetcher = globalThis.fetch }) {
+    ensure(typeof token === "string" && token.length >= 32 && !/[\r\n]/.test(token) && !token.includes("REEMPLAZAR_"), "Configura una clave privada de integraci\xF3n v\xE1lida.");
+    const url = new URL(endpoint);
+    ensure(url.protocol === "https:" && !url.username && !url.password && !url.hash, "El endpoint debe usar HTTPS sin credenciales en la URL.");
+    ensure(url.searchParams.get("externalWhatsApp") === "v1", "El endpoint debe seleccionar el contrato externalWhatsApp=v1.");
+    ensure(typeof fetcher === "function", "Se requiere fetch de Node.js.");
+    this.endpoint = url;
+    this.token = token;
+    this.fetcher = fetcher;
+  }
+  async request(action, { method = "GET", body, key, messageId } = {}) {
+    const url = new URL(this.endpoint);
+    url.searchParams.set("action", action);
+    if (messageId) url.searchParams.set("messageId", messageId);
+    const headers = { Authorization: `Bearer ${this.token}`, Accept: "application/json" };
+    if (body !== void 0) headers["Content-Type"] = "application/json";
+    if (key) headers["Idempotency-Key"] = key;
+    let response;
+    try {
+      response = await this.fetcher(url, {
+        method,
+        headers,
+        body: body === void 0 ? void 0 : JSON.stringify(body),
+        redirect: "error",
+        signal: AbortSignal.timeout(2e4)
+      });
+    } catch {
+      throw new LrTransportError(action, action === "messages" && body?.dryRun === false);
+    }
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new LrTransportError(action, action === "messages" && body?.dryRun === false);
+    }
+    if (!response.ok) {
+      throw new LrApiError(
+        response.status,
+        result.error?.code || "LR_ERROR",
+        result.error?.message || "LR rechaz\xF3 la solicitud.",
+        response.headers.get("Retry-After")
+      );
+    }
+    return result;
+  }
+  /** No devuelve QR ni permite conectar, desconectar o cambiar la sesión. */
+  async connection() {
+    const result = await this.request("connection");
+    ensure(result.senderPhone === "+51936755465" && typeof result.ready === "boolean", "LR no confirm\xF3 el remitente autorizado.");
+    return result;
+  }
+  /**
+   * Reintentar siempre con los mismos bytes, campos y sendId.
+   * dryRun es true por defecto: para un envío real se exige false explícito.
+   */
+  async submitImage(input) {
+    validateSend(input);
+    const dryRun = input.dryRun ?? true;
+    const sha256 = createHash("sha256").update(input.image).digest("hex");
+    const media = await this.request("media", {
+      method: "POST",
+      key: `${input.sendId}:image`,
+      body: { mime: input.mime, size: input.image.length, sha256 }
+    });
+    ensure(UUID.test(media.mediaId) && typeof media.uploadRequired === "boolean", "LR devolvi\xF3 un permiso de imagen inv\xE1lido.");
+    if (media.uploadRequired) {
+      const url = new URL(media.uploadUrl);
+      ensure(url.protocol === "https:" && url.hostname.endsWith(".r2.cloudflarestorage.com") && !url.username && !url.password && !url.port, "LR devolvi\xF3 un destino de subida no autorizado.");
+      const signedHeaders = media.requiredHeaders;
+      ensure(signedHeaders && Object.keys(signedHeaders).length === 1 && signedHeaders["Content-Type"] === input.mime, "Cabeceras de subida no autorizadas.");
+      let response;
+      try {
+        response = await this.fetcher(url, {
+          method: "PUT",
+          headers: signedHeaders,
+          body: input.image,
+          redirect: "error",
+          signal: AbortSignal.timeout(6e4)
+        });
+      } catch {
+        throw new LrTransportError("upload", false);
+      }
+      if (!response.ok) throw new LrApiError(response.status, "UPLOAD_FAILED", "No se pudo subir la imagen; repite el flujo con el mismo sendId.");
+    }
+    const result = await this.request("messages", {
+      method: "POST",
+      key: input.sendId,
+      body: {
+        to: input.to,
+        caption: input.caption,
+        mediaId: media.mediaId,
+        externalContactId: input.externalContactId,
+        consent: input.consent,
+        dryRun
+      }
+    });
+    if (dryRun) ensure(result.dryRun === true && result.enqueued === false && result.valid === true, "LR no confirm\xF3 el modo de prueba sin env\xEDo.");
+    else ensure(UUID.test(result.messageId) && MESSAGE_STATES.has(result.status), "LR no devolvi\xF3 un registro de env\xEDo v\xE1lido; consulta con el mismo sendId.");
+    return result;
+  }
+  async status(messageId) {
+    ensure(UUID.test(messageId), "messageId debe ser el UUID de LR.");
+    const result = await this.request("message", { messageId });
+    ensure(result.messageId === messageId && MESSAGE_STATES.has(result.status), "LR devolvi\xF3 un estado inv\xE1lido.");
+    return result;
+  }
+};
 
 // supabase/functions/_shared/whatsapp-core.mjs
+var UUID2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var LR_STATES = ["queued", "processing", "sent", "failed", "uncertain", "cancelled"];
 var OutboundError = class extends Error {
   constructor(code, message, status = 400) {
     super(message);
     this.code = code;
     this.status = status;
+  }
+};
+var fail = (code, message, status) => {
+  throw new OutboundError(code, message, status);
+};
+var digest = (value) => createHash2("sha256").update(value).digest("hex");
+var blocked = (company) => !company || company.archived || ["no_contactar", "no_encaja"].includes(company.status) || company.pipeline_stage === "perdida";
+var PUBLIC_JOB_FIELDS = /* @__PURE__ */ new Set(["id", "company_id", "recipient", "caption", "contact_id", "status", "provider_message_id", "provider_whatsapp_id", "error_code", "error_message", "sent_at", "logged_at", "version", "created_at", "updated_at", "log_pending", "refresh_pending"]);
+var publicJob = (job) => {
+  if (!job) return null;
+  const result = Object.fromEntries(Object.entries(job).filter(([key]) => PUBLIC_JOB_FIELDS.has(key)));
+  if (job.status === "prepared" && ["RATE_LIMITED", "QUEUE_LIMIT"].includes(job.error_code) && job.lease_until) result.retry_at = job.lease_until;
+  return result;
+};
+var SAFE_LR_CODES = /* @__PURE__ */ new Set(["INVALID_REQUEST", "INVALID_INTEGRATION_KEY", "INTEGRATION_DISABLED", "SCOPE_DENIED", "NOT_FOUND", "IDEMPOTENCY_CONFLICT", "IMAGE_TOO_LARGE", "UNSUPPORTED_MEDIA_TYPE", "MEDIA_NOT_READY", "MEDIA_INTEGRITY_MISMATCH", "RATE_LIMITED", "QUEUE_LIMIT", "SESSION_NOT_READY", "SENDER_IDENTITY_MISMATCH", "UPLOAD_FAILED"]);
+var WhatsAppService = class {
+  constructor({ store, provider, loadImage, imageHash, configured = false, enabled = false, now = () => /* @__PURE__ */ new Date() }) {
+    Object.assign(this, { store, provider, loadImage, imageHash, configured, enabled, now });
+  }
+  async company(companyId) {
+    const data = await this.store.loadData();
+    const company = data.companies.find((row) => row.id === companyId);
+    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    return { data, company };
+  }
+  async context(companyId) {
+    await this.company(companyId);
+    const jobs = await this.store.listJobs(companyId);
+    let ready = false, message = this.configured ? "La conexi\xF3n est\xE1 pendiente de comprobar." : "Falta configurar la conexi\xF3n privada de LR en el servidor.";
+    if (this.configured) {
+      try {
+        const connection = await this.provider.connection();
+        ready = connection.ready;
+        message = ready ? "Conectado al WhatsApp de Julio." : "Vincula el n\xFAmero de Julio en Sistema LR \u2192 Campa\xF1as \u2192 Mi WhatsApp comercial. Puedes validar el mensaje sin enviarlo.";
+      } catch {
+        message = "LR todav\xEDa no confirm\xF3 su conexi\xF3n. Revisa que el puente est\xE9 habilitado y la clave sea v\xE1lida.";
+      }
+    }
+    return { configured: this.configured, enabled: this.enabled, ready, senderPhone: "+51936755465", message, jobs: jobs.map(publicJob) };
+  }
+  async prepare(input) {
+    if (!this.configured) fail("LR_NOT_CONFIGURED", "Falta configurar la conexi\xF3n privada de LR.", 503);
+    if (!UUID2.test(input.requestId || "")) fail("INVALID_REQUEST", "No se pudo identificar este intento. Vuelve a abrir el mensaje.");
+    const { data, company } = await this.company(input.companyId);
+    if (blocked(company) || companyStage(company, data) === "perdida") fail("CONTACT_BLOCKED", "El seguimiento de esta empresa est\xE1 cerrado o archivado.");
+    const contact = input.contactId ? data.contacts.find((row) => row.id === input.contactId && row.company_id === company.id) : company;
+    const recipient = normalizeWhatsAppPhone(contact?.phone);
+    if (!recipient) fail("INVALID_PHONE", "Registra un tel\xE9fono internacional v\xE1lido en la empresa o contacto.");
+    const caption = typeof input.caption === "string" ? input.caption : "";
+    if (!caption.trim() || caption.length > 1024) fail("INVALID_CAPTION", "El mensaje debe tener entre 1 y 1024 caracteres.");
+    const email = priorEmail(data, company.id);
+    if (/(?:le|les|te) (?:envi[eé]|enviamos) un correo/i.test(caption) && !email && input.emailAlreadySent !== true) fail("EMAIL_REQUIRED", "Este mensaje dice que ya enviaste un correo. Registra o confirma ese env\xEDo primero.");
+    const consent = input.consent;
+    if (consent?.confirmed !== true || typeof consent.source !== "string" || !consent.source.trim() || consent.source.length > 200 || typeof consent.capturedAt !== "string" || !/^\d{4}-\d\d-\d\dT/.test(consent.capturedAt) || !Number.isFinite(Date.parse(consent.capturedAt)) || Date.parse(consent.capturedAt) > this.now().getTime() + 3e5) fail("CONSENT_REQUIRED", "La conexi\xF3n LR exige registrar la autorizaci\xF3n del destinatario y su origen.");
+    const normalizedConsent = { confirmed: true, source: consent.source.trim(), capturedAt: consent.capturedAt };
+    const hash = digest(JSON.stringify({ company: company.id, contact: input.contactId || "", recipient, caption, image: this.imageHash, consentSource: normalizedConsent.source }));
+    return this.store.prepareJob({ id: input.requestId, company_id: company.id, contact_id: input.contactId || "", recipient, caption, image_sha256: this.imageHash, payload_hash: hash, consent: normalizedConsent, email_evidence: email ? { type: "activity", id: email.id } : /correo/i.test(caption) ? { type: "manual", recorded_at: this.now().toISOString() } : { type: "not_mentioned" } });
+  }
+  async ensureEligible(job) {
+    const { data, company } = await this.company(job.company_id);
+    if (blocked(company) || companyStage(company, data) === "perdida") fail("CONTACT_BLOCKED", "La empresa cerr\xF3 su seguimiento. No se solicitar\xE1 otro env\xEDo.");
+    const contact = job.contact_id ? data.contacts.find((row) => row.id === job.contact_id && row.company_id === company.id) : company;
+    if (normalizeWhatsAppPhone(contact?.phone) !== job.recipient) fail("RECIPIENT_CHANGED", "El tel\xE9fono cambi\xF3 desde que preparaste este mensaje. Revisa el intento antes de enviar.");
+  }
+  async submit(input) {
+    if (input.dryRun !== true && input.dryRun !== false) fail("INVALID_REQUEST", "Indica si deseas validar o enviar.");
+    if (input.dryRun === false && !this.enabled) fail("SENDING_DISABLED", "El env\xEDo real todav\xEDa no est\xE1 activado en el servidor.", 503);
+    const job = await this.prepare(input);
+    return this.dispatch(job, input.dryRun);
+  }
+  async dispatch(job, dryRun, recover = false) {
+    if (["queued", "processing", "sent", "cancelled", "failed"].includes(job.status) || job.status === "uncertain" && !recover) return publicJob(await this.refreshInternal(job));
+    if (["submitting", "validating"].includes(job.status)) return publicJob(await this.refreshInternal(job));
+    if (!this.configured) fail("LR_NOT_CONFIGURED", "Falta configurar LR.", 503);
+    if (!dryRun && !this.enabled) fail("SENDING_DISABLED", "El env\xEDo real todav\xEDa no est\xE1 activado.", 503);
+    if (["RATE_LIMITED", "QUEUE_LIMIT"].includes(job.error_code) && Date.parse(job.lease_until) > this.now().getTime()) fail("RATE_LIMITED", "LR pidi\xF3 esperar antes de volver a intentar.", 429);
+    await this.ensureEligible(job);
+    job = await this.store.claimJob(job, dryRun);
+    let mayHaveSent = false;
+    try {
+      if (!recover && !dryRun) {
+        const connection = await this.provider.connection();
+        if (!connection.ready) fail("SESSION_NOT_READY", "El WhatsApp de Julio no est\xE1 conectado en LR.", 503);
+      }
+      const image = await this.loadImage();
+      if (digest(image) !== job.image_sha256) fail("IMAGE_CHANGED", "La imagen cambi\xF3. Es necesario revisar la versi\xF3n antes de enviar.");
+      await this.ensureEligible(job);
+      mayHaveSent = !dryRun;
+      const result = await this.provider.submitImage({ sendId: job.id, to: job.recipient, caption: job.caption, image, mime: "image/jpeg", externalContactId: job.contact_id || job.company_id, consent: job.consent, dryRun });
+      if (dryRun) {
+        job = await this.store.updateJob(job, { status: "validated", lease_until: null, error_code: null, error_message: null });
+        return publicJob(job);
+      }
+      job = await this.applyProvider(job, result);
+      if (job.status === "sent") {
+        try {
+          job = await this.logSent(job);
+        } catch {
+          job = { ...job, log_pending: true };
+        }
+      }
+      return publicJob(job);
+    } catch (error) {
+      const uncertain = mayHaveSent && !(error instanceof LrTransportError && !error.mayHaveBeenAccepted) && !(error instanceof LrApiError && error.status >= 400 && error.status < 500);
+      const code = error instanceof OutboundError ? error.code : error instanceof LrApiError && SAFE_LR_CODES.has(error.code) ? error.code : uncertain ? "ACCEPTANCE_UNCERTAIN" : "CONNECTION_FAILED";
+      const message = uncertain ? "No se pudo confirmar el resultado. Revisa este mismo intento; no crees otro env\xEDo." : error instanceof OutboundError ? error.message : "LR no acept\xF3 el env\xEDo. Revisa la conexi\xF3n o la configuraci\xF3n antes de volver a intentar.";
+      let retryAt = null;
+      if (error instanceof LrApiError && error.status === 429) {
+        const raw = String(error.retryAfter || "");
+        const time = /^\d+$/.test(raw) ? this.now().getTime() + Number(raw) * 1e3 : Date.parse(raw);
+        retryAt = new Date(Number.isFinite(time) && time > this.now().getTime() && time < this.now().getTime() + 2592e6 ? time : this.now().getTime() + 6e4).toISOString();
+      }
+      job = await this.store.updateJob(job, { status: uncertain ? "uncertain" : "prepared", lease_until: retryAt, error_code: retryAt ? code === "QUEUE_LIMIT" ? "QUEUE_LIMIT" : "RATE_LIMITED" : code, error_message: retryAt ? "LR alcanz\xF3 su l\xEDmite de env\xEDo. Espera el plazo indicado antes de volver a intentar." : message });
+      return publicJob(job);
+    }
+  }
+  async applyProvider(job, result) {
+    if (!result || !UUID2.test(result.messageId || "") || !LR_STATES.includes(result.status) || result.senderPhone && result.senderPhone !== "+51936755465") fail("INVALID_PROVIDER_RESPONSE", "LR devolvi\xF3 un estado que no se pudo comprobar.", 502);
+    const reported = result.updatedAt;
+    const time = typeof reported === "string" && Number.isFinite(Date.parse(reported)) && Date.parse(reported) <= this.now().getTime() + 3e5 ? new Date(reported).toISOString() : this.now().toISOString();
+    return this.store.updateJob(job, { status: result.status, provider_message_id: result.messageId, provider_whatsapp_id: typeof result.whatsappMessageId === "string" ? result.whatsappMessageId.slice(0, 200) : null, sent_at: result.status === "sent" ? job.sent_at || time : null, lease_until: null, error_code: result.status === "failed" ? "LR_SEND_FAILED" : null, error_message: result.status === "failed" ? "LR inform\xF3 que no se pudo enviar. Revisa el intento antes de repetirlo." : null });
+  }
+  async logSent(job) {
+    if (job.logged_at) return job;
+    const activityId = "wa-" + job.id;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const data = await this.store.loadData();
+      if (data.activities.some((row) => row.id === activityId)) return this.store.updateJob(job, { logged_at: this.now().toISOString(), error_code: null, error_message: null });
+      const company = data.companies.find((row) => row.id === job.company_id);
+      if (!company) return job;
+      const now = new Date(job.sent_at || this.now());
+      const operations = companyStage(company, data) === "perdida" || company.archived ? [{ type: "activities", expected: 0, record: { id: activityId, company_id: company.id, deal_id: "", kind: "contacto", channels: ["whatsapp"], outcome: "sin_respuesta", body: job.caption, occurred_at: now.toISOString(), date: today(now), time: localTime(now) } }] : contactOperations(data, company, ["whatsapp"], { body: job.caption, now });
+      const record = operations.find((op2) => op2.type === "activities" && op2.record.kind === "contacto").record;
+      record.id = activityId;
+      record.outbound_id = job.id;
+      record.provider_message_id = job.provider_message_id;
+      try {
+        await this.store.commit(operations);
+        return await this.store.updateJob(job, { logged_at: this.now().toISOString(), error_code: null, error_message: null });
+      } catch {
+      }
+    }
+    return { ...job, log_pending: true };
+  }
+  async refreshInternal(job) {
+    if (job.status === "sent") {
+      try {
+        return await this.logSent(job);
+      } catch {
+        return { ...job, log_pending: true };
+      }
+    }
+    if (["submitting", "validating"].includes(job.status) && job.lease_until && Date.parse(job.lease_until) <= this.now().getTime()) return this.store.updateJob(job, { status: job.status === "submitting" ? "uncertain" : "prepared", lease_until: null, error_code: "INTERRUPTED", error_message: job.status === "submitting" ? "El intento se interrumpi\xF3. Puede haberse aceptado; revisa este mismo intento." : "La validaci\xF3n se interrumpi\xF3 sin solicitar env\xEDo." });
+    if (!job.provider_message_id || !["queued", "processing", "uncertain"].includes(job.status)) return job;
+    if (!this.configured) return job;
+    try {
+      job = await this.applyProvider(job, await this.provider.status(job.provider_message_id));
+    } catch {
+      return { ...job, refresh_pending: true };
+    }
+    if (job.status === "sent") {
+      try {
+        return await this.logSent(job);
+      } catch {
+        return { ...job, log_pending: true };
+      }
+    }
+    return job;
+  }
+  async refresh(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    return publicJob(await this.refreshInternal(await this.store.getJob(id2)));
+  }
+  async recover(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    let job = await this.store.getJob(id2);
+    job = await this.refreshInternal(job);
+    if (job.provider_message_id || job.status !== "uncertain") return publicJob(job);
+    return this.dispatch(job, false, true);
+  }
+  async cancel(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    const job = await this.store.getJob(id2);
+    if (!["prepared", "validated"].includes(job.status)) fail("JOB_BUSY", "Solo se puede descartar un borrador que todav\xEDa no se ha solicitado.");
+    return publicJob(await this.store.updateJob(job, { status: "cancelled", lease_until: null }));
   }
 };
 
@@ -35,6 +484,54 @@ async function authenticateSupabase(authorization, { service, makeUser }) {
   if (membershipError || !member) throw new OutboundError("NOT_AUTHORIZED", "Esta cuenta no est\xE1 autorizada en Nexo CRM.", 403);
   return { service, user, owner: data.user.id };
 }
+function authorizeSenderOwner(owner, expectedOwner, configured) {
+  if (!configured) return;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expectedOwner || "")) throw new OutboundError("SENDER_OWNER_NOT_CONFIGURED", "Falta vincular el WhatsApp de Julio a su usuario del CRM. Revisa los pasos de activaci\xF3n.", 503);
+  if (owner !== expectedOwner) throw new OutboundError("SENDER_NOT_AUTHORIZED", "Esta cuenta no est\xE1 autorizada para usar el WhatsApp de Julio.", 403);
+}
+
+// supabase/functions/_shared/sectors.mjs
+var TEMPLATE_VERSION = "sector-queue-v2";
+var SECTOR_LABELS = { impresion: "Impresoras y fotocopiadoras", computadoras: "Laptops y computadoras", general: "Presentaci\xF3n general" };
+var base = "https://nexoamedida.com";
+var clean = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+var escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+function sectorFor(company = {}, override = "auto") {
+  if (Object.hasOwn(SECTOR_LABELS, override)) return override;
+  const sector = clean(company.sector), name = clean(company.name);
+  if (/laptop|computador|informatica|ordenador|notebook/.test(sector)) return "computadoras";
+  if (/impres|fotocopi|multifuncional/.test(sector)) return "impresion";
+  if (/laptop|computador|notebook/.test(name)) return "computadoras";
+  if (/impres|fotocopi/.test(name)) return "impresion";
+  return "general";
+}
+var SECTOR_CONTENT = {
+  impresion: { label: SECTOR_LABELS.impresion, kicker: "ALQUILER DE EQUIPOS DE IMPRESI\xD3N", headline: "Del reporte t\xE9cnico\na facturaci\xF3n, sin esperas.", subject: "contadores y reportes, listos para facturar", question: "\xBFEl contador est\xE1 listo, pero facturaci\xF3n sigue esperando el reporte?", pain: "Cuando el reporte t\xE9cnico queda en papel, en un PDF suelto o en el celular de alguien, facturaci\xF3n tiene que buscarlo o pedirlo. Administraci\xF3n vuelve a reunir la misma informaci\xF3n para conocer lo que pas\xF3 con el equipo.", solution: "En Nexo creamos sistemas a medida para que el t\xE9cnico registre el contador, la intervenci\xF3n y los repuestos desde su celular. Al guardar, esa informaci\xF3n queda relacionada con el equipo y disponible para facturaci\xF3n y administraci\xF3n, seg\xFAn sus permisos.", benefit: "Menos llamadas para pedir un reporte. M\xE1s claridad para preparar la facturaci\xF3n y atender al cliente.", before: ["Pedir el reporte al t\xE9cnico.", "Buscar el contador entre archivos.", "Unir los datos para facturar."], after: ["El t\xE9cnico registra la visita.", "Equipo, contador y PDF quedan unidos.", "Facturaci\xF3n consulta el mismo registro."], facts: ["Equipo y n\xFAmero de serie", "Lecturas con fecha y evidencia", "Repuestos, visita y reporte PDF"], benefits: [["Facturar con respaldo", "Contadores y documentos asociados al periodo y al equipo, con revisi\xF3n antes de emitir."], ["Resolver consultas", "Consultar qu\xE9 se hizo, cu\xE1ndo y con qu\xE9 repuestos sin interrumpir al t\xE9cnico."], ["Coordinar entre \xE1reas", "El dato registrado se comparte con las personas autorizadas, sin volver a digitarlo."]], flow: ["T\xE9cnico registra", "Sistema relaciona", "Facturaci\xF3n consulta"], whatsapp: "\xBFSu equipo de facturaci\xF3n tiene que pedir al t\xE9cnico el reporte o buscar el contador antes de preparar una factura?\n\nEn Nexo conectamos reportes, contadores y repuestos con cada impresora. El t\xE9cnico registra la visita y las \xE1reas autorizadas pueden consultar la misma informaci\xF3n al guardarla.\n\nMenos b\xFAsquedas y menos esperas entre \xE1reas." },
+  computadoras: { label: SECTOR_LABELS.computadoras, kicker: "ALQUILER DE LAPTOPS Y COMPUTADORAS", headline: "Sepa qu\xE9 equipo puede alquilar.\nY cu\xE1ndo vuelve.", subject: "disponibilidad y devoluciones, bajo control", question: "Un cliente pide laptops. \xBFSabe cu\xE1les est\xE1n listas para entregar?", pain: "Si ventas consulta un Excel, almac\xE9n otro y las devoluciones se coordinan por mensajes, confirmar qu\xE9 equipos est\xE1n disponibles exige preguntar a varias personas. Una laptop devuelta puede seguir pendiente de revisi\xF3n o tener un accesorio por completar.", solution: "En Nexo creamos sistemas a medida que relacionan cada laptop por n\xFAmero de serie con su reserva, cliente, contrato, entrega y devoluci\xF3n. Almac\xE9n registra el estado y los accesorios; ventas consulta qu\xE9 est\xE1 disponible y soporte ve qu\xE9 necesita revisi\xF3n.", benefit: "Cotizar con m\xE1s seguridad. Coordinar entregas con menos cruces y recuperar cada equipo con su historial.", before: ["Preguntar qu\xE9 laptops est\xE1n libres.", "Revisar contratos y mensajes.", "Confirmar devoluci\xF3n y accesorios."], after: ["Una ficha por equipo y serie.", "Reservas y devoluciones relacionadas.", "Estado listo para alquilar, en revisi\xF3n o entregado."], facts: ["Marca, modelo y n\xFAmero de serie", "Cliente, contrato y fecha de retorno", "Cargador, condici\xF3n y mantenimiento"], benefits: [["Prometer con m\xE1s claridad", "Distinguir equipos disponibles, reservados, entregados y en revisi\xF3n antes de comprometerlos."], ["Controlar las devoluciones", "Vincular fecha prevista, accesorios y estado del equipo a su entrega original."], ["Preparar el siguiente alquiler", "Soporte registra la revisi\xF3n y almac\xE9n identifica cu\xE1les est\xE1n listos para volver a salir."]], flow: ["Almac\xE9n actualiza", "Sistema relaciona", "Ventas confirma"], whatsapp: "Cuando le piden laptops, \xBFconfirma la disponibilidad en un solo lugar o tiene que consultar a ventas, almac\xE9n y soporte?\n\nEn Nexo conectamos cada equipo por serie con su reserva, entrega, devoluci\xF3n y mantenimiento. Su equipo ve cu\xE1les est\xE1n listos para alquilar y cu\xE1les necesitan revisi\xF3n.\n\nM\xE1s claridad para cotizar y menos cruces al entregar." }
+};
+function sectorAssets(key) {
+  return key === "impresion" || key === "computadoras" ? { pdf: `${base}/presentacion/Nexo-${key}.pdf`, image: `${base}/presentacion/Nexo-${key}-WhatsApp.jpg` } : { pdf: `${base}/presentacion/Nexo-Informacion-Conectada.pdf`, image: `${base}/presentacion/Nexo-WhatsApp-Informacion.jpg` };
+}
+function sectorWhatsApp(company = {}, override = "auto", { emailSent = false } = {}) {
+  const key = sectorFor(company, override), content = SECTOR_CONTENT[key];
+  const text = content ? content.whatsapp : "Ayudamos a que su equipo encuentre clientes, equipos, documentos e historial en un solo sistema, sin buscar entre varios Excel o carpetas. Menos interrupciones y m\xE1s claridad para atender.";
+  return `Hola \u{1F44B}
+
+Soy Julio, de Nexo.${emailSent ? " Tambi\xE9n le envi\xE9 un correo con la presentaci\xF3n." : ""}
+
+${text}
+
+\xBFCoordinamos 15 minutos para mostrarle un proyecto funcionando y revisar c\xF3mo podr\xEDa ayudar a su empresa?
+
+${base}`;
+}
+function sectorSubject(name, key) {
+  return `${name}: ${SECTOR_CONTENT[key].subject}`;
+}
+function sectorHtml(name, key) {
+  const c = SECTOR_CONTENT[key], p = "margin:0 0 17px;line-height:1.75";
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Nexo | ${escape(c.label)}</title></head><body style="margin:0;background:#f6f8f6;font:14px Verdana,sans-serif;color:#202730"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td style="padding:24px 12px" align="center"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;background:white;border:1px solid #dce5de;border-radius:12px"><tr><td style="padding:28px 26px"><img src="${base}/brand/nexo-logo-email.png" width="142" alt="Nexo" style="display:block;height:auto"><p style="font-size:10px;letter-spacing:1px;color:#52675b;margin:20px 0 12px">${c.kicker}</p><h1 style="font-size:27px;line-height:1.25;color:#247459;margin:0 0 26px">${escape(c.headline).replace("\n", "<br>")}</h1><p style="${p}">Hola, equipo de <strong>${escape(name)}</strong>:</p><p style="${p}">Soy Julio, de Nexo. Desarrollamos sistemas de informaci\xF3n a medida para empresas de alquiler.</p><p style="${p};font-weight:bold">${c.question}</p><p style="${p}">${c.pain}</p><p style="${p}">${c.solution}</p><p style="${p};padding:15px;background:#eef4ee;border-left:3px solid #247459;color:#20352b;font-weight:bold">${c.benefit}</p><p style="${p}">Me gustar\xEDa mostrarles un proyecto real que ya desarrollamos y revisar c\xF3mo adaptar ese enfoque a su operaci\xF3n.</p><p style="${p}"><strong>\xBFPodemos coordinar una demostraci\xF3n de 15 minutos?</strong> Puede ser virtual o presencial en Lima. Si lo ve otra persona, agradecer\xE9 que me ayuden a contactarla.</p><p style="${p}"><a href="${sectorAssets(key).pdf}" style="display:inline-block;background:#247459;border-radius:6px;padding:12px 17px;color:white;text-decoration:none">Ver la presentaci\xF3n de su rubro en PDF</a></p><p style="${p}">Conozca Nexo: <a href="${base}" style="color:#247459">nexoamedida.com</a></p><p style="margin-top:30px;line-height:1.8"><strong>Julio Robles</strong><br>Nexo \xB7 Sistemas de informaci\xF3n a medida<br><a href="mailto:asesoria@nexoamedida.com" style="color:#247459">asesoria@nexoamedida.com</a><br>+51 936 755 465</p></td></tr><tr><td style="background:#20352b;color:white;padding:18px 26px;border-radius:0 0 12px 12px;font-size:12px">Informaci\xF3n conectada. Empresas con claridad.</td></tr></table></td></tr></table></body></html>`;
+}
 
 // supabase/functions/_shared/templates.mjs
 var OUTREACH = Object.freeze({
@@ -47,16 +544,18 @@ var OUTREACH = Object.freeze({
   whatsappImage: "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",
   emailAttachment: "https://nexoamedida.com/presentacion/Nexo-Informacion-Conectada.pdf"
 });
-var escape = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+var escape2 = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 function companyName(value) {
   if (typeof value !== "string" || /[\r\n\u0000]/.test(value) || !value.trim() || value.trim().length > 180) throw new Error("Indica el nombre de la empresa en una sola l\xEDnea, con hasta 180 caracteres.");
   return value.trim();
 }
-function emailSubject(name) {
+function emailSubject(name, sector = "general") {
+  if (sector !== "general" && sectorFor({}, sector) !== "general") return sectorSubject(companyName(name), sector);
   return `${companyName(name)}: menos b\xFAsquedas, respuestas m\xE1s r\xE1pidas`;
 }
-function emailHtml(name) {
-  const company = escape(companyName(name));
+function emailHtml(name, sector = "general") {
+  if (["impresion", "computadoras"].includes(sector)) return sectorHtml(companyName(name), sector);
+  const company = escape2(companyName(name));
   const paragraph = "margin:0 0 18px;line-height:1.65;";
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="https://nexoamedida.com/favicon.ico"><title>Nexo | Presentaci\xF3n comercial</title>
@@ -97,14 +596,14 @@ var ZOHO_DEFAULTS = Object.freeze({
   accountsUrl: "https://accounts.zoho.com/oauth/v2/token",
   apiUrl: "https://mail.zoho.com/api/accounts"
 });
-function prepareZohoEmail(companyName2, to) {
+function prepareZohoEmail(companyName2, to, sector = "general") {
   if (typeof to !== "string" || !/^\S+@\S+\.\S+$/.test(to.trim())) throw new Error("Registra un correo v\xE1lido para esta empresa.");
-  return { fromAddress: OUTREACH.senderEmail, toAddress: to.trim(), subject: emailSubject(companyName2), content: emailHtml(companyName2), mailFormat: "html" };
+  return { fromAddress: OUTREACH.senderEmail, toAddress: to.trim(), subject: emailSubject(companyName2, sector), content: emailHtml(companyName2, sector), mailFormat: "html" };
 }
 
 // supabase/functions/_shared/email-core.mjs
-var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-var fail = (code, message, status = 400) => {
+var UUID3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var fail2 = (code, message, status = 400) => {
   throw new OutboundError(code, message, status);
 };
 var ZohoMailClient = class {
@@ -115,37 +614,40 @@ var ZohoMailClient = class {
     return [this.clientId, this.clientSecret, this.refreshToken, this.fromAddress].every(Boolean);
   }
   async token() {
-    if (!this.configured) fail("ZOHO_NOT_CONFIGURED", "Falta autorizar Zoho Mail en el servidor.", 503);
+    if (!this.configured) fail2("ZOHO_NOT_CONFIGURED", "Falta autorizar Zoho Mail en el servidor.", 503);
     const body = new URLSearchParams({ grant_type: "refresh_token", client_id: this.clientId, client_secret: this.clientSecret, refresh_token: this.refreshToken });
-    const response = await this.fetcher("https://accounts.zoho.com/oauth/v2/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
-    if (!response.ok) fail("ZOHO_AUTH_FAILED", "Zoho no autoriz\xF3 el env\xEDo.", 503);
+    const response = await this.fetcher("https://accounts.zoho.com/oauth/v2/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body, signal: AbortSignal.timeout(2e4) });
+    if (!response.ok) fail2("ZOHO_AUTH_FAILED", "Zoho no autoriz\xF3 el env\xEDo.", 503);
     const result = await response.json();
-    if (typeof result.access_token !== "string") fail("ZOHO_AUTH_FAILED", "Zoho no devolvi\xF3 una autorizaci\xF3n v\xE1lida.", 503);
+    if (typeof result.access_token !== "string") fail2("ZOHO_AUTH_FAILED", "Zoho no devolvi\xF3 una autorizaci\xF3n v\xE1lida.", 503);
     return result.access_token;
   }
   async account(token) {
     if (this.accountId) return this.accountId;
-    const response = await this.fetcher("https://mail.zoho.com/api/accounts", { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
-    if (!response.ok) fail("ZOHO_ACCOUNT_FAILED", "Zoho autoriz\xF3 la cuenta, pero no devolvi\xF3 su identificador.", 503);
+    const response = await this.fetcher("https://mail.zoho.com/api/accounts", { headers: { Authorization: `Zoho-oauthtoken ${token}` }, signal: AbortSignal.timeout(2e4) });
+    if (!response.ok) fail2("ZOHO_ACCOUNT_FAILED", "Zoho autoriz\xF3 la cuenta, pero no devolvi\xF3 su identificador.", 503);
     const result = await response.json().catch(() => ({}));
     const accountId = result?.data?.[0]?.accountId || result?.data?.[0]?.accountID;
-    if (!accountId) fail("ZOHO_ACCOUNT_FAILED", "Zoho no devolvi\xF3 un identificador de cuenta para este buz\xF3n.", 503);
+    if (!accountId) fail2("ZOHO_ACCOUNT_FAILED", "Zoho no devolvi\xF3 un identificador de cuenta para este buz\xF3n.", 503);
     this.accountId = String(accountId);
     return this.accountId;
   }
   async send(input) {
-    if (!UUID.test(input.sendId || "")) fail("INVALID_REQUEST", "Identificador de correo inv\xE1lido.");
+    if (!UUID3.test(input.sendId || "")) fail2("INVALID_REQUEST", "Identificador de correo inv\xE1lido.");
     const token = await this.token();
     const accountId = await this.account(token);
     const body = JSON.stringify({ fromAddress: this.fromAddress, toAddress: input.toAddress, subject: input.subject, content: input.content, mailFormat: input.mailFormat || "html" });
     const url = `https://mail.zoho.com/api/accounts/${encodeURIComponent(accountId)}/messages`;
-    const response = await this.fetcher(url, { method: "POST", headers: { Authorization: `Zoho-oauthtoken ${token}`, "Content-Type": "application/json" }, body });
+    const response = await this.fetcher(url, { method: "POST", headers: { Authorization: `Zoho-oauthtoken ${token}`, "Content-Type": "application/json" }, body, signal: AbortSignal.timeout(25e3) });
     if (!response.ok) {
-      if (response.status === 429) fail("RATE_LIMITED", "Zoho pidi\xF3 esperar antes de volver a intentar.", 429);
-      fail("ZOHO_SEND_FAILED", "Zoho no acept\xF3 el correo. Revisa la autorizaci\xF3n y el buz\xF3n de origen.", 503);
+      if (response.status === 429) fail2("RATE_LIMITED", "Zoho pidi\xF3 esperar antes de volver a intentar.", 429);
+      fail2("ZOHO_SEND_FAILED", "Zoho no acept\xF3 el correo. Revisa la autorizaci\xF3n y el buz\xF3n de origen.", 503);
     }
     const result = await response.json().catch(() => ({}));
-    return { providerId: String(result.messageId || result.data?.messageId || "").slice(0, 200), status: "sent" };
+    if (Number(result.status?.code) >= 400) fail2("ZOHO_SEND_REJECTED", "Zoho rechaz\xF3 el mensaje. Revisa el destinatario y el buz\xF3n antes de continuar.", 503);
+    const providerId = String(result.messageId || result.data?.messageId || "").slice(0, 200);
+    if (!providerId) fail2("ZOHO_SEND_UNCERTAIN", "Zoho no devolvi\xF3 confirmaci\xF3n del mensaje. Revisa Enviados antes de repetirlo.", 503);
+    return { providerId, status: "sent" };
   }
 };
 var EmailService = class {
@@ -154,50 +656,363 @@ var EmailService = class {
   }
   async context(companyId) {
     const data = await this.store.loadData(), company = data.companies.find((row) => row.id === companyId);
-    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
-    return { configured: this.provider.configured, enabled: this.enabled, fromAddress: this.provider.fromAddress || "", recipient: company.email || data.contacts.find((row) => row.company_id === companyId && row.email)?.email || "", message: this.provider.configured ? "Correo Nexo listo para validar." : "Falta autorizar Zoho Mail en el servidor." };
+    if (!company) fail2("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    return { templateVersion: TEMPLATE_VERSION, sector: sectorFor(company), configured: this.provider.configured, enabled: this.enabled, fromAddress: this.provider.fromAddress || "", recipient: company.email || data.contacts.find((row) => row.company_id === companyId && row.email)?.email || "", message: this.provider.configured ? "Correo Nexo listo para validar." : "Falta autorizar Zoho Mail en el servidor." };
   }
   async send(input) {
-    if (input.dryRun !== true && input.dryRun !== false) fail("INVALID_REQUEST", "Indica si deseas validar o enviar.");
+    if (input.dryRun !== true && input.dryRun !== false) fail2("INVALID_REQUEST", "Indica si deseas validar o enviar.");
     const data = await this.store.loadData(), company = data.companies.find((row) => row.id === input.companyId);
-    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    if (!company) fail2("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
     const recipient = input.toAddress || company.email || data.contacts.find((row) => row.company_id === company.id && row.email)?.email;
-    if (!recipient) fail("EMAIL_REQUIRED", "Registra un correo para esta empresa.");
-    const prepared = prepareZohoEmail(company.name, recipient);
+    if (!recipient) fail2("EMAIL_REQUIRED", "Registra un correo para esta empresa.");
+    const prepared = prepareZohoEmail(company.name, recipient, sectorFor(company, input.template || "auto"));
+    if (typeof input.subject === "string" && input.subject.trim() && input.subject.length <= 220 && !/[\r\n]/.test(input.subject)) prepared.subject = input.subject.trim();
     if (input.dryRun) return { status: "validated", toAddress: recipient, subject: prepared.subject };
-    if (!this.enabled) fail("SENDING_DISABLED", "El env\xEDo de Zoho todav\xEDa no est\xE1 activado.", 503);
+    if (!this.enabled) fail2("SENDING_DISABLED", "El env\xEDo de Zoho todav\xEDa no est\xE1 activado.", 503);
     const result = await this.provider.send({ ...prepared, sendId: input.sendId });
-    return { status: "sent", toAddress: recipient, subject: prepared.subject, providerId: result.providerId };
+    let logged = false;
+    if (this.store.logEmail) try {
+      await this.store.logEmail({ company, sendId: input.sendId, recipient, subject: prepared.subject });
+      logged = true;
+    } catch {
+    }
+    return { status: "sent", toAddress: recipient, subject: prepared.subject, providerId: result.providerId, logged };
+  }
+};
+
+// supabase/functions/_shared/whatsapp-store.mjs
+function databaseError(error) {
+  const message = error?.message || "", code = error?.code || "";
+  if (["42P01", "PGRST202", "PGRST205"].includes(code)) return new OutboundError("BACKEND_NOT_INSTALLED", "Falta instalar el SQL adicional de WhatsApp en Supabase.", 503);
+  const known = { RATE_LIMITED: ["LR pidi\xF3 esperar antes de volver a intentar.", 429], RECIPIENT_CHANGED: ["El tel\xE9fono cambi\xF3. Revisa el destinatario antes de enviar.", 409], NOT_AUTHORIZED: ["La cuenta no est\xE1 autorizada.", 403], COMPANY_NOT_FOUND: ["La empresa no est\xE1 disponible.", 404], CONTACT_BLOCKED: ["La empresa est\xE1 cerrada o archivada.", 400], JOB_NOT_FOUND: ["No se encontr\xF3 este intento.", 404], IDEMPOTENCY_CONFLICT: ["Este identificador ya se us\xF3 con otro contenido. Conserva el intento original.", 409], JOB_PENDING: ["Ya hay un intento pendiente para este destinatario. Revisa el historial.", 409], JOB_BUSY: ["Este intento est\xE1 siendo procesado. Consulta su estado antes de repetirlo.", 409] };
+  for (const [key, [text, status]] of Object.entries(known)) if (message.includes(key)) return new OutboundError(key, text, status);
+  if (code === "PGRST116" || code === "23505") return new OutboundError("JOB_BUSY", "El intento cambi\xF3 desde otro dispositivo. Consulta su estado.", 409);
+  return new OutboundError("DATABASE_ERROR", "No se pudo confirmar el registro. Consulta el historial antes de volver a intentar.", 503);
+}
+var WhatsAppStore = class {
+  constructor({ service, user, owner }) {
+    Object.assign(this, { service, user, owner });
+  }
+  async loadData() {
+    const result = emptyData();
+    let offset = 0;
+    while (true) {
+      const { data, error } = await this.user.from("crm_records").select("*").order("kind").order("id").range(offset, offset + 999);
+      if (error) throw databaseError(error);
+      for (const row of data) if (result[row.kind]) result[row.kind].push({ ...row.data, id: row.id, version: row.version, created_at: row.created_at, updated_at: row.updated_at });
+      if (data.length < 1e3) break;
+      offset += 1e3;
+    }
+    return result;
+  }
+  async listJobs(companyId) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").select("*").eq("owner_id", this.owner).eq("company_id", companyId).order("created_at", { ascending: false }).limit(20);
+    if (error) throw databaseError(error);
+    return data;
+  }
+  async getJob(id2) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").select("*").eq("owner_id", this.owner).eq("id", id2).maybeSingle();
+    if (error) throw databaseError(error);
+    if (!data) throw new OutboundError("JOB_NOT_FOUND", "No se encontr\xF3 este intento.", 404);
+    return data;
+  }
+  async prepareJob(job) {
+    const { data, error } = await this.service.rpc("crm_whatsapp_prepare", { actor: this.owner, job });
+    if (error) throw databaseError(error);
+    return Array.isArray(data) ? data[0] : data;
+  }
+  async claimJob(job, dryRun) {
+    const { data, error } = await this.service.rpc("crm_whatsapp_claim", { actor: this.owner, job_id: job.id, expected: job.version, is_dry_run: dryRun });
+    if (error) throw databaseError(error);
+    return Array.isArray(data) ? data[0] : data;
+  }
+  async updateJob(job, patch) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").update({ ...patch, version: job.version + 1, updated_at: (/* @__PURE__ */ new Date()).toISOString() }).eq("id", job.id).eq("owner_id", this.owner).eq("version", job.version).select("*").single();
+    if (error) throw databaseError(error);
+    return data;
+  }
+  async commit(operations) {
+    const { error } = await this.user.rpc("crm_commit", { operations });
+    if (error) throw databaseError(error);
+  }
+};
+
+// supabase/functions/_shared/whatsapp-runtime.mjs
+import { Buffer as Buffer2 } from "node:buffer";
+
+// supabase/functions/crm-whatsapp/campaign.json
+var campaign_default = {
+  sectors: {
+    impresion: {
+      url: "https://nexoamedida.com/presentacion/Nexo-impresion-WhatsApp.jpg",
+      sha256: "c90057fc0b9253be05f280766b5e015050104304cb3f52c88e2d5b885b20df64"
+    },
+    computadoras: {
+      url: "https://nexoamedida.com/presentacion/Nexo-computadoras-WhatsApp.jpg",
+      sha256: "242e773e16d16eb3be6d464759d67365412de13d28a265aa85604b53e0796313"
+    }
+  },
+  url: "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",
+  sha256: "af7b4d171722db4eaee52176f2f0197c7131ca35e9a15d1220f164dd53f6159c"
+};
+
+// supabase/functions/_shared/whatsapp-runtime.mjs
+function whatsappRuntime(identity, template = "general") {
+  const token = Deno.env.get("LR_WHATSAPP_TOKEN") || "", endpoint = Deno.env.get("LR_WHATSAPP_ENDPOINT") || "https://www.sistemalr.com/api/bot-action?externalWhatsApp=v1", configured = token.length >= 32 && !token.includes("REEMPLAZAR_");
+  authorizeSenderOwner(identity.owner, Deno.env.get("NEXO_WHATSAPP_OWNER_ID"), configured);
+  const campaign = campaign_default.sectors?.[template] || campaign_default;
+  return new WhatsAppService({ store: new WhatsAppStore(identity), provider: configured ? new LrWhatsAppClient({ token, endpoint }) : null, configured, enabled: Deno.env.get("LR_WHATSAPP_ENABLED") === "true", imageHash: campaign.sha256, loadImage: async () => {
+    const response = await fetch(campaign.url, { redirect: "error", signal: AbortSignal.timeout(2e4) });
+    if (!response.ok || Number(response.headers.get("content-length") || 0) > 5242880) throw new OutboundError("IMAGE_UNAVAILABLE", "No se pudo cargar la imagen de Nexo.", 503);
+    const bytes = Buffer2.from(await response.arrayBuffer());
+    if (!bytes.length || bytes.length > 5242880) throw new OutboundError("IMAGE_UNAVAILABLE", "La imagen no tiene el tama\xF1o permitido.", 503);
+    return bytes;
+  } });
+}
+
+// supabase/functions/_shared/campaign-store.mjs
+var CampaignStore = class {
+  constructor({ service, user, owner, loadData }) {
+    Object.assign(this, { service, user, owner, loadData });
+  }
+  unpack(row) {
+    return row ? { ...row.data, id: row.id, version: row.version, created_at: row.created_at, updated_at: row.updated_at } : null;
+  }
+  async get(id2) {
+    const { data, error } = await this.service.from("crm_records").select("*").eq("owner_id", this.owner).eq("kind", "settings").eq("id", id2).maybeSingle();
+    if (error) throw new OutboundError("QUEUE_DATABASE_ERROR", "No se pudo consultar la cola.", 503);
+    return this.unpack(data);
+  }
+  async put(record) {
+    const now = (/* @__PURE__ */ new Date()).toISOString(), payload = { ...record };
+    delete payload.version;
+    delete payload.created_at;
+    delete payload.updated_at;
+    const row = { owner_id: this.owner, kind: "settings", id: record.id, data: payload, version: (record.version || 0) + 1, updated_at: now };
+    let query;
+    if (record.version) query = this.service.from("crm_records").update(row).eq("owner_id", this.owner).eq("kind", "settings").eq("id", record.id).eq("version", record.version).select("*").maybeSingle();
+    else query = this.service.from("crm_records").insert(row).select("*").single();
+    const { data, error } = await query;
+    if (error || !data) throw new OutboundError("QUEUE_CONFLICT", "La cola cambi\xF3 en otro dispositivo. Actualiza para continuar.", 409);
+    return this.unpack(data);
+  }
+  async insertMany(records) {
+    for (let i = 0; i < records.length; i += 80) {
+      const rows = records.slice(i, i + 80).map((record) => ({ owner_id: this.owner, kind: "settings", id: record.id, data: record, version: 1 }));
+      const { error } = await this.service.from("crm_records").insert(rows);
+      if (error) throw new OutboundError("QUEUE_DATABASE_ERROR", "No se pudo terminar de guardar la campa\xF1a. No se enviar\xE1 hasta que est\xE9 completa.", 503);
+    }
+  }
+  async acquire(now) {
+    let lock = await this.get("outreach-scheduler");
+    if (!lock) {
+      try {
+        lock = await this.put({ id: "outreach-scheduler", category: "outreach_scheduler", lease_until: "", token: "", next_email_at: "", next_whatsapp_at: "" });
+      } catch {
+        return null;
+      }
+    }
+    if (Date.parse(lock.lease_until || "") > now.getTime()) return null;
+    try {
+      return await this.put({ ...lock, token: crypto.randomUUID(), lease_until: new Date(now.getTime() + 18e4).toISOString() });
+    } catch {
+      return null;
+    }
+  }
+  async release(lock, patch = {}) {
+    try {
+      const latest = await this.get(lock.id);
+      if (latest?.token === lock.token) await this.put({ ...latest, ...patch, lease_until: "", token: "" });
+    } catch {
+    }
+  }
+};
+
+// supabase/functions/_shared/campaign-core.mjs
+var UUID4 = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var terminal = ["sent", "failed", "uncertain", "skipped", "cancelled"];
+var fail3 = (message, code = "INVALID_CAMPAIGN", status = 400) => {
+  throw new OutboundError(code, message, status);
+};
+var CampaignService = class {
+  constructor({ store, emailApi, whatsappFor, now = () => /* @__PURE__ */ new Date(), uuid = () => crypto.randomUUID() }) {
+    Object.assign(this, { store, emailApi, whatsappFor, now, uuid });
+  }
+  async create(input) {
+    if (!UUID4.test(input.campaignId || "") || !Array.isArray(input.companyIds) || !input.companyIds.length || input.companyIds.length > 1e3 || !["correo", "whatsapp", "ambos"].includes(input.channel)) fail3("Selecciona el canal y entre 1 y 1000 empresas.");
+    if (!["auto", "general", "impresion", "computadoras"].includes(input.template || "auto")) fail3("Selecciona una plantilla v\xE1lida.");
+    const emailInterval = Number(input.emailInterval || 60), whatsappInterval = Number(input.whatsappInterval || 30);
+    if (![60, 120, 180, 300].includes(emailInterval) || ![30, 60, 120].includes(whatsappInterval)) fail3("Selecciona un intervalo v\xE1lido.");
+    const campaignId = "campaign-" + input.campaignId, existing = await this.store.get(campaignId);
+    if (existing) return { campaign: existing, version: TEMPLATE_VERSION };
+    const data = await this.store.loadData(), ids = [...new Set(input.companyIds)], companies = ids.map((id2) => data.companies.find((c) => c.id === id2));
+    if (companies.some((c) => !c || c.archived || ["no_contactar", "no_encaja"].includes(c.status) || companyStage(c, data) === "perdida")) fail3("Hay empresas archivadas o con seguimiento cerrado en la selecci\xF3n.");
+    const channels = input.channel === "ambos" ? ["correo", "whatsapp"] : [input.channel], deliveries = [];
+    let rank = 0;
+    for (const company of companies) {
+      if (data.settings.some((j) => j.category === "outreach_delivery" && j.company_id === company.id && channels.includes(j.channel) && !["sent", "failed", "skipped", "cancelled"].includes(j.status))) continue;
+      const choices = recipientChoices(data, company), email = company.email || data.contacts.find((c) => c.company_id === company.id && c.email)?.email || "", template = sectorFor(company, input.template || "auto");
+      for (const channel of channels) {
+        const recipient = channel === "correo" ? email : choices[0]?.phone || "";
+        if (!recipient) continue;
+        deliveries.push({ id: "delivery-" + this.uuid(), category: "outreach_delivery", campaign_id: campaignId, company_id: company.id, channel, recipient, contact_id: channel === "whatsapp" ? choices[0].id : "", template, send_id: this.uuid(), rank: rank++, status: "pending", caption: channel === "whatsapp" ? sectorWhatsApp(company, template, { emailSent: input.channel === "ambos" && !!email }) : "", error: "", sent_at: "", last_poll_at: "" });
+      }
+    }
+    if (!deliveries.length) fail3("No hay destinatarios disponibles: faltan datos o ya tienen un env\xEDo pendiente en ese canal.");
+    const name = String(input.name || "Campa\xF1a " + this.now().toLocaleDateString("es-PE", { timeZone: "America/Lima" })).trim().slice(0, 120);
+    let campaign = await this.store.put({ id: campaignId, category: "outreach_campaign", name, channel: input.channel, template: input.template || "auto", email_interval: emailInterval, whatsapp_interval: whatsappInterval, status: "preparing", total: deliveries.length, company_count: companies.length, filters: input.filters && typeof input.filters === "object" ? JSON.stringify(input.filters).slice(0, 2500) : "" });
+    await this.store.insertMany(deliveries);
+    campaign = await this.store.put({ ...campaign, status: "queued" });
+    return { campaign, version: TEMPLATE_VERSION };
+  }
+  async control(input) {
+    const campaign = await this.store.get(input.id);
+    if (campaign?.category !== "outreach_campaign") fail3("No se encontr\xF3 la campa\xF1a.");
+    if (!["pause", "resume", "cancel"].includes(input.operation)) fail3("Acci\xF3n no disponible.");
+    if (["completed", "cancelled", "preparing"].includes(campaign.status)) fail3("Esta campa\xF1a ya termin\xF3 o no est\xE1 preparada.");
+    if (input.operation === "cancel") {
+      const data = await this.store.loadData();
+      for (const job of data.settings.filter((j) => j.category === "outreach_delivery" && j.campaign_id === campaign.id && j.status === "pending")) await this.store.put({ ...job, status: "cancelled" });
+    }
+    return { campaign: await this.store.put({ ...campaign, status: input.operation === "pause" ? "paused" : input.operation === "resume" ? "queued" : "cancelled", error: "" }) };
+  }
+  async tick() {
+    const now = this.now(), lock = await this.store.acquire(now);
+    if (!lock) return { busy: true, version: TEMPLATE_VERSION };
+    let schedule = {};
+    try {
+      const data = await this.store.loadData(), campaigns = data.settings.filter((r) => r.category === "outreach_campaign"), jobs = data.settings.filter((r) => r.category === "outreach_delivery");
+      const interrupted = jobs.find((j) => j.status === "sending" && Date.parse(j.lease_until || "") <= now.getTime());
+      if (interrupted) {
+        const logged = data.activities.find((a) => a.outbound_id === interrupted.send_id || a.id === "mail-" + interrupted.send_id || a.id === "wa-" + interrupted.send_id);
+        if (logged) {
+          await this.store.put({ ...interrupted, status: "sent", sent_at: logged.occurred_at || logged.created_at || now.toISOString(), error: "" });
+          return { changed: true };
+        }
+        if (interrupted.channel === "whatsapp") try {
+          const result = await this.whatsappFor(interrupted.template).refresh(interrupted.send_id);
+          if (["sent", "queued", "processing", "uncertain", "failed"].includes(result.status)) {
+            await this.store.put({ ...interrupted, status: result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+            return { changed: true };
+          }
+        } catch {
+        }
+        await this.store.put({ ...interrupted, status: "uncertain", error: "El intento se interrumpi\xF3. Revisa el proveedor antes de repetirlo." });
+        return { changed: true };
+      }
+      const awaiting = jobs.find((j) => ["queued", "processing"].includes(j.status) && (!j.last_poll_at || now.getTime() - Date.parse(j.last_poll_at) > 15e3));
+      if (awaiting) {
+        try {
+          const api = this.whatsappFor(awaiting.template), result = await api.refresh(awaiting.provider_id);
+          await this.store.put({ ...awaiting, status: result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+        } catch {
+        }
+        return { changed: true };
+      }
+      const active = campaigns.filter((c) => c.status === "queued").sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)) || a.id.localeCompare(b.id));
+      for (const campaign of active) {
+        const items = jobs.filter((j) => j.campaign_id === campaign.id).sort((a, b) => a.rank - b.rank);
+        if (items.every((j) => terminal.includes(j.status))) {
+          await this.store.put({ ...campaign, status: "completed" });
+          continue;
+        }
+        const job = items.find((j) => j.status === "pending");
+        if (!job) continue;
+        const company = data.companies.find((c) => c.id === job.company_id);
+        if (!company || company.archived || ["no_contactar", "no_encaja"].includes(company.status) || companyStage(company, data) === "perdida") {
+          await this.store.put({ ...job, status: "skipped", error: "Empresa cerrada o archivada desde que se cre\xF3 la campa\xF1a." });
+          return { changed: true };
+        }
+        if (job.channel === "whatsapp" && campaign.channel === "ambos") {
+          const email = items.find((j) => j.company_id === job.company_id && j.channel === "correo");
+          if (email && email.status !== "sent") {
+            if (terminal.includes(email.status)) {
+              await this.store.put({ ...job, status: "skipped", error: "El correo previo no se confirm\xF3; el mensaje lo menciona." });
+              return { changed: true };
+            }
+            return { waiting: true };
+          }
+        }
+        const key = job.channel === "correo" ? "next_email_at" : "next_whatsapp_at";
+        if (Date.parse(lock[key] || "") > now.getTime()) return { nextAt: lock[key] };
+        let claimed = await this.store.put({ ...job, status: "sending", lease_until: new Date(now.getTime() + 18e4).toISOString() });
+        const interval = job.channel === "correo" ? campaign.email_interval : campaign.whatsapp_interval;
+        schedule[key] = new Date(now.getTime() + interval * 1e3).toISOString();
+        try {
+          if (job.channel === "correo") {
+            if (![company.email, ...data.contacts.filter((c) => c.company_id === company.id).map((c) => c.email)].some((email) => email && email.toLowerCase() === job.recipient.toLowerCase())) fail3("El correo cambi\xF3; revisa la empresa antes de enviar.", "RECIPIENT_CHANGED");
+            const result = await this.emailApi.send({ sendId: job.send_id, companyId: job.company_id, toAddress: job.recipient, template: job.template, dryRun: false });
+            if (result.status !== "sent") throw new OutboundError("EMAIL_UNCERTAIN", "Zoho no confirm\xF3 el resultado.", 503);
+            await this.store.put({ ...claimed, status: "sent", sent_at: this.now().toISOString(), provider_id: result.providerId || "", error: "" });
+          } else {
+            const choices = recipientChoices(data, company), choice = choices.find((c) => (c.id || "") === job.contact_id);
+            if (choice?.phone !== job.recipient) fail3("El tel\xE9fono cambi\xF3; revisa la empresa antes de enviar.", "RECIPIENT_CHANGED");
+            const result = await this.whatsappFor(job.template).submit({ requestId: job.send_id, companyId: job.company_id, contactId: job.contact_id, caption: job.caption, emailAlreadySent: campaign.channel === "ambos" && items.some((j) => j.company_id === job.company_id && j.channel === "correo" && j.status === "sent"), consent: { confirmed: true, source: "Confirmaci\xF3n del operador al crear campa\xF1a", capturedAt: now.toISOString() }, dryRun: false });
+            if (result.id !== job.send_id) {
+              await this.store.put({ ...claimed, status: "skipped", provider_id: result.id, error: "Este mismo WhatsApp ya estaba registrado en LR; no se solicit\xF3 otro env\xEDo." });
+              return { changed: true };
+            }
+            await this.store.put({ ...claimed, status: ["prepared", "validated"].includes(result.status) ? "failed" : result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+            if (result.retry_at) {
+              schedule[key] = result.retry_at;
+              await this.store.put({ ...campaign, status: "paused", error: "El proveedor pidi\xF3 esperar. Revisa el plazo del intento antes de continuar." });
+            } else if (["prepared", "validated", "uncertain", "failed"].includes(result.status)) {
+              await this.store.put({ ...campaign, status: "paused", error: "WhatsApp no confirm\xF3 el env\xEDo. Revisa el intento antes de continuar." });
+            }
+          }
+        } catch (error) {
+          const definite = ["SENDING_DISABLED", "EMAIL_REQUIRED", "COMPANY_NOT_FOUND", "CONTACT_BLOCKED", "RECIPIENT_CHANGED", "ZOHO_NOT_CONFIGURED", "ZOHO_AUTH_FAILED", "ZOHO_ACCOUNT_FAILED", "ZOHO_SEND_REJECTED", "RATE_LIMITED", "SENDER_NOT_AUTHORIZED", "SENDER_OWNER_NOT_CONFIGURED", "LR_NOT_CONFIGURED"].includes(error.code);
+          try {
+            await this.store.put({ ...claimed, status: definite ? "failed" : "uncertain", error: error instanceof OutboundError ? error.message : "No se pudo confirmar el env\xEDo. Revisa el proveedor antes de repetirlo." });
+          } catch {
+          }
+          await this.store.put({ ...campaign, status: "paused", error: "La campa\xF1a se paus\xF3 por un error. El historial conserva el intento." });
+          if (error.code === "RATE_LIMITED") schedule[key] = new Date(now.getTime() + 3e5).toISOString();
+        }
+        return { changed: true, version: TEMPLATE_VERSION };
+      }
+      return { idle: true, version: TEMPLATE_VERSION };
+    } finally {
+      await this.store.release(lock, schedule);
+    }
   }
 };
 
 // supabase/functions/crm-email/index.ts
-var reply = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Access-Control-Allow-Origin": "https://nexoamedida.com", "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS", "Cache-Control": "no-store", "Content-Type": "application/json" } });
-var loadData = async (user) => {
-  const result = emptyData();
-  const { data, error } = await user.from("crm_records").select("*").order("kind").order("id");
-  if (error) throw new OutboundError("DATABASE_ERROR", "No se pudo leer el CRM.", 503);
-  for (const row of data || []) if (result[row.kind]) result[row.kind].push({ ...row.data, id: row.id, version: row.version });
-  return result;
-};
+var cors = { "Access-Control-Allow-Origin": "https://nexoamedida.com", "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS", "Cache-Control": "no-store", "Content-Type": "application/json", "Vary": "Origin" };
+var reply = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: cors });
 Deno.serve(async (request) => {
   try {
-    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": "https://nexoamedida.com", "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS" } });
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     if (request.method !== "POST") return reply({ error: { code: "METHOD_NOT_ALLOWED", message: "Usa POST." } }, 405);
     if (request.headers.get("origin") && request.headers.get("origin") !== "https://nexoamedida.com") return reply({ error: { code: "ORIGIN_DENIED", message: "Origen no autorizado." } }, 403);
     const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), anonKey = Deno.env.get("SUPABASE_ANON_KEY");
     if (!url || !serviceKey || !anonKey) throw new OutboundError("BACKEND_NOT_CONFIGURED", "Falta la configuraci\xF3n interna de Supabase.", 503);
-    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-    const identity = await authenticateSupabase(request.headers.get("authorization") || "", { service, makeUser: (header) => createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: header } } }) });
-    const input = await request.json();
-    const userData = await loadData(identity.user);
-    const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" });
-    const api = new EmailService({ store: { loadData: async () => userData }, provider, enabled: Deno.env.get("ZOHO_MAIL_ENABLED") === "true" });
+    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } }), identity = await authenticateSupabase(request.headers.get("authorization") || "", { service, makeUser: (header) => createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: header } } }) });
+    const raw = await request.text();
+    if (raw.length > 15e4) throw new OutboundError("INVALID_REQUEST", "La solicitud es demasiado grande.", 413);
+    const input = JSON.parse(raw), crm = new WhatsAppStore(identity);
+    const store = { loadData: () => crm.loadData(), logEmail: async ({ company, sendId, recipient, subject }) => {
+      const data = await crm.loadData(), activityId = "mail-" + sendId;
+      if (data.activities.some((a) => a.id === activityId)) return;
+      const now = /* @__PURE__ */ new Date(), operations = contactOperations(data, data.companies.find((c) => c.id === company.id), ["correo"], { body: `${subject}
+Destinatario: ${recipient}`, now });
+      const activity = operations.find((op2) => op2.type === "activities" && op2.record.kind === "contacto");
+      activity.record.id = activityId;
+      activity.record.outbound_id = sendId;
+      await crm.commit(operations);
+    } };
+    const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" }), api = new EmailService({ store, provider, enabled: Deno.env.get("ZOHO_MAIL_ENABLED") === "true" });
+    const campaigns = new CampaignService({ store: new CampaignStore({ ...identity, loadData: () => crm.loadData() }), emailApi: api, whatsappFor: (template) => whatsappRuntime(identity, template) });
+    if (input.action === "capabilities") return reply({ templateVersion: TEMPLATE_VERSION, queue: true });
+    if (input.action === "campaign-create") return reply(await campaigns.create(input));
+    if (input.action === "campaign-control") return reply(await campaigns.control(input));
+    if (input.action === "campaign-tick") return reply(await campaigns.tick());
     if (input.action === "context") return reply(await api.context(input.companyId));
     if (input.action === "send") return reply({ email: await api.send(input) });
     throw new OutboundError("INVALID_REQUEST", "Acci\xF3n no disponible.");
   } catch (error) {
-    const problem = error instanceof OutboundError ? error : new OutboundError("EMAIL_INTEGRATION_ERROR", "No se pudo completar el correo.", 503);
+    const problem = error instanceof OutboundError ? error : new OutboundError("EMAIL_INTEGRATION_ERROR", "No se pudo completar la operaci\xF3n. Consulta el historial antes de repetirla.", 503);
     return reply({ error: { code: problem.code, message: problem.message } }, problem.status);
   }
 });

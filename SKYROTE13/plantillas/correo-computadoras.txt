@@ -1,0 +1,24 @@
+ASUNTO: [Empresa]: disponibilidad y devoluciones, bajo control
+
+Hola, equipo de [Empresa]:
+
+Soy Julio, de Nexo. Desarrollamos sistemas de información a medida para empresas de alquiler.
+
+Un cliente pide laptops. ¿Sabe cuáles están listas para entregar?
+
+Si ventas consulta un Excel, almacén otro y las devoluciones se coordinan por mensajes, confirmar qué equipos están disponibles exige preguntar a varias personas. Una laptop devuelta puede seguir pendiente de revisión o tener un accesorio por completar.
+
+En Nexo creamos sistemas a medida que relacionan cada laptop por número de serie con su reserva, cliente, contrato, entrega y devolución. Almacén registra el estado y los accesorios; ventas consulta qué está disponible y soporte ve qué necesita revisión.
+
+Cotizar con más seguridad. Coordinar entregas con menos cruces y recuperar cada equipo con su historial.
+
+Me gustaría mostrarles un proyecto real que ya desarrollamos y revisar cómo adaptar ese enfoque a su operación.
+
+¿Podemos coordinar una demostración de 15 minutos, virtual o presencial en Lima? Si lo ve otra persona, agradeceré que me ayuden a contactarla.
+
+Presentación PDF: https://nexoamedida.com/presentacion/Nexo-computadoras.pdf
+Conozca Nexo: https://nexoamedida.com
+
+Julio Robles
+asesoria@nexoamedida.com
++51 936 755 465
