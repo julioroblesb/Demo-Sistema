@@ -139,6 +139,7 @@ const actions={
  'open-company':button=>openCompany(button.dataset.id),
  'open-whatsapp':button=>whatsappDialog.open(state.data,get('companies',button.dataset.id)),
  'open-email':button=>emailDialog.open(state.data,get('companies',button.dataset.id)),
+ 'email-reload':()=>emailDialog.reload($('#email-send-form')),
  'wa-reload':()=>whatsappDialog.reload($('#whatsapp-send-form')),
  'wa-refresh':button=>whatsappDialog.jobAction('refresh',button.dataset.id),
  'wa-recover':button=>whatsappDialog.jobAction('recover',button.dataset.id),
@@ -216,7 +217,7 @@ const actions={
 };
 function shiftMonth(change){const [year,month]=state.calendarDate.split('-').map(Number);const date=new Date(Date.UTC(year,month-1+change,1,12));state.calendarDate=date.toISOString().slice(0,10);render();}
 
-document.addEventListener('click',async event=>{const button=event.target.closest('[data-action]');if(!button||button.disabled)return;const handler=actions[button.dataset.action];if(!handler)return;if($('#record-dialog').open&&editingDirty()&&!['cancel-form','copy-rules','copy-schema','export-connection','wa-reload','wa-refresh','wa-recover','wa-cancel'].includes(button.dataset.action)){if(!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes continuar editando o realizar la otra acción.','Descartar cambios'))return;initialForm='';}document.querySelectorAll('.create-menu[open]').forEach(element=>element.open=false);try{await handler(button);}catch(error){toast(friendly(error),'error');}});
+document.addEventListener('click',async event=>{const button=event.target.closest('[data-action]');if(!button||button.disabled)return;const handler=actions[button.dataset.action];if(!handler)return;if($('#record-dialog').open&&editingDirty()&&!['cancel-form','copy-rules','copy-schema','export-connection','email-reload','wa-reload','wa-refresh','wa-recover','wa-cancel'].includes(button.dataset.action)){if(!await confirmDialog('¿Descartar los cambios sin guardar?','Puedes continuar editando o realizar la otra acción.','Descartar cambios'))return;initialForm='';}document.querySelectorAll('.create-menu[open]').forEach(element=>element.open=false);try{await handler(button);}catch(error){toast(friendly(error),'error');}});
 let filterTimer;
 document.addEventListener('input',event=>{const input=event.target;if(input.id==='global-search'){searchResults(input.value);return;}if(!input.dataset.filter||input.tagName==='SELECT')return;state[input.dataset.filter]=input.value;state.page=1;clearTimeout(filterTimer);filterTimer=setTimeout(render,120);});
 document.addEventListener('input',event=>{if(event.target.closest('#campaign-form')){campaignPreview();return;}if(event.target.closest('#company-form')&&['name','phone','email','ruc','website'].includes(event.target.name))companyDuplicateNotice();if(event.target.closest('#goals-form'))event.target.closest('#goals-form').dataset.dirty='true';});

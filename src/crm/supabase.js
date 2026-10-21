@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { emptyData } from './domain.js';
 import { checkOperations, ConflictError } from './repository.js';
+import { invokePrivate } from './private-functions.js';
 const storageKey='nexo-crm-auth';
 const storage={getItem:key=>localStorage.getItem(key)||sessionStorage.getItem(key),setItem:(key,value)=>(localStorage.getItem('nexo-crm-remember')==='1'?localStorage:sessionStorage).setItem(key,value),removeItem:key=>{localStorage.removeItem(key);sessionStorage.removeItem(key);}};
 const unpack=row=>({...row.data,id:row.id,version:row.version,created_at:row.created_at,updated_at:row.updated_at});
@@ -11,8 +12,8 @@ export class CloudConnection {
  async login(email,password,remember=false){await this.client.auth.signOut({scope:'local'});localStorage.setItem('nexo-crm-remember',remember?'1':'0');const {error}=await this.client.auth.signInWithPassword({email,password});if(error)throw failure(error);}
  async logout(){const {error}=await this.client.auth.signOut({scope:'local'});if(error)throw failure(error);}
  async reset(){throw new Error('Por ahora recupera tu acceso desde Supabase → Authentication → Users. No compartas tu contraseña en el chat.');}
- async whatsapp(action,payload={}){const {data,error}=await this.client.functions.invoke('crm-whatsapp',{body:{action,...payload}});if(error){let problem;try{problem=await error.context?.clone().json();}catch{}const failure=new Error(problem?.error?.message||'Falta activar la función privada de WhatsApp. Abre los pasos de activación.');failure.code=problem?.error?.code||'WHATSAPP_FUNCTION_UNAVAILABLE';throw failure;}if(data?.error)throw new Error(data.error.message);return data;}
- async email(action,payload={}){const {data,error}=await this.client.functions.invoke('crm-email',{body:{action,...payload}});if(error){let problem;try{problem=await error.context?.clone().json();}catch{}const failure=new Error(problem?.error?.message||'Falta autorizar Zoho Mail en la función privada.');failure.code=problem?.error?.code||'EMAIL_FUNCTION_UNAVAILABLE';throw failure;}if(data?.error)throw new Error(data.error.message);return data;}
+ async whatsapp(action,payload={}){return invokePrivate(this.client,'crm-whatsapp',{action,...payload});}
+ async email(action,payload={}){return invokePrivate(this.client,'crm-email',{action,...payload});}
  async close(){await this.client.removeAllChannels();this.client.auth.stopAutoRefresh();}
  repository(user,callback,onError){return new SupabaseRepository(this.client,user,callback,onError);}
 }
