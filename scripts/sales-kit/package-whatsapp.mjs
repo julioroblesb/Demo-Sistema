@@ -14,7 +14,7 @@ with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
  for p in files: add(p.relative_to(root),p.read_bytes())
  add('LEEME.txt','''Nexo WhatsApp: paquete de función privada.
 Instalación: https://nexoamedida.com/SKYROTE13/whatsapp/
-El puente externo LR todavía debe habilitarse y su clave se configura en los secretos de Supabase.
+El paquete actualizado de LR confirma su API publicada. Falta instalar esta función y configurar su clave exclusivamente en los secretos de Supabase.
 No hay credenciales incluidas. No se envían mensajes al extraer este ZIP.
 ''')
 print('Paquete de función privada generado, sin secretos.')`],{stdio:'inherit'});

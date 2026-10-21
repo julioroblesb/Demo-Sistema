@@ -29,3 +29,9 @@ La actualización añade una vista de envío con la imagen y texto proporcionado
 - La entrada TypeScript de la función se compiló con esbuild. Esto no equivale a ejecutar el entorno Deno remoto. La revisión visual incluye la vista WhatsApp a 1440 y 390 px y el correo a 390 px.
 
 El ZIP recibido contiene el contrato y cliente del puente LR, pero no el servidor habilitado ni credenciales. No se instalaron migraciones ni funciones en Supabase remoto, no se confirmó acceso API/SMTP de la cuenta gratuita Zoho y no se enviaron mensajes reales. Las pruebas de proveedor son simulaciones. La activación requiere habilitar LR e instalar la migración adicional y función con sus secretos, incluida la vinculación al UUID de la cuenta personal.
+
+## Paquete LR publicado recibido después
+
+Se contrastó el nuevo cliente con el anterior: conserva el comportamiento y solo actualiza su encabezado de estado. Según la entrega, LR ya publicó su API; no se necesita acceso a su repositorio. Se actualizan la guía y el paquete de instalación de Nexo sin incluir la credencial privada ni los informes internos.
+
+Se corrigió la validación seca para permitirla con WhatsApp desconectado, tal como admite la API publicada. El envío real sigue bloqueado en la interfaz y vuelve a comprobar la sesión en el servidor. Pasa la compilación, las 84 pruebas unitarias y los 9 recorridos de navegador de WhatsApp, incluida esta separación. Las seis pruebas SQL y los restantes recorridos no se repitieron porque no cambian sus esquemas ni funciones. El entorno no tiene sesión de despliegue Supabase y su proxy rechaza HTTP hacia LR y Supabase con CONNECT 403: no se comprobó la credencial ni se activó producción.

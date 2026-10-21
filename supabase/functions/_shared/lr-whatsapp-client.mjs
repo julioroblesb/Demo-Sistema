@@ -1,6 +1,6 @@
 /**
  * Cliente de referencia para BACKEND Node.js 20.19+ / 22+.
- * Contrato v1 POR HABILITAR en LR; no es una API ya publicada.
+ * Contrato v1 del puente comercial LR. Requiere la clave privada de integración.
  * Sin dependencias, sin conexión directa a Baileys ni acceso a Supabase.
  */
 import { createHash } from 'node:crypto';

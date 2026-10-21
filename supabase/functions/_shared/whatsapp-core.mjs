@@ -15,7 +15,7 @@ const SAFE_LR_CODES=new Set(['INVALID_REQUEST','INVALID_INTEGRATION_KEY','INTEGR
 export class WhatsAppService{
  constructor({store,provider,loadImage,imageHash,configured=false,enabled=false,now=()=>new Date()}){Object.assign(this,{store,provider,loadImage,imageHash,configured,enabled,now});}
  async company(companyId){const data=await this.store.loadData();const company=data.companies.find(row=>row.id===companyId);if(!company)fail('COMPANY_NOT_FOUND','No se encontró esta empresa.',404);return {data,company};}
- async context(companyId){await this.company(companyId);const jobs=await this.store.listJobs(companyId);let ready=false,message=this.configured?'La conexión está pendiente de comprobar.':'Falta configurar la conexión privada de LR en el servidor.';if(this.configured){try{const connection=await this.provider.connection();ready=connection.ready;message=ready?'Conectado al WhatsApp de Julio.':'El WhatsApp de Julio no está listo en LR.';}catch{message='LR todavía no confirmó su conexión. Revisa que el puente esté habilitado y la clave sea válida.';}}return {configured:this.configured,enabled:this.enabled,ready,senderPhone:'+51936755465',message,jobs:jobs.map(publicJob)};}
+ async context(companyId){await this.company(companyId);const jobs=await this.store.listJobs(companyId);let ready=false,message=this.configured?'La conexión está pendiente de comprobar.':'Falta configurar la conexión privada de LR en el servidor.';if(this.configured){try{const connection=await this.provider.connection();ready=connection.ready;message=ready?'Conectado al WhatsApp de Julio.':'Vincula el número de Julio en Sistema LR → Campañas → Mi WhatsApp comercial. Puedes validar el mensaje sin enviarlo.';}catch{message='LR todavía no confirmó su conexión. Revisa que el puente esté habilitado y la clave sea válida.';}}return {configured:this.configured,enabled:this.enabled,ready,senderPhone:'+51936755465',message,jobs:jobs.map(publicJob)};}
  async prepare(input){
   if(!this.configured)fail('LR_NOT_CONFIGURED','Falta configurar la conexión privada de LR.',503);
   if(!UUID.test(input.requestId||''))fail('INVALID_REQUEST','No se pudo identificar este intento. Vuelve a abrir el mensaje.');
@@ -39,7 +39,7 @@ export class WhatsAppService{
   await this.ensureEligible(job);job=await this.store.claimJob(job,dryRun);let mayHaveSent=false;
   try{
    // LR resuelve los reintentos por el mismo UUID; no se crea otro identificador.
-   if(!recover){const connection=await this.provider.connection();if(!connection.ready)fail('SESSION_NOT_READY','El WhatsApp de Julio no está conectado en LR.',503);}
+   if(!recover&&!dryRun){const connection=await this.provider.connection();if(!connection.ready)fail('SESSION_NOT_READY','El WhatsApp de Julio no está conectado en LR.',503);}
    const image=await this.loadImage();if(digest(image)!==job.image_sha256)fail('IMAGE_CHANGED','La imagen cambió. Es necesario revisar la versión antes de enviar.');
    await this.ensureEligible(job);
    mayHaveSent=!dryRun;

@@ -1,6 +1,6 @@
 import {seedDemo} from '../../src/crm/demo.js';
 import {today,localTime} from '../../src/crm/domain.js';
-export async function mockWhatsAppCloud(context,{configured=true,enabled=true,uncertain=false,delay=0}={}){
+export async function mockWhatsAppCloud(context,{configured=true,enabled=true,ready=configured,uncertain=false,delay=0}={}){
  await context.route('https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg',route=>route.fulfill({path:'public/presentacion/Nexo-WhatsApp-Informacion.jpg',contentType:'image/jpeg'}));
  const owner='11111111-1111-4111-8111-111111111111',data=seedDemo();data.companies.find(row=>row.id==='demo-empresa-6').phone='936755465';
  const rows=Object.entries(data).flatMap(([kind,list])=>list.map(record=>({owner_id:owner,kind,id:record.id,data:record,version:record.version||1,created_at:record.created_at,updated_at:record.updated_at})));
@@ -17,7 +17,7 @@ export async function mockWhatsAppCloud(context,{configured=true,enabled=true,un
   else if(path==='/functions/v1/crm-whatsapp'){
    if(req.headers().authorization!=='Bearer '+token)throw new Error('Missing authenticated user session');
    const input=req.postDataJSON();requests.push(input);
-   if(input.action==='context')body={configured,enabled,ready:configured,senderPhone:'+51936755465',message:configured?'Conectado al WhatsApp de Julio.':'Falta configurar la conexión privada de LR en el servidor.',jobs:jobs.filter(row=>row.company_id===input.companyId)};
+   if(input.action==='context')body={configured,enabled,ready,senderPhone:'+51936755465',message:configured?(ready?'Conectado al WhatsApp de Julio.':'Vincula el número de Julio en Sistema LR → Campañas → Mi WhatsApp comercial. Puedes validar el mensaje sin enviarlo.'):'Falta configurar la conexión privada de LR en el servidor.',jobs:jobs.filter(row=>row.company_id===input.companyId)};
    else if(input.action==='submit'){
     submits++;if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
     let job=jobs.find(row=>row.id===input.requestId);
