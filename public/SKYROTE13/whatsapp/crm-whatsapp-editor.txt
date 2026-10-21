@@ -1,0 +1,609 @@
+// Nexo: pegar el contenido completo en index.ts del editor de Supabase.
+// Nombre de función: crm-whatsapp. Los secretos se leen solo en el servidor.
+
+// supabase/functions/crm-whatsapp/index.ts
+import { createClient } from "npm:@supabase/supabase-js@2.118.0";
+import { Buffer as Buffer2 } from "node:buffer";
+
+// supabase/functions/_shared/lr-whatsapp-client.mjs
+import { createHash } from "node:crypto";
+import { Buffer } from "node:buffer";
+var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+var MAX_CAPTION_LENGTH = 1024;
+var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var MESSAGE_STATES = /* @__PURE__ */ new Set(["queued", "processing", "sent", "failed", "uncertain", "cancelled"]);
+var LrApiError = class extends Error {
+  constructor(status, code, message, retryAfter = null) {
+    super(message);
+    this.name = "LrApiError";
+    this.status = status;
+    this.code = code;
+    this.retryAfter = retryAfter;
+  }
+};
+var LrTransportError = class extends Error {
+  constructor(phase, mayHaveBeenAccepted) {
+    super(mayHaveBeenAccepted ? "No se pudo confirmar la respuesta. Consulta o repite con la MISMA clave de idempotencia." : "No se pudo completar la conexi\xF3n con LR. Conserva el mismo identificador al reintentar.");
+    this.name = "LrTransportError";
+    this.phase = phase;
+    this.mayHaveBeenAccepted = mayHaveBeenAccepted;
+  }
+};
+function ensure(condition, message) {
+  if (!condition) throw new TypeError(message);
+}
+function imageMime(bytes) {
+  if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
+  if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return "image/png";
+  if (bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP") return "image/webp";
+  return null;
+}
+function validateSend(input) {
+  ensure(UUID.test(input.sendId), "sendId debe ser un UUID persistido para este env\xEDo.");
+  ensure(typeof input.to === "string" && /^\+[1-9][0-9]{7,14}$/.test(input.to), "Usa tel\xE9fono internacional, por ejemplo +51 seguido del celular.");
+  ensure(typeof input.caption === "string" && input.caption.trim().length > 0, "Escribe el texto del mensaje.");
+  ensure(input.caption.length <= MAX_CAPTION_LENGTH, "El texto con imagen admite hasta 1024 unidades UTF-16.");
+  ensure(Buffer.isBuffer(input.image), "image debe ser un Buffer.");
+  ensure(input.image.length > 0 && input.image.length <= MAX_IMAGE_BYTES, "La imagen debe pesar como m\xE1ximo 5 MiB.");
+  ensure(imageMime(input.image) === input.mime && ["image/jpeg", "image/png", "image/webp"].includes(input.mime), "El archivo no coincide con el tipo JPEG, PNG o WebP indicado.");
+  ensure(typeof input.externalContactId === "string" && input.externalContactId.length > 0 && input.externalContactId.length <= 128, "Indica el identificador del contacto en tu CRM.");
+  ensure(input.consent?.confirmed === true, "Debes confirmar autorizaci\xF3n del destinatario.");
+  ensure(typeof input.consent.source === "string" && input.consent.source.trim().length > 0 && input.consent.source.length <= 200, "Indica el origen de la autorizaci\xF3n.");
+  const consentDate = input.consent.capturedAt;
+  ensure(typeof consentDate === "string" && /^\d{4}-\d\d-\d\dT/.test(consentDate) && Number.isFinite(Date.parse(consentDate)) && Date.parse(consentDate) <= Date.now() + 3e5, "capturedAt debe ser una fecha ISO real, no futura.");
+  ensure(input.dryRun === void 0 || typeof input.dryRun === "boolean", "dryRun debe ser booleano.");
+}
+var LrWhatsAppClient = class {
+  constructor({ token, endpoint = "https://www.sistemalr.com/api/bot-action?externalWhatsApp=v1", fetcher = globalThis.fetch }) {
+    ensure(typeof token === "string" && token.length >= 32 && !/[\r\n]/.test(token) && !token.includes("REEMPLAZAR_"), "Configura una clave privada de integraci\xF3n v\xE1lida.");
+    const url = new URL(endpoint);
+    ensure(url.protocol === "https:" && !url.username && !url.password && !url.hash, "El endpoint debe usar HTTPS sin credenciales en la URL.");
+    ensure(url.searchParams.get("externalWhatsApp") === "v1", "El endpoint debe seleccionar el contrato externalWhatsApp=v1.");
+    ensure(typeof fetcher === "function", "Se requiere fetch de Node.js.");
+    this.endpoint = url;
+    this.token = token;
+    this.fetcher = fetcher;
+  }
+  async request(action, { method = "GET", body, key, messageId } = {}) {
+    const url = new URL(this.endpoint);
+    url.searchParams.set("action", action);
+    if (messageId) url.searchParams.set("messageId", messageId);
+    const headers = { Authorization: `Bearer ${this.token}`, Accept: "application/json" };
+    if (body !== void 0) headers["Content-Type"] = "application/json";
+    if (key) headers["Idempotency-Key"] = key;
+    let response;
+    try {
+      response = await this.fetcher(url, {
+        method,
+        headers,
+        body: body === void 0 ? void 0 : JSON.stringify(body),
+        redirect: "error",
+        signal: AbortSignal.timeout(2e4)
+      });
+    } catch {
+      throw new LrTransportError(action, action === "messages" && body?.dryRun === false);
+    }
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new LrTransportError(action, action === "messages" && body?.dryRun === false);
+    }
+    if (!response.ok) {
+      throw new LrApiError(
+        response.status,
+        result.error?.code || "LR_ERROR",
+        result.error?.message || "LR rechaz\xF3 la solicitud.",
+        response.headers.get("Retry-After")
+      );
+    }
+    return result;
+  }
+  /** No devuelve QR ni permite conectar, desconectar o cambiar la sesión. */
+  async connection() {
+    const result = await this.request("connection");
+    ensure(result.senderPhone === "+51936755465" && typeof result.ready === "boolean", "LR no confirm\xF3 el remitente autorizado.");
+    return result;
+  }
+  /**
+   * Reintentar siempre con los mismos bytes, campos y sendId.
+   * dryRun es true por defecto: para un envío real se exige false explícito.
+   */
+  async submitImage(input) {
+    validateSend(input);
+    const dryRun = input.dryRun ?? true;
+    const sha256 = createHash("sha256").update(input.image).digest("hex");
+    const media = await this.request("media", {
+      method: "POST",
+      key: `${input.sendId}:image`,
+      body: { mime: input.mime, size: input.image.length, sha256 }
+    });
+    ensure(UUID.test(media.mediaId) && typeof media.uploadRequired === "boolean", "LR devolvi\xF3 un permiso de imagen inv\xE1lido.");
+    if (media.uploadRequired) {
+      const url = new URL(media.uploadUrl);
+      ensure(url.protocol === "https:" && url.hostname.endsWith(".r2.cloudflarestorage.com") && !url.username && !url.password && !url.port, "LR devolvi\xF3 un destino de subida no autorizado.");
+      const signedHeaders = media.requiredHeaders;
+      ensure(signedHeaders && Object.keys(signedHeaders).length === 1 && signedHeaders["Content-Type"] === input.mime, "Cabeceras de subida no autorizadas.");
+      let response;
+      try {
+        response = await this.fetcher(url, {
+          method: "PUT",
+          headers: signedHeaders,
+          body: input.image,
+          redirect: "error",
+          signal: AbortSignal.timeout(6e4)
+        });
+      } catch {
+        throw new LrTransportError("upload", false);
+      }
+      if (!response.ok) throw new LrApiError(response.status, "UPLOAD_FAILED", "No se pudo subir la imagen; repite el flujo con el mismo sendId.");
+    }
+    const result = await this.request("messages", {
+      method: "POST",
+      key: input.sendId,
+      body: {
+        to: input.to,
+        caption: input.caption,
+        mediaId: media.mediaId,
+        externalContactId: input.externalContactId,
+        consent: input.consent,
+        dryRun
+      }
+    });
+    if (dryRun) ensure(result.dryRun === true && result.enqueued === false && result.valid === true, "LR no confirm\xF3 el modo de prueba sin env\xEDo.");
+    else ensure(UUID.test(result.messageId) && MESSAGE_STATES.has(result.status), "LR no devolvi\xF3 un registro de env\xEDo v\xE1lido; consulta con el mismo sendId.");
+    return result;
+  }
+  async status(messageId) {
+    ensure(UUID.test(messageId), "messageId debe ser el UUID de LR.");
+    const result = await this.request("message", { messageId });
+    ensure(result.messageId === messageId && MESSAGE_STATES.has(result.status), "LR devolvi\xF3 un estado inv\xE1lido.");
+    return result;
+  }
+};
+
+// supabase/functions/_shared/whatsapp-core.mjs
+import { createHash as createHash2 } from "node:crypto";
+
+// supabase/functions/_shared/crm/domain.js
+var ZONE = "America/Lima";
+var TYPES = ["companies", "contacts", "deals", "tasks", "activities", "payments", "milestones", "settings"];
+var STAGES = { diagnostico: "Filtrado", demo: "Contactado", propuesta: "Seguimiento", ganada: "Ganado", perdida: "Perdido" };
+var STAGE_STATUS = { diagnostico: "nueva", demo: "contactada", propuesta: "conversacion", ganada: "cliente", perdida: "no_contactar" };
+var CONTACT_CHANNELS = { correo: "Correo", whatsapp: "WhatsApp", llamada: "Llamada", instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn", presencial: "Presencial", otro: "Otro canal" };
+var emptyData = () => Object.fromEntries(TYPES.map((type) => [type, []]));
+var id = () => crypto.randomUUID();
+function today(now = /* @__PURE__ */ new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now);
+  const get = (type) => parts.find((part) => part.type === type).value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+function localTime(now = /* @__PURE__ */ new Date()) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: ZONE, hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
+}
+var isOpen = (deal) => !["ganada", "perdida"].includes(deal.stage) && !deal.archived;
+var isPending = (task) => !["hecha", "cancelada"].includes(task.status);
+function dealStageKey(deal) {
+  const row = typeof deal === "string" ? { stage: deal } : deal;
+  return row?.stage === "negociacion" || row?.stage === "demo" && row.pipeline_version !== 2 ? "propuesta" : row?.stage;
+}
+function activityTime(activity) {
+  const value = activity.occurred_at || (["contacto", "respuesta"].includes(activity.kind) ? activity.created_at : "") || (activity.date ? `${activity.date}T${activity.time || "12:00"}:00-05:00` : activity.created_at);
+  return value && !Number.isNaN(Date.parse(value)) ? new Date(value).toISOString() : "";
+}
+function contactHistory(companyId, data) {
+  const rows = (data.activities || []).filter((row) => row.company_id === companyId);
+  const attempts = rows.filter((row) => row.kind === "contacto" || ["correo", "whatsapp", "llamada", "reunion", "presencial"].includes(row.kind));
+  attempts.sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+  const contact = attempts[0];
+  if (!contact) {
+    const responses2 = rows.filter((row) => row.kind === "respuesta").sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+    return { contact: null, at: "", channels: [], response: responses2[0] || null };
+  }
+  const at = activityTime(contact);
+  const group = attempts.filter((row) => activityTime(row) === at);
+  const channels = [...new Set(group.flatMap((row) => row.kind === "contacto" ? row.channels || [] : [row.kind === "reunion" ? "presencial" : row.kind]))].filter((key) => CONTACT_CHANNELS[key]);
+  const responses = rows.filter((row) => row.kind === "respuesta" && (row.contact_id === contact.id || !row.contact_id && activityTime(row) >= at));
+  responses.push(...group.filter((row) => ["conversacion", "no_interes", "no_contactar"].includes(row.outcome)));
+  responses.sort((a, b) => activityTime(b).localeCompare(activityTime(a)));
+  return { contact, at, channels, response: responses[0] || null };
+}
+function companyStage(company, data) {
+  if (STAGES[company.pipeline_stage]) return company.pipeline_stage;
+  if (["no_contactar", "no_encaja"].includes(company.status)) return "perdida";
+  const deals = (data.deals || []).filter((row) => row.company_id === company.id && !row.archived);
+  const open = deals.filter(isOpen);
+  if (open.some((row) => dealStageKey(row) === "propuesta")) return "propuesta";
+  if (!open.length && (deals.some((row) => row.stage === "ganada") || company.status === "cliente")) return "ganada";
+  if (!open.length && deals.some((row) => row.stage === "perdida")) return "perdida";
+  if (["conversacion", "calificada"].includes(company.status)) return "propuesta";
+  const history = contactHistory(company.id, data);
+  if (history.response?.outcome === "conversacion") return "propuesta";
+  if (history.response && ["no_interes", "no_contactar"].includes(history.response.outcome)) return "perdida";
+  if (history.contact || company.status === "contactada" || open.some((row) => dealStageKey(row) === "demo")) return "demo";
+  return "diagnostico";
+}
+
+// supabase/functions/_shared/crm/prospecting.js
+var op = (type, record) => ({ type, record, expected: record.version || 0 });
+var stamp = (now) => ({ occurred_at: now.toISOString(), date: today(now), time: localTime(now) });
+var companyUpdate = (company, stage) => ({ ...company, status: STAGE_STATUS[stage], pipeline_stage: stage });
+var log = (company, body, now) => op("activities", { id: id(), company_id: company.id, deal_id: "", kind: "sistema", outcome: "comentario", body, ...stamp(now) });
+var assertSize = (operations) => {
+  if (operations.length > 180) throw new Error("Esta empresa tiene demasiadas tareas vinculadas para cerrar todo de una vez. Reduce las tareas pendientes antes de volver a intentarlo.");
+  return operations;
+};
+function stageOperations(data, company, stage, { reason = "", now = /* @__PURE__ */ new Date(), allowContact = false } = {}) {
+  if (!STAGES[stage]) throw new Error("Elige una etapa v\xE1lida.");
+  if (stage === "demo" && !allowContact) throw new Error("Registra los canales antes de pasar a Contactado.");
+  if (stage === "ganada") throw new Error("Registra el importe y la fecha para confirmar una venta ganada.");
+  if (stage === "perdida" && !reason.trim()) throw new Error("Indica el motivo del cierre.");
+  const operations = [op("companies", companyUpdate(company, stage))];
+  const open = data.deals.filter((deal) => deal.company_id === company.id && isOpen(deal));
+  for (const deal of open) operations.push(op("deals", { ...deal, stage, pipeline_version: 2, closed_date: stage === "perdida" ? today(now) : "", lost_reason: stage === "perdida" ? reason.trim() : "", next_step: stage === "perdida" ? "" : deal.next_step || "", next_action_date: stage === "perdida" ? "" : deal.next_action_date || "" }));
+  if (stage === "perdida") {
+    for (const task of data.tasks.filter((task2) => task2.company_id === company.id && isPending(task2))) {
+      const deal = data.deals.find((deal2) => deal2.id === task.deal_id);
+      if (deal?.stage === "ganada" || task.kind === "entrega") continue;
+      operations.push(op("tasks", { ...task, status: "cancelada", cancel_reason: reason.trim() }));
+    }
+  }
+  operations.push(log(company, `${STAGES[stage]}${reason ? ": " + reason.trim() : ""}`, now));
+  return assertSize(operations);
+}
+function contactOperations(data, company, channels, { body = "", move = false, allowReopen = false, now = /* @__PURE__ */ new Date() } = {}) {
+  if (!Array.isArray(channels) || channels.some((key) => !CONTACT_CHANNELS[key])) throw new Error("Revisa los canales seleccionados.");
+  const chosen = Object.keys(CONTACT_CHANNELS).filter((key) => channels.includes(key));
+  if (!chosen.length) throw new Error("Elige al menos un canal de contacto.");
+  const current = companyStage(company, data);
+  if (current === "perdida" && !allowReopen) throw new Error("El seguimiento est\xE1 cerrado. Reabre la empresa antes de contactarla.");
+  const stage = move || current === "diagnostico" ? "demo" : current;
+  let operations;
+  if (stage !== current || move) operations = stageOperations(data, company, stage, { allowContact: true, now });
+  else operations = [op("companies", companyUpdate(company, stage))];
+  const contact = { id: id(), company_id: company.id, deal_id: "", kind: "contacto", channels: chosen, outcome: "sin_respuesta", body: body.trim() || `Contacto realizado por ${chosen.map((key) => CONTACT_CHANNELS[key]).join(" y ")}.`, ...stamp(now) };
+  operations.push(op("activities", contact));
+  return assertSize(operations);
+}
+
+// supabase/functions/_shared/whatsapp-domain.mjs
+function normalizeWhatsAppPhone(value) {
+  let digits = String(value || "").replace(/\D/g, "").replace(/^00/, "");
+  if (/^9\d{8}$/.test(digits)) digits = "51" + digits;
+  return /^[1-9]\d{7,14}$/.test(digits) ? "+" + digits : "";
+}
+function priorEmail(data, companyId) {
+  return data.activities.filter((row) => row.company_id === companyId && (row.kind === "correo" || row.kind === "contacto" && row.channels?.includes("correo"))).sort((a, b) => (b.occurred_at || b.created_at || b.date || "").localeCompare(a.occurred_at || a.created_at || a.date || ""))[0] || null;
+}
+
+// supabase/functions/_shared/whatsapp-core.mjs
+var UUID2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var LR_STATES = ["queued", "processing", "sent", "failed", "uncertain", "cancelled"];
+var OutboundError = class extends Error {
+  constructor(code, message, status = 400) {
+    super(message);
+    this.code = code;
+    this.status = status;
+  }
+};
+var fail = (code, message, status) => {
+  throw new OutboundError(code, message, status);
+};
+var digest = (value) => createHash2("sha256").update(value).digest("hex");
+var blocked = (company) => !company || company.archived || ["no_contactar", "no_encaja"].includes(company.status) || company.pipeline_stage === "perdida";
+var PUBLIC_JOB_FIELDS = /* @__PURE__ */ new Set(["id", "company_id", "recipient", "caption", "contact_id", "status", "provider_message_id", "provider_whatsapp_id", "error_code", "error_message", "sent_at", "logged_at", "version", "created_at", "updated_at", "log_pending", "refresh_pending"]);
+var publicJob = (job) => {
+  if (!job) return null;
+  const result = Object.fromEntries(Object.entries(job).filter(([key]) => PUBLIC_JOB_FIELDS.has(key)));
+  if (job.status === "prepared" && ["RATE_LIMITED", "QUEUE_LIMIT"].includes(job.error_code) && job.lease_until) result.retry_at = job.lease_until;
+  return result;
+};
+var SAFE_LR_CODES = /* @__PURE__ */ new Set(["INVALID_REQUEST", "INVALID_INTEGRATION_KEY", "INTEGRATION_DISABLED", "SCOPE_DENIED", "NOT_FOUND", "IDEMPOTENCY_CONFLICT", "IMAGE_TOO_LARGE", "UNSUPPORTED_MEDIA_TYPE", "MEDIA_NOT_READY", "MEDIA_INTEGRITY_MISMATCH", "RATE_LIMITED", "QUEUE_LIMIT", "SESSION_NOT_READY", "SENDER_IDENTITY_MISMATCH", "UPLOAD_FAILED"]);
+var WhatsAppService = class {
+  constructor({ store, provider, loadImage, imageHash, configured = false, enabled = false, now = () => /* @__PURE__ */ new Date() }) {
+    Object.assign(this, { store, provider, loadImage, imageHash, configured, enabled, now });
+  }
+  async company(companyId) {
+    const data = await this.store.loadData();
+    const company = data.companies.find((row) => row.id === companyId);
+    if (!company) fail("COMPANY_NOT_FOUND", "No se encontr\xF3 esta empresa.", 404);
+    return { data, company };
+  }
+  async context(companyId) {
+    await this.company(companyId);
+    const jobs = await this.store.listJobs(companyId);
+    let ready = false, message = this.configured ? "La conexi\xF3n est\xE1 pendiente de comprobar." : "Falta configurar la conexi\xF3n privada de LR en el servidor.";
+    if (this.configured) {
+      try {
+        const connection = await this.provider.connection();
+        ready = connection.ready;
+        message = ready ? "Conectado al WhatsApp de Julio." : "Vincula el n\xFAmero de Julio en Sistema LR \u2192 Campa\xF1as \u2192 Mi WhatsApp comercial. Puedes validar el mensaje sin enviarlo.";
+      } catch {
+        message = "LR todav\xEDa no confirm\xF3 su conexi\xF3n. Revisa que el puente est\xE9 habilitado y la clave sea v\xE1lida.";
+      }
+    }
+    return { configured: this.configured, enabled: this.enabled, ready, senderPhone: "+51936755465", message, jobs: jobs.map(publicJob) };
+  }
+  async prepare(input) {
+    if (!this.configured) fail("LR_NOT_CONFIGURED", "Falta configurar la conexi\xF3n privada de LR.", 503);
+    if (!UUID2.test(input.requestId || "")) fail("INVALID_REQUEST", "No se pudo identificar este intento. Vuelve a abrir el mensaje.");
+    const { data, company } = await this.company(input.companyId);
+    if (blocked(company) || companyStage(company, data) === "perdida") fail("CONTACT_BLOCKED", "El seguimiento de esta empresa est\xE1 cerrado o archivado.");
+    const contact = input.contactId ? data.contacts.find((row) => row.id === input.contactId && row.company_id === company.id) : company;
+    const recipient = normalizeWhatsAppPhone(contact?.phone);
+    if (!recipient) fail("INVALID_PHONE", "Registra un tel\xE9fono internacional v\xE1lido en la empresa o contacto.");
+    const caption = typeof input.caption === "string" ? input.caption : "";
+    if (!caption.trim() || caption.length > 1024) fail("INVALID_CAPTION", "El mensaje debe tener entre 1 y 1024 caracteres.");
+    const email = priorEmail(data, company.id);
+    if (!email && input.emailAlreadySent !== true) fail("EMAIL_REQUIRED", "Este mensaje dice que ya enviaste un correo. Registra o confirma ese env\xEDo primero.");
+    const consent = input.consent;
+    if (consent?.confirmed !== true || typeof consent.source !== "string" || !consent.source.trim() || consent.source.length > 200 || typeof consent.capturedAt !== "string" || !/^\d{4}-\d\d-\d\dT/.test(consent.capturedAt) || !Number.isFinite(Date.parse(consent.capturedAt)) || Date.parse(consent.capturedAt) > this.now().getTime() + 3e5) fail("CONSENT_REQUIRED", "La conexi\xF3n LR exige registrar la autorizaci\xF3n del destinatario y su origen.");
+    const normalizedConsent = { confirmed: true, source: consent.source.trim(), capturedAt: consent.capturedAt };
+    const hash = digest(JSON.stringify({ company: company.id, contact: input.contactId || "", recipient, caption, image: this.imageHash, consentSource: normalizedConsent.source }));
+    return this.store.prepareJob({ id: input.requestId, company_id: company.id, contact_id: input.contactId || "", recipient, caption, image_sha256: this.imageHash, payload_hash: hash, consent: normalizedConsent, email_evidence: email ? { type: "activity", id: email.id } : { type: "manual", recorded_at: this.now().toISOString() } });
+  }
+  async ensureEligible(job) {
+    const { data, company } = await this.company(job.company_id);
+    if (blocked(company) || companyStage(company, data) === "perdida") fail("CONTACT_BLOCKED", "La empresa cerr\xF3 su seguimiento. No se solicitar\xE1 otro env\xEDo.");
+    const contact = job.contact_id ? data.contacts.find((row) => row.id === job.contact_id && row.company_id === company.id) : company;
+    if (normalizeWhatsAppPhone(contact?.phone) !== job.recipient) fail("RECIPIENT_CHANGED", "El tel\xE9fono cambi\xF3 desde que preparaste este mensaje. Revisa el intento antes de enviar.");
+  }
+  async submit(input) {
+    if (input.dryRun !== true && input.dryRun !== false) fail("INVALID_REQUEST", "Indica si deseas validar o enviar.");
+    if (input.dryRun === false && !this.enabled) fail("SENDING_DISABLED", "El env\xEDo real todav\xEDa no est\xE1 activado en el servidor.", 503);
+    const job = await this.prepare(input);
+    return this.dispatch(job, input.dryRun);
+  }
+  async dispatch(job, dryRun, recover = false) {
+    if (["queued", "processing", "sent", "cancelled", "failed"].includes(job.status) || job.status === "uncertain" && !recover) return publicJob(await this.refreshInternal(job));
+    if (["submitting", "validating"].includes(job.status)) return publicJob(await this.refreshInternal(job));
+    if (!this.configured) fail("LR_NOT_CONFIGURED", "Falta configurar LR.", 503);
+    if (!dryRun && !this.enabled) fail("SENDING_DISABLED", "El env\xEDo real todav\xEDa no est\xE1 activado.", 503);
+    if (["RATE_LIMITED", "QUEUE_LIMIT"].includes(job.error_code) && Date.parse(job.lease_until) > this.now().getTime()) fail("RATE_LIMITED", "LR pidi\xF3 esperar antes de volver a intentar.", 429);
+    await this.ensureEligible(job);
+    job = await this.store.claimJob(job, dryRun);
+    let mayHaveSent = false;
+    try {
+      if (!recover && !dryRun) {
+        const connection = await this.provider.connection();
+        if (!connection.ready) fail("SESSION_NOT_READY", "El WhatsApp de Julio no est\xE1 conectado en LR.", 503);
+      }
+      const image = await this.loadImage();
+      if (digest(image) !== job.image_sha256) fail("IMAGE_CHANGED", "La imagen cambi\xF3. Es necesario revisar la versi\xF3n antes de enviar.");
+      await this.ensureEligible(job);
+      mayHaveSent = !dryRun;
+      const result = await this.provider.submitImage({ sendId: job.id, to: job.recipient, caption: job.caption, image, mime: "image/jpeg", externalContactId: job.contact_id || job.company_id, consent: job.consent, dryRun });
+      if (dryRun) {
+        job = await this.store.updateJob(job, { status: "validated", lease_until: null, error_code: null, error_message: null });
+        return publicJob(job);
+      }
+      job = await this.applyProvider(job, result);
+      if (job.status === "sent") {
+        try {
+          job = await this.logSent(job);
+        } catch {
+          job = { ...job, log_pending: true };
+        }
+      }
+      return publicJob(job);
+    } catch (error) {
+      const uncertain = mayHaveSent && !(error instanceof LrTransportError && !error.mayHaveBeenAccepted) && !(error instanceof LrApiError && error.status >= 400 && error.status < 500);
+      const code = error instanceof OutboundError ? error.code : error instanceof LrApiError && SAFE_LR_CODES.has(error.code) ? error.code : uncertain ? "ACCEPTANCE_UNCERTAIN" : "CONNECTION_FAILED";
+      const message = uncertain ? "No se pudo confirmar el resultado. Revisa este mismo intento; no crees otro env\xEDo." : error instanceof OutboundError ? error.message : "LR no acept\xF3 el env\xEDo. Revisa la conexi\xF3n o la configuraci\xF3n antes de volver a intentar.";
+      let retryAt = null;
+      if (error instanceof LrApiError && error.status === 429) {
+        const raw = String(error.retryAfter || "");
+        const time = /^\d+$/.test(raw) ? this.now().getTime() + Number(raw) * 1e3 : Date.parse(raw);
+        retryAt = new Date(Number.isFinite(time) && time > this.now().getTime() && time < this.now().getTime() + 2592e6 ? time : this.now().getTime() + 6e4).toISOString();
+      }
+      job = await this.store.updateJob(job, { status: uncertain ? "uncertain" : "prepared", lease_until: retryAt, error_code: retryAt ? code === "QUEUE_LIMIT" ? "QUEUE_LIMIT" : "RATE_LIMITED" : code, error_message: retryAt ? "LR alcanz\xF3 su l\xEDmite de env\xEDo. Espera el plazo indicado antes de volver a intentar." : message });
+      return publicJob(job);
+    }
+  }
+  async applyProvider(job, result) {
+    if (!result || !UUID2.test(result.messageId || "") || !LR_STATES.includes(result.status) || result.senderPhone && result.senderPhone !== "+51936755465") fail("INVALID_PROVIDER_RESPONSE", "LR devolvi\xF3 un estado que no se pudo comprobar.", 502);
+    const reported = result.updatedAt;
+    const time = typeof reported === "string" && Number.isFinite(Date.parse(reported)) && Date.parse(reported) <= this.now().getTime() + 3e5 ? new Date(reported).toISOString() : this.now().toISOString();
+    return this.store.updateJob(job, { status: result.status, provider_message_id: result.messageId, provider_whatsapp_id: typeof result.whatsappMessageId === "string" ? result.whatsappMessageId.slice(0, 200) : null, sent_at: result.status === "sent" ? job.sent_at || time : null, lease_until: null, error_code: result.status === "failed" ? "LR_SEND_FAILED" : null, error_message: result.status === "failed" ? "LR inform\xF3 que no se pudo enviar. Revisa el intento antes de repetirlo." : null });
+  }
+  async logSent(job) {
+    if (job.logged_at) return job;
+    const activityId = "wa-" + job.id;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const data = await this.store.loadData();
+      if (data.activities.some((row) => row.id === activityId)) return this.store.updateJob(job, { logged_at: this.now().toISOString(), error_code: null, error_message: null });
+      const company = data.companies.find((row) => row.id === job.company_id);
+      if (!company) return job;
+      const now = new Date(job.sent_at || this.now());
+      const operations = companyStage(company, data) === "perdida" || company.archived ? [{ type: "activities", expected: 0, record: { id: activityId, company_id: company.id, deal_id: "", kind: "contacto", channels: ["whatsapp"], outcome: "sin_respuesta", body: job.caption, occurred_at: now.toISOString(), date: today(now), time: localTime(now) } }] : contactOperations(data, company, ["whatsapp"], { body: job.caption, now });
+      const record = operations.find((op2) => op2.type === "activities" && op2.record.kind === "contacto").record;
+      record.id = activityId;
+      record.outbound_id = job.id;
+      record.provider_message_id = job.provider_message_id;
+      try {
+        await this.store.commit(operations);
+        return await this.store.updateJob(job, { logged_at: this.now().toISOString(), error_code: null, error_message: null });
+      } catch {
+      }
+    }
+    return { ...job, log_pending: true };
+  }
+  async refreshInternal(job) {
+    if (job.status === "sent") {
+      try {
+        return await this.logSent(job);
+      } catch {
+        return { ...job, log_pending: true };
+      }
+    }
+    if (["submitting", "validating"].includes(job.status) && job.lease_until && Date.parse(job.lease_until) <= this.now().getTime()) return this.store.updateJob(job, { status: job.status === "submitting" ? "uncertain" : "prepared", lease_until: null, error_code: "INTERRUPTED", error_message: job.status === "submitting" ? "El intento se interrumpi\xF3. Puede haberse aceptado; revisa este mismo intento." : "La validaci\xF3n se interrumpi\xF3 sin solicitar env\xEDo." });
+    if (!job.provider_message_id || !["queued", "processing", "uncertain"].includes(job.status)) return job;
+    if (!this.configured) return job;
+    try {
+      job = await this.applyProvider(job, await this.provider.status(job.provider_message_id));
+    } catch {
+      return { ...job, refresh_pending: true };
+    }
+    if (job.status === "sent") {
+      try {
+        return await this.logSent(job);
+      } catch {
+        return { ...job, log_pending: true };
+      }
+    }
+    return job;
+  }
+  async refresh(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    return publicJob(await this.refreshInternal(await this.store.getJob(id2)));
+  }
+  async recover(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    let job = await this.store.getJob(id2);
+    job = await this.refreshInternal(job);
+    if (job.provider_message_id || job.status !== "uncertain") return publicJob(job);
+    return this.dispatch(job, false, true);
+  }
+  async cancel(id2) {
+    if (!UUID2.test(id2 || "")) fail("INVALID_REQUEST", "Identificador de env\xEDo inv\xE1lido.");
+    const job = await this.store.getJob(id2);
+    if (!["prepared", "validated"].includes(job.status)) fail("JOB_BUSY", "Solo se puede descartar un borrador que todav\xEDa no se ha solicitado.");
+    return publicJob(await this.store.updateJob(job, { status: "cancelled", lease_until: null }));
+  }
+};
+
+// supabase/functions/_shared/whatsapp-store.mjs
+function databaseError(error) {
+  const message = error?.message || "", code = error?.code || "";
+  if (["42P01", "PGRST202", "PGRST205"].includes(code)) return new OutboundError("BACKEND_NOT_INSTALLED", "Falta instalar el SQL adicional de WhatsApp en Supabase.", 503);
+  const known = { RATE_LIMITED: ["LR pidi\xF3 esperar antes de volver a intentar.", 429], RECIPIENT_CHANGED: ["El tel\xE9fono cambi\xF3. Revisa el destinatario antes de enviar.", 409], NOT_AUTHORIZED: ["La cuenta no est\xE1 autorizada.", 403], COMPANY_NOT_FOUND: ["La empresa no est\xE1 disponible.", 404], CONTACT_BLOCKED: ["La empresa est\xE1 cerrada o archivada.", 400], JOB_NOT_FOUND: ["No se encontr\xF3 este intento.", 404], IDEMPOTENCY_CONFLICT: ["Este identificador ya se us\xF3 con otro contenido. Conserva el intento original.", 409], JOB_PENDING: ["Ya hay un intento pendiente para este destinatario. Revisa el historial.", 409], JOB_BUSY: ["Este intento est\xE1 siendo procesado. Consulta su estado antes de repetirlo.", 409] };
+  for (const [key, [text, status]] of Object.entries(known)) if (message.includes(key)) return new OutboundError(key, text, status);
+  if (code === "PGRST116" || code === "23505") return new OutboundError("JOB_BUSY", "El intento cambi\xF3 desde otro dispositivo. Consulta su estado.", 409);
+  return new OutboundError("DATABASE_ERROR", "No se pudo confirmar el registro. Consulta el historial antes de volver a intentar.", 503);
+}
+var WhatsAppStore = class {
+  constructor({ service, user, owner }) {
+    Object.assign(this, { service, user, owner });
+  }
+  async loadData() {
+    const result = emptyData();
+    let offset = 0;
+    while (true) {
+      const { data, error } = await this.user.from("crm_records").select("*").order("kind").order("id").range(offset, offset + 999);
+      if (error) throw databaseError(error);
+      for (const row of data) if (result[row.kind]) result[row.kind].push({ ...row.data, id: row.id, version: row.version, created_at: row.created_at, updated_at: row.updated_at });
+      if (data.length < 1e3) break;
+      offset += 1e3;
+    }
+    return result;
+  }
+  async listJobs(companyId) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").select("*").eq("owner_id", this.owner).eq("company_id", companyId).order("created_at", { ascending: false }).limit(20);
+    if (error) throw databaseError(error);
+    return data;
+  }
+  async getJob(id2) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").select("*").eq("owner_id", this.owner).eq("id", id2).maybeSingle();
+    if (error) throw databaseError(error);
+    if (!data) throw new OutboundError("JOB_NOT_FOUND", "No se encontr\xF3 este intento.", 404);
+    return data;
+  }
+  async prepareJob(job) {
+    const { data, error } = await this.service.rpc("crm_whatsapp_prepare", { actor: this.owner, job });
+    if (error) throw databaseError(error);
+    return Array.isArray(data) ? data[0] : data;
+  }
+  async claimJob(job, dryRun) {
+    const { data, error } = await this.service.rpc("crm_whatsapp_claim", { actor: this.owner, job_id: job.id, expected: job.version, is_dry_run: dryRun });
+    if (error) throw databaseError(error);
+    return Array.isArray(data) ? data[0] : data;
+  }
+  async updateJob(job, patch) {
+    const { data, error } = await this.service.from("crm_whatsapp_jobs").update({ ...patch, version: job.version + 1, updated_at: (/* @__PURE__ */ new Date()).toISOString() }).eq("id", job.id).eq("owner_id", this.owner).eq("version", job.version).select("*").single();
+    if (error) throw databaseError(error);
+    return data;
+  }
+  async commit(operations) {
+    const { error } = await this.user.rpc("crm_commit", { operations });
+    if (error) throw databaseError(error);
+  }
+};
+
+// supabase/functions/_shared/whatsapp-http.mjs
+async function authenticateSupabase(authorization, { service, makeUser }) {
+  if (!/^Bearer \S+$/i.test(authorization || "")) throw new OutboundError("UNAUTHENTICATED", "Inicia sesi\xF3n para acceder a los env\xEDos.", 401);
+  const { data, error } = await service.auth.getUser(authorization.replace(/^Bearer /i, ""));
+  if (error || !data?.user) throw new OutboundError("UNAUTHENTICATED", "La sesi\xF3n no es v\xE1lida. Vuelve a iniciar sesi\xF3n.", 401);
+  const user = makeUser(authorization);
+  const { data: member, error: membershipError } = await user.from("crm_members").select("user_id").eq("user_id", data.user.id).maybeSingle();
+  if (membershipError || !member) throw new OutboundError("NOT_AUTHORIZED", "Esta cuenta no est\xE1 autorizada en Nexo CRM.", 403);
+  return { service, user, owner: data.user.id };
+}
+function authorizeSenderOwner(owner, expectedOwner, configured) {
+  if (!configured) return;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expectedOwner || "")) throw new OutboundError("SENDER_OWNER_NOT_CONFIGURED", "Falta vincular el WhatsApp de Julio a su usuario del CRM. Revisa los pasos de activaci\xF3n.", 503);
+  if (owner !== expectedOwner) throw new OutboundError("SENDER_NOT_AUTHORIZED", "Esta cuenta no est\xE1 autorizada para usar el WhatsApp de Julio.", 403);
+}
+function createWhatsAppHandler({ authenticate, makeService, origin = "https://nexoamedida.com" }) {
+  const cors = { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info", "Access-Control-Allow-Methods": "POST,OPTIONS", "Cache-Control": "no-store", "Vary": "Origin" };
+  const reply = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json; charset=utf-8" } });
+  return async (req) => {
+    if (req.headers.get("origin") && req.headers.get("origin") !== origin) return reply({ error: { code: "ORIGIN_DENIED", message: "Origen no autorizado." } }, 403);
+    if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+    if (req.method !== "POST") return reply({ error: { code: "METHOD_NOT_ALLOWED", message: "Usa POST." } }, 405);
+    try {
+      const authorization = req.headers.get("authorization") || "";
+      if (!/^Bearer \S+$/i.test(authorization)) throw new OutboundError("UNAUTHENTICATED", "Inicia sesi\xF3n para acceder a los env\xEDos.", 401);
+      const identity = await authenticate(authorization);
+      if (Number(req.headers.get("content-length") || 0) > 12e3) throw new OutboundError("INVALID_REQUEST", "La solicitud es demasiado grande.", 413);
+      const text = await req.text();
+      if (text.length > 12e3) throw new OutboundError("INVALID_REQUEST", "La solicitud es demasiado grande.", 413);
+      let input;
+      try {
+        input = JSON.parse(text);
+      } catch {
+        throw new OutboundError("INVALID_REQUEST", "La solicitud no es v\xE1lida.");
+      }
+      if (!input || typeof input !== "object" || Array.isArray(input)) throw new OutboundError("INVALID_REQUEST", "La solicitud no es v\xE1lida.");
+      const api = await makeService(identity);
+      if (input.action === "context") return reply(await api.context(input.companyId));
+      if (input.action === "submit") return reply({ job: await api.submit(input) });
+      if (input.action === "refresh") return reply({ job: await api.refresh(input.jobId) });
+      if (input.action === "recover") return reply({ job: await api.recover(input.jobId) });
+      if (input.action === "cancel") return reply({ job: await api.cancel(input.jobId) });
+      throw new OutboundError("INVALID_REQUEST", "Acci\xF3n no disponible.");
+    } catch (error) {
+      const problem = error instanceof OutboundError ? error : new OutboundError("INTEGRATION_ERROR", "No se pudo completar la operaci\xF3n. Consulta el historial antes de repetirla.", 503);
+      return reply({ error: { code: problem.code, message: problem.message } }, problem.status);
+    }
+  };
+}
+
+// supabase/functions/crm-whatsapp/campaign.json
+var campaign_default = {
+  url: "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",
+  sha256: "af7b4d171722db4eaee52176f2f0197c7131ca35e9a15d1220f164dd53f6159c"
+};
+
+// supabase/functions/crm-whatsapp/index.ts
+Deno.serve(createWhatsAppHandler({
+  authenticate: async (authorization) => {
+    const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !serviceKey || !anonKey) throw new OutboundError("BACKEND_NOT_CONFIGURED", "La funci\xF3n no tiene configurada su conexi\xF3n interna.", 503);
+    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    return authenticateSupabase(authorization, { service, makeUser: (header) => createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: header } } }) });
+  },
+  makeService: ({ service, user, owner }) => {
+    const token = Deno.env.get("LR_WHATSAPP_TOKEN") || "", endpoint = Deno.env.get("LR_WHATSAPP_ENDPOINT") || "https://www.sistemalr.com/api/bot-action?externalWhatsApp=v1";
+    const configured = token.length >= 32 && !token.includes("REEMPLAZAR_");
+    authorizeSenderOwner(owner, Deno.env.get("NEXO_WHATSAPP_OWNER_ID"), configured);
+    const provider = configured ? new LrWhatsAppClient({ token, endpoint }) : null;
+    return new WhatsAppService({ store: new WhatsAppStore({ service, user, owner }), provider, configured, enabled: Deno.env.get("LR_WHATSAPP_ENABLED") === "true", imageHash: campaign_default.sha256, loadImage: async () => {
+      const response = await fetch(campaign_default.url, { redirect: "error", signal: AbortSignal.timeout(2e4) });
+      if (!response.ok || Number(response.headers.get("content-length") || 0) > 5242880) throw new OutboundError("IMAGE_UNAVAILABLE", "No se pudo cargar la imagen de Nexo.", 503);
+      const image = Buffer2.from(await response.arrayBuffer());
+      if (!image.length || image.length > 5242880) throw new OutboundError("IMAGE_UNAVAILABLE", "La imagen no tiene el tama\xF1o permitido.", 503);
+      return image;
+    } });
+  }
+}));
