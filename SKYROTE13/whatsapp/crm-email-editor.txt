@@ -108,11 +108,11 @@ var fail = (code, message, status = 400) => {
   throw new OutboundError(code, message, status);
 };
 var ZohoMailClient = class {
-  constructor({ clientId, clientSecret, refreshToken, accountId, fromAddress, fetcher = fetch }) {
+  constructor({ clientId, clientSecret, refreshToken, accountId = "", fromAddress, fetcher = fetch }) {
     Object.assign(this, { clientId, clientSecret, refreshToken, accountId, fromAddress, fetcher });
   }
   get configured() {
-    return [this.clientId, this.clientSecret, this.refreshToken, this.accountId, this.fromAddress].every(Boolean);
+    return [this.clientId, this.clientSecret, this.refreshToken, this.fromAddress].every(Boolean);
   }
   async token() {
     if (!this.configured) fail("ZOHO_NOT_CONFIGURED", "Falta autorizar Zoho Mail en el servidor.", 503);
@@ -123,15 +123,26 @@ var ZohoMailClient = class {
     if (typeof result.access_token !== "string") fail("ZOHO_AUTH_FAILED", "Zoho no devolvi\xF3 una autorizaci\xF3n v\xE1lida.", 503);
     return result.access_token;
   }
+  async account(token) {
+    if (this.accountId) return this.accountId;
+    const response = await this.fetcher("https://mail.zoho.com/api/accounts", { headers: { Authorization: `Zoho-oauthtoken ${token}` } });
+    if (!response.ok) fail("ZOHO_ACCOUNT_FAILED", "Zoho autoriz\xF3 la cuenta, pero no devolvi\xF3 su identificador.", 503);
+    const result = await response.json().catch(() => ({}));
+    const accountId = result?.data?.[0]?.accountId || result?.data?.[0]?.accountID;
+    if (!accountId) fail("ZOHO_ACCOUNT_FAILED", "Zoho no devolvi\xF3 un identificador de cuenta para este buz\xF3n.", 503);
+    this.accountId = String(accountId);
+    return this.accountId;
+  }
   async send(input) {
     if (!UUID.test(input.sendId || "")) fail("INVALID_REQUEST", "Identificador de correo inv\xE1lido.");
     const token = await this.token();
+    const accountId = await this.account(token);
     const body = JSON.stringify({ fromAddress: this.fromAddress, toAddress: input.toAddress, subject: input.subject, content: input.content, mailFormat: input.mailFormat || "html" });
-    const url = `https://mail.zoho.com/api/accounts/${encodeURIComponent(this.accountId)}/messages`;
+    const url = `https://mail.zoho.com/api/accounts/${encodeURIComponent(accountId)}/messages`;
     const response = await this.fetcher(url, { method: "POST", headers: { Authorization: `Zoho-oauthtoken ${token}`, "Content-Type": "application/json" }, body });
     if (!response.ok) {
       if (response.status === 429) fail("RATE_LIMITED", "Zoho pidi\xF3 esperar antes de volver a intentar.", 429);
-      fail("ZOHO_SEND_FAILED", "Zoho no acept\xF3 el correo. Revisa la autorizaci\xF3n o la plantilla.", 503);
+      fail("ZOHO_SEND_FAILED", "Zoho no acept\xF3 el correo. Revisa la autorizaci\xF3n y el buz\xF3n de origen.", 503);
     }
     const result = await response.json().catch(() => ({}));
     return { providerId: String(result.messageId || result.data?.messageId || "").slice(0, 200), status: "sent" };
@@ -180,7 +191,7 @@ Deno.serve(async (request) => {
     const identity = await authenticateSupabase(request.headers.get("authorization") || "", { service, makeUser: (header) => createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: header } } }) });
     const input = await request.json();
     const userData = await loadData(identity.user);
-    const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), accountId: Deno.env.get("ZOHO_ACCOUNT_ID"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" });
+    const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" });
     const api = new EmailService({ store: { loadData: async () => userData }, provider, enabled: Deno.env.get("ZOHO_MAIL_ENABLED") === "true" });
     if (input.action === "context") return reply(await api.context(input.companyId));
     if (input.action === "send") return reply({ email: await api.send(input) });
