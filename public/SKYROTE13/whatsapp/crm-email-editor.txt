@@ -510,7 +510,7 @@ var SECTOR_CONTENT = {
   computadoras: { label: SECTOR_LABELS.computadoras, kicker: "ALQUILER DE LAPTOPS Y COMPUTADORAS", headline: "Sepa qu\xE9 equipo puede alquilar.\nY cu\xE1ndo vuelve.", subject: "disponibilidad y devoluciones, bajo control", question: "Un cliente pide laptops. \xBFSabe cu\xE1les est\xE1n listas para entregar?", pain: "Si ventas consulta un Excel, almac\xE9n otro y las devoluciones se coordinan por mensajes, confirmar qu\xE9 equipos est\xE1n disponibles exige preguntar a varias personas. Una laptop devuelta puede seguir pendiente de revisi\xF3n o tener un accesorio por completar.", solution: "En Nexo creamos sistemas a medida que relacionan cada laptop por n\xFAmero de serie con su reserva, cliente, contrato, entrega y devoluci\xF3n. Almac\xE9n registra el estado y los accesorios; ventas consulta qu\xE9 est\xE1 disponible y soporte ve qu\xE9 necesita revisi\xF3n.", benefit: "Cotizar con m\xE1s seguridad. Coordinar entregas con menos cruces y recuperar cada equipo con su historial.", before: ["Preguntar qu\xE9 laptops est\xE1n libres.", "Revisar contratos y mensajes.", "Confirmar devoluci\xF3n y accesorios."], after: ["Una ficha por equipo y serie.", "Reservas y devoluciones relacionadas.", "Estado listo para alquilar, en revisi\xF3n o entregado."], facts: ["Marca, modelo y n\xFAmero de serie", "Cliente, contrato y fecha de retorno", "Cargador, condici\xF3n y mantenimiento"], benefits: [["Prometer con m\xE1s claridad", "Distinguir equipos disponibles, reservados, entregados y en revisi\xF3n antes de comprometerlos."], ["Controlar las devoluciones", "Vincular fecha prevista, accesorios y estado del equipo a su entrega original."], ["Preparar el siguiente alquiler", "Soporte registra la revisi\xF3n y almac\xE9n identifica cu\xE1les est\xE1n listos para volver a salir."]], flow: ["Almac\xE9n actualiza", "Sistema relaciona", "Ventas confirma"], whatsapp: "Cuando le piden laptops, \xBFconfirma la disponibilidad en un solo lugar o tiene que consultar a ventas, almac\xE9n y soporte?\n\nEn Nexo conectamos cada equipo por serie con su reserva, entrega, devoluci\xF3n y mantenimiento. Su equipo ve cu\xE1les est\xE1n listos para alquilar y cu\xE1les necesitan revisi\xF3n.\n\nM\xE1s claridad para cotizar y menos cruces al entregar." }
 };
 function sectorAssets(key) {
-  return key === "impresion" || key === "computadoras" ? { pdf: `${base}/presentacion/Nexo-${key}.pdf`, image: `${base}/presentacion/Nexo-${key}-WhatsApp.jpg` } : { pdf: `${base}/presentacion/Nexo-Informacion-Conectada.pdf`, image: `${base}/presentacion/Nexo-WhatsApp-Informacion.jpg` };
+  return key === "impresion" || key === "computadoras" ? { pdf: `${base}/presentacion/Nexo-${key}.pdf`, image: `${base}/presentacion/Nexo-${key}${key === "impresion" ? "-v2" : ""}-WhatsApp.jpg` } : { pdf: `${base}/presentacion/Nexo-Informacion-Conectada.pdf`, image: `${base}/presentacion/Nexo-WhatsApp-Informacion.jpg` };
 }
 function sectorWhatsApp(company = {}, override = "auto", { emailSent = false } = {}) {
   const key = sectorFor(company, override), content = SECTOR_CONTENT[key];
@@ -744,12 +744,16 @@ import { Buffer as Buffer2 } from "node:buffer";
 var campaign_default = {
   sectors: {
     impresion: {
-      url: "https://nexoamedida.com/presentacion/Nexo-impresion-WhatsApp.jpg",
-      sha256: "c90057fc0b9253be05f280766b5e015050104304cb3f52c88e2d5b885b20df64"
+      url: "https://nexoamedida.com/presentacion/Nexo-impresion-v2-WhatsApp.jpg",
+      sha256: "6164f24b1b5f983fb92dfbea0c1d57c6acab9f2e1c7c5525b535a08d42483d73"
     },
     computadoras: {
       url: "https://nexoamedida.com/presentacion/Nexo-computadoras-WhatsApp.jpg",
       sha256: "242e773e16d16eb3be6d464759d67365412de13d28a265aa85604b53e0796313"
+    },
+    impresion_v1: {
+      url: "https://nexoamedida.com/presentacion/Nexo-impresion-WhatsApp.jpg",
+      sha256: "c90057fc0b9253be05f280766b5e015050104304cb3f52c88e2d5b885b20df64"
     }
   },
   url: "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",

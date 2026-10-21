@@ -1,12 +1,16 @@
 {
   "sectors": {
     "impresion": {
-      "url": "https://nexoamedida.com/presentacion/Nexo-impresion-WhatsApp.jpg",
-      "sha256": "c90057fc0b9253be05f280766b5e015050104304cb3f52c88e2d5b885b20df64"
+      "url": "https://nexoamedida.com/presentacion/Nexo-impresion-v2-WhatsApp.jpg",
+      "sha256": "6164f24b1b5f983fb92dfbea0c1d57c6acab9f2e1c7c5525b535a08d42483d73"
     },
     "computadoras": {
       "url": "https://nexoamedida.com/presentacion/Nexo-computadoras-WhatsApp.jpg",
       "sha256": "242e773e16d16eb3be6d464759d67365412de13d28a265aa85604b53e0796313"
+    },
+    "impresion_v1": {
+      "url": "https://nexoamedida.com/presentacion/Nexo-impresion-WhatsApp.jpg",
+      "sha256": "c90057fc0b9253be05f280766b5e015050104304cb3f52c88e2d5b885b20df64"
     }
   },
   "url": "https://nexoamedida.com/presentacion/Nexo-WhatsApp-Informacion.jpg",
