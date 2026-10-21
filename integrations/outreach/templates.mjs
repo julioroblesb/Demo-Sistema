@@ -84,6 +84,7 @@ export function emailHtml(name) {
 <p style="${paragraph}">Me gustaría mostrarles un proyecto real que ya desarrollamos y conversar sobre cómo podría aplicarse a su forma de trabajar.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td bgcolor="#247459" style="background:#247459;border-radius:7px;"><a href="${OUTREACH.demoUrl}" style="display:inline-block;padding:10px 18px;line-height:1.4;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;">Explorar la demo</a></td></tr></table>
 <p style="${paragraph}">¿Podemos coordinar una demostración de 15 minutos? Puede ser virtual o presencial en Lima. Si lo revisa otra persona, agradeceré que me ayuden a contactarla.</p>
+<p style="${paragraph}"><a href="${OUTREACH.emailAttachment}" style="color:#247459;text-decoration:underline;text-underline-offset:3px;">Descargar la presentación en PDF</a></p>
 <p style="margin:42px 0 0;line-height:1.6;">Saludos,<br><strong>Julio Robles</strong><br><span style="color:#52675b;">Nexo · Sistemas de información a medida</span><br><a href="mailto:asesoria@nexoamedida.com" style="color:#247459;text-decoration:none;">asesoria@nexoamedida.com</a><br><a href="tel:+51936755465" style="color:#247459;text-decoration:none;">+51 936 755 465</a></p>
 </td></tr>
 <tr><td style="height:72px;line-height:72px;font-size:1px;">&nbsp;</td></tr>
