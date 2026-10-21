@@ -29,7 +29,7 @@ export function createWhatsAppHandler({authenticate,makeService,origin='https://
    const text=await req.text();if(text.length>12000)throw new OutboundError('INVALID_REQUEST','La solicitud es demasiado grande.',413);
    let input;try{input=JSON.parse(text);}catch{throw new OutboundError('INVALID_REQUEST','La solicitud no es válida.');}
    if(!input||typeof input!=='object'||Array.isArray(input))throw new OutboundError('INVALID_REQUEST','La solicitud no es válida.');
-   const api=await makeService(identity);
+   const api=await makeService(identity,input);
    if(input.action==='context')return reply(await api.context(input.companyId));
    if(input.action==='submit')return reply({job:await api.submit(input)});
    if(input.action==='refresh')return reply({job:await api.refresh(input.jobId)});

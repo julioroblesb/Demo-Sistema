@@ -5,7 +5,7 @@ const result=spawnSync('python3',['-c',`from pathlib import Path
 import zipfile
 root=Path(${JSON.stringify(root)})
 output=root/'public/SKYROTE13/whatsapp/Nexo-WhatsApp-Supabase.zip'
-names=['supabase/config.toml','supabase/migrations/202610200002_whatsapp.sql','supabase/functions/crm-whatsapp/index.ts','supabase/functions/crm-whatsapp/campaign.json','supabase/functions/_shared/lr-whatsapp-client.mjs','supabase/functions/_shared/whatsapp-core.mjs','supabase/functions/_shared/whatsapp-http.mjs','supabase/functions/_shared/whatsapp-store.mjs','supabase/functions/_shared/whatsapp-domain.mjs','supabase/functions/_shared/crm/domain.js','supabase/functions/_shared/crm/prospecting.js']
+names=['supabase/config.toml','supabase/migrations/202610200002_whatsapp.sql','supabase/functions/crm-whatsapp/index.ts','supabase/functions/crm-whatsapp/campaign.json','supabase/functions/_shared/lr-whatsapp-client.mjs','supabase/functions/_shared/whatsapp-core.mjs','supabase/functions/_shared/whatsapp-http.mjs','supabase/functions/_shared/whatsapp-store.mjs','supabase/functions/_shared/whatsapp-domain.mjs','supabase/functions/_shared/whatsapp-runtime.mjs','supabase/functions/_shared/sectors.mjs','supabase/functions/_shared/templates.mjs','supabase/functions/_shared/outreach-templates.mjs','supabase/functions/_shared/email-core.mjs','supabase/functions/_shared/campaign-core.mjs','supabase/functions/_shared/campaign-store.mjs','supabase/functions/crm-email/index.ts','supabase/functions/_shared/crm/domain.js','supabase/functions/_shared/crm/prospecting.js']
 files=[root/name for name in names]
 with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
  def add(name,data):

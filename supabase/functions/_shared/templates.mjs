@@ -1,3 +1,4 @@
+import {sectorFor,sectorHtml,sectorText,sectorSubject,sectorAssets,sectorWhatsApp} from './sectors.mjs';
 // Shared content only. Sending requires the user's WhatsApp service and Zoho account.
 export const WHATSAPP_TEXT = `Hola👋
 
@@ -22,8 +23,9 @@ function companyName(value) {
  if(typeof value!=='string'||/[\r\n\u0000]/.test(value)||!value.trim()||value.trim().length>180)throw new Error('Indica el nombre de la empresa en una sola línea, con hasta 180 caracteres.');
  return value.trim();
 }
-export function emailSubject(name){return `${companyName(name)}: menos búsquedas, respuestas más rápidas`;}
-export function emailText(name) {
+export function emailSubject(name,sector='general'){if(sector!=='general'&&sectorFor({},sector)!=='general')return sectorSubject(companyName(name),sector);return `${companyName(name)}: menos búsquedas, respuestas más rápidas`;}
+export function emailText(name,sector='general') {
+ if(['impresion','computadoras'].includes(sector))return sectorText(companyName(name),sector);
  const company=companyName(name);
  return `Menos búsquedas.
 Más claridad para trabajar.
@@ -57,7 +59,8 @@ asesoria@nexoamedida.com
 Información conectada. Empresas con claridad.
 nexoamedida.com`;
 }
-export function emailHtml(name) {
+export function emailHtml(name,sector='general') {
+ if(['impresion','computadoras'].includes(sector))return sectorHtml(companyName(name),sector);
  const company=escape(companyName(name));
  const paragraph='margin:0 0 18px;line-height:1.65;';
  return `<!doctype html>

@@ -3,3 +3,6 @@ project_id = "nexo-crm"
 [functions.crm-whatsapp]
 verify_jwt = false
 # La función valida el JWT con auth.getUser y comprueba crm_members en cada petición.
+
+[functions.crm-email]
+verify_jwt = false
