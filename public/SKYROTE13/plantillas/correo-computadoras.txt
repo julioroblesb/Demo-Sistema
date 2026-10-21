@@ -1,22 +1,22 @@
-ASUNTO: [Empresa]: disponibilidad y devoluciones, bajo control
+ASUNTO: [Empresa]: qué laptops puede ofrecer y cuándo regresan
 
 Hola, equipo de [Empresa]:
 
-Soy Julio, de Nexo. Desarrollamos sistemas de información a medida para empresas de alquiler.
+Soy Julio Robles, de Nexo. Les escribo por su servicio de alquiler de laptops y computadoras.
 
-Un cliente pide laptops. ¿Sabe cuáles están listas para entregar?
+Cuando llega un pedido, ¿pueden confirmar qué equipos tendrán disponibles para esas fechas?
 
-Si ventas consulta un Excel, almacén otro y las devoluciones se coordinan por mensajes, confirmar qué equipos están disponibles exige preguntar a varias personas. Una laptop devuelta puede seguir pendiente de revisión o tener un accesorio por completar.
+Si ventas revisa un Excel, almacén otro y las devoluciones se coordinan por mensajes, confirmar una disponibilidad exige varias consultas. Además, un equipo devuelto puede seguir en revisión o tener un cargador pendiente.
 
-En Nexo creamos sistemas a medida que relacionan cada laptop por número de serie con su reserva, cliente, contrato, entrega y devolución. Almacén registra el estado y los accesorios; ventas consulta qué está disponible y soporte ve qué necesita revisión.
+En Nexo diseñamos sistemas a medida para relacionar cada equipo por número de serie con su reserva, cliente, contrato, entrega y devolución. Ventas consulta el periodo solicitado; almacén registra condición y accesorios, y soporte actualiza cuándo el equipo está listo para volver a salir.
 
-Cotizar con más seguridad. Coordinar entregas con menos cruces y recuperar cada equipo con su historial.
+Más seguridad al ofrecer equipos, menos cruces entre reservas y entregas, y devoluciones con el estado y los accesorios a la vista.
 
 Me gustaría mostrarles un proyecto real que ya desarrollamos y revisar cómo adaptar ese enfoque a su operación.
 
 ¿Podemos coordinar una demostración de 15 minutos, virtual o presencial en Lima? Si lo ve otra persona, agradeceré que me ayuden a contactarla.
 
-Presentación PDF: https://nexoamedida.com/presentacion/Nexo-computadoras.pdf
+Presentación PDF: https://nexoamedida.com/presentacion/Nexo-computadoras-guia-operativa.pdf
 Conozca Nexo: https://nexoamedida.com
 
 Julio Robles

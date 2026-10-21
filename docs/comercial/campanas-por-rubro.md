@@ -40,3 +40,11 @@ La interfaz y los documentos se publican en GitHub Pages. Los cambios de servido
 ## Validación
 
 Se probaron intervalos compartidos entre campañas, exclusión de solicitudes simultáneas, prioridad del correo en campañas mixtas, WhatsApp independiente, pausa por límites, incertidumbre sin reenvío, cambio de destinatario, cancelación y filtros por ubicación/canal. Las pruebas de interfaz cubren vista previa de las piezas a 320, 390 y 1440 px y selección de opciones/fecha/hora con el diseño propio. Los PDF se exportaron y verificaron como A4 de una página. Las pruebas usan proveedores simulados; no se enviaron campañas a prospectos durante el desarrollo.
+
+## Revisión de contenido y guías complementarias
+
+Se revisaron el correo y WhatsApp de ambos rubros para reconocer de forma explícita la actividad de la empresa y presentar problemas y beneficios distintos. Impresión abarca servicio técnico, administración, facturación y atención al cliente. Computadoras se centra en disponibilidad por periodo, reservas, series, accesorios, retornos y revisión antes de otro alquiler.
+
+Las imágenes aprobadas se conservan. Las nuevas guías PDF tienen dos páginas y otra estructura: recorrido operativo, matriz de áreas e información, primer alcance por etapas y agenda para una conversación de 15 minutos. No reutilizan los bloques de comparación de la imagen. Se publican con nombres nuevos (`Nexo-impresion-guia-operativa.pdf` y `Nexo-computadoras-guia-operativa.pdf`); los enlaces anteriores también apuntan al contenido actualizado mediante copias del mismo archivo.
+
+Los mensajes y enlaces pueden revisarse juntos en `/SKYROTE13/campanas/mensajes.html`. La versión de contenido `sector-queue-v3` permite detectar funciones antiguas y evita mostrar una vista previa nueva mientras se envía silenciosamente el texto anterior. Los archivos autónomos de ambas funciones deben volver a desplegarse en Supabase para usar los nuevos mensajes en el envío automático.
