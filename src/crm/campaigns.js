@@ -4,6 +4,9 @@ export const CAMPAIGN_LABELS={preparing:'Preparando',queued:'En cola',paused:'Pa
 export const DELIVERY_LABELS={pending:'Pendiente',sending:'Solicitando envío',queued:'En cola de WhatsApp',processing:'Procesando',sent:'Enviado',failed:'Con error',uncertain:'Por verificar',skipped:'Omitido',cancelled:'Cancelado'};
 export const isCampaign=row=>row.category==='outreach_campaign';
 export const isDelivery=row=>row.category==='outreach_delivery';
+export function queueNeedsWork(data,now=Date.now()){
+ return data.settings.some(row=>isCampaign(row)&&row.status==='queued'||isDelivery(row)&&(['queued','processing','sending'].includes(row.status)||row.status==='sent'&&!row.contact_logged_at&&(!row.contact_retry_at||Date.parse(row.contact_retry_at)<=now)));
+}
 export const atOf=row=>row.occurred_at||(row.date?`${row.date}T${row.time||'00:00'}:00-05:00`:row.created_at||'');
 export const channelsOf=row=>[...new Set([...(row.channels||[]),...(['correo','whatsapp'].includes(row.kind)?[row.kind]:[])])].filter(c=>['correo','whatsapp'].includes(c));
 export function outreachFor(data,company){return [...data.activities.filter(row=>row.company_id===company.id&&channelsOf(row).length),...data.settings.filter(row=>isDelivery(row)&&row.company_id===company.id&&row.status==='sent').map(row=>({...row,kind:row.channel,occurred_at:row.sent_at}))];}

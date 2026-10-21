@@ -12,9 +12,20 @@ with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
   info=zipfile.ZipInfo(str(name),(2026,10,20,0,0,0));info.external_attr=0o644<<16
   archive.writestr(info,data,compress_type=zipfile.ZIP_DEFLATED)
  for p in files: add(p.relative_to(root),p.read_bytes())
- add('LEEME.txt','''Nexo WhatsApp: paquete de función privada.
-Instalación: https://nexoamedida.com/SKYROTE13/whatsapp/
-El paquete actualizado de LR confirma su API publicada. Falta instalar esta función y configurar su clave exclusivamente en los secretos de Supabase.
+ add('supabase/functions/_shared/outreach-contact.mjs',(root/'supabase/functions/_shared/outreach-contact.mjs').read_bytes())
+ add('Actualizar-Nexo.cmd',(root/'scripts/sales-kit/Actualizar-Nexo.cmd').read_bytes().replace(bytes([13,10]),bytes([10])).replace(bytes([10]),bytes([13,10])))
+ add('LEEME.txt','''Nexo: actualizar correo, WhatsApp y campañas.
+Guía desde cualquier navegador: https://nexoamedida.com/SKYROTE13/campanas/
+
+Desde Windows:
+1. Extrae TODO este ZIP en una carpeta.
+2. Abre Actualizar-Nexo.cmd. Necesitas Node.js LTS (https://nodejs.org).
+3. Autoriza Supabase en el navegador. El instalador actualiza crm-email y crm-whatsapp.
+4. Cuando confirme ambos despliegues, vuelve al CRM y recarga.
+
+Se conservan los secretos, contactos, campañas e historial.
+No se ejecutan SQL ni migraciones, ni se cambian DNS o claves.
+La cola conserva su funcionamiento actual: necesita una sesión del CRM abierta.
 No hay credenciales incluidas. No se envían mensajes al extraer este ZIP.
 ''')
 print('Paquete de función privada generado, sin secretos.')`],{stdio:'inherit'});

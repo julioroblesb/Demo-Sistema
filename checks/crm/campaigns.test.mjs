@@ -3,18 +3,22 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {CampaignService} from '../../supabase/functions/_shared/campaign-core.mjs';
 import {OutboundError} from '../../supabase/functions/_shared/whatsapp-core.mjs';
-import {emptyData} from '../../src/crm/domain.js';
+import {emptyData,companyStage,contactHistory} from '../../src/crm/domain.js';
+import {checkOperations} from '../../src/crm/repository.js';
+import {logOutboundContact} from '../../supabase/functions/_shared/outreach-contact.mjs';
 import {sectorFor,sectorWhatsApp,sectorAssets} from '../../integrations/outreach/sectors.mjs';
 import {emailHtml,emailSubject} from '../../integrations/outreach/templates.mjs';
-import {campaignCandidates} from '../../src/crm/campaigns.js';
+import {campaignCandidates,queueNeedsWork} from '../../src/crm/campaigns.js';
 function setup(){
  const data=emptyData();data.companies=[{id:'printer',name:'Impresión Norte',sector:'Impresoras y oficina',status:'nueva',email:'ventas@printer.pe',phone:'987654321',city:'Lima',created_at:'2026-01-01'},{id:'laptop',name:'Laptops Sur',sector:'Laptops y computadoras',status:'nueva',email:'ventas@laptop.pe',phone:'987654322',city:'Arequipa',created_at:'2026-02-01'}];let clock=new Date('2026-10-21T14:00:00Z'),locked=false;const calls=[],records=new Map();
  const store={loadData:async()=>({...structuredClone(data),settings:structuredClone([...records.values()])}),get:async id=>structuredClone(records.get(id)||null),put:async record=>{const old=records.get(record.id);if((old?.version||0)!==(record.version||0))throw new Error('Conflict');const saved={...structuredClone(record),created_at:old?.created_at||clock.toISOString(),version:(old?.version||0)+1};records.set(record.id,saved);return structuredClone(saved);},insertMany:async rows=>{for(const row of rows)await store.put(row);},acquire:async()=>{if(locked)return null;locked=true;return {id:'outreach-scheduler',...(records.get('scheduler')||{})};},release:async(lock,patch)=>{records.set('scheduler',{...records.get('scheduler'),...patch});locked=false;}};
+ const crm={loadData:store.loadData,commit:async operations=>{const next=checkOperations(data,operations);for(const operation of operations)next[operation.type].find(row=>row.id===operation.record.id).version=(data[operation.type].find(row=>row.id===operation.record.id)?.version||0)+1;Object.assign(data,next);}};
+ store.logContact=job=>logOutboundContact(crm,{companyId:job.company_id,sendId:job.send_id,channel:job.channel,body:job.caption||'Correo enviado',sentAt:job.sent_at});
  const emailApi={send:async input=>{calls.push({channel:'correo',...input});return {status:'sent',providerId:'zoho-id'};}};
  const whatsappFor=template=>({submit:async input=>{calls.push({channel:'whatsapp',template,...input});return {id:input.requestId,status:'sent',sent_at:clock.toISOString()};},refresh:async id=>({id,status:'sent',sent_at:clock.toISOString()})});
  const factory=()=>new CampaignService({store,emailApi,whatsappFor,now:()=>clock,uuid:randomUUID});const api=factory();
  const create=(extra={})=>api.create({campaignId:randomUUID(),companyIds:['printer'],channel:'correo',template:'auto',emailInterval:60,whatsappInterval:30,...extra});
- return {data,records,calls,store,emailApi,api,factory,create,advance:seconds=>{clock=new Date(clock.getTime()+seconds*1000);}};
+ return {data,records,calls,store,crm,emailApi,api,factory,create,advance:seconds=>{clock=new Date(clock.getTime()+seconds*1000);}};
 }
 test('Dos campañas comparten intervalo por canal y conservan la cola tras recrear el proceso',async()=>{const s=setup();await s.create();s.advance(1);await s.create({companyIds:['laptop']});await s.api.tick();assert.equal(s.calls.length,1);assert.equal(s.calls[0].companyId,'printer');await s.api.tick();assert.equal(s.calls.length,1);s.advance(61);await s.factory().tick();assert.equal(s.calls.length,2);assert.equal(s.calls[1].companyId,'laptop');});
 test('Campaña mixta personaliza cada rubro y envía correo antes de WhatsApp sin bloqueo por no tener correo histórico',async()=>{const s=setup();await s.create({channel:'ambos'});await s.api.tick();await s.api.tick();assert.deepEqual(s.calls.map(c=>c.channel),['correo','whatsapp']);assert.equal(s.calls[0].template,'impresion');assert.match(s.calls[1].caption,/reporte|contador/);assert.match(s.calls[1].caption,/envié un correo/);});
@@ -30,3 +34,48 @@ test('Las piezas de rubro incluyen activos distintos, saludo escapado y mensajes
 test('Un WhatsApp reutilizado por LR no se cuenta como un segundo envío',async()=>{const s=setup();const api=new CampaignService({store:s.store,emailApi:s.emailApi,whatsappFor:()=>({submit:async()=>({id:randomUUID(),status:'sent'})})});await api.create({campaignId:randomUUID(),companyIds:['printer'],channel:'whatsapp',template:'impresion'});await api.tick();const delivery=[...s.records.values()].find(j=>j.category==='outreach_delivery');assert.equal(delivery.status,'skipped');assert.match(delivery.error,/no se solicitó otro envío/);});
 
 test('Al recuperar una sesión, la evidencia de envío real reconcilia un intento interrumpido sin reenviar',async()=>{const s=setup();await s.create();let job=[...s.records.values()].find(j=>j.category==='outreach_delivery');job=await s.store.put({...job,status:'sending',lease_until:'2026-10-21T13:00:00Z'});s.data.activities.push({id:'mail-'+job.send_id,company_id:'printer',kind:'correo',outbound_id:job.send_id,occurred_at:'2026-10-21T13:59:00Z'});await s.api.tick();assert.equal(s.records.get(job.id).status,'sent');assert.equal(s.calls.length,0);});
+
+test('La campaña mueve Filtrado a Contactado solo al confirmarse el envío y registra ambos canales una vez',async()=>{
+ const s=setup();await s.create({channel:'ambos'});
+ assert.equal(companyStage(s.data.companies[0],s.data),'diagnostico');assert.equal(s.data.activities.length,0);
+ await s.api.tick();assert.equal(companyStage(s.data.companies[0],s.data),'demo');
+ let history=contactHistory('printer',s.data);assert.deepEqual(history.contact.channels,['correo']);assert.equal(history.contact.occurred_at,'2026-10-21T14:00:00.000Z');
+ await s.api.tick();history=contactHistory('printer',s.data);assert.ok(s.data.activities.some(a=>a.channels?.includes('whatsapp')));
+ const count=s.data.activities.length;await s.api.tick();await s.api.tick();assert.equal(s.data.activities.length,count);assert.equal(s.calls.length,2);
+});
+
+test('Si falla guardar el contacto, la siguiente ejecución lo recupera sin reenviar ni pausar la campaña',async()=>{
+ const s=setup(),logContact=s.store.logContact;s.store.logContact=async()=>{throw new Error('database offline');};
+ const {campaign}=await s.create();await s.api.tick();
+ let job=[...s.records.values()].find(j=>j.category==='outreach_delivery');assert.equal(job.status,'sent');assert.ok(job.contact_retry_at);assert.equal(s.records.get(campaign.id).status,'queued');assert.equal(companyStage(s.data.companies[0],s.data),'diagnostico');
+ s.store.logContact=logContact;s.advance(61);await s.factory().tick();job=s.records.get(job.id);
+ assert.ok(job.contact_logged_at);assert.equal(companyStage(s.data.companies[0],s.data),'demo');assert.equal(s.calls.length,1);
+});
+
+test('El navegador continúa recuperando contactos pendientes aunque la campaña ya haya terminado',()=>{
+ const data=emptyData();data.settings=[{category:'outreach_campaign',status:'completed'},{category:'outreach_delivery',status:'sent',contact_retry_at:'2026-10-21T14:01:00Z'}];
+ assert.equal(queueNeedsWork(data,Date.parse('2026-10-21T14:00:00Z')),false);
+ assert.equal(queueNeedsWork(data,Date.parse('2026-10-21T14:01:01Z')),true);
+ data.settings[1].contact_logged_at='2026-10-21T14:01:01Z';assert.equal(queueNeedsWork(data),false);
+});
+
+test('WhatsApp en cola no mueve la empresa; al confirmarse por consulta registra el contacto',async()=>{
+ const s=setup(),api=new CampaignService({store:s.store,emailApi:s.emailApi,whatsappFor:()=>({submit:async input=>({id:input.requestId,status:'queued'}),refresh:async id=>({id,status:'sent',sent_at:'2026-10-21T14:01:00Z'})}),now:()=>new Date('2026-10-21T14:00:00Z')});
+ await api.create({campaignId:randomUUID(),companyIds:['printer'],channel:'whatsapp'});await api.tick();
+ assert.equal(companyStage(s.data.companies[0],s.data),'diagnostico');
+ const delivery=[...s.records.values()].find(j=>j.category==='outreach_delivery');await s.store.put({...delivery,last_poll_at:''});await api.tick();
+ assert.equal(companyStage(s.data.companies[0],s.data),'demo');assert.equal(contactHistory('printer',s.data).contact.occurred_at,'2026-10-21T14:01:00.000Z');
+});
+
+test('Registrar un envío no retrocede Seguimiento y tolera un conflicto simultáneo sin duplicados',async()=>{
+ const s=setup();s.data.companies[0].pipeline_stage='propuesta';s.data.companies[0].status='calificada';const commit=s.crm.commit;let commits=0;
+ s.crm.commit=async operations=>{if(commits++===0)throw new Error('CONFLICT_UI');return commit(operations);};
+ await s.create();await s.api.tick();assert.equal(companyStage(s.data.companies[0],s.data),'propuesta');assert.equal(s.data.activities.filter(a=>a.kind==='contacto').length,1);assert.equal(commits,2);
+ const job=[...s.records.values()].find(j=>j.category==='outreach_delivery');await s.store.logContact(job);assert.equal(s.data.activities.filter(a=>a.kind==='contacto').length,1);
+});
+
+test('Un envío confirmado después del cierre conserva Perdido y añade solo su historial',async()=>{
+ const s=setup();await s.create();let job=[...s.records.values()].find(j=>j.category==='outreach_delivery');await s.store.put({...job,status:'sent',sent_at:'2026-10-21T14:00:00Z'});
+ s.data.companies[0].status='no_contactar';s.data.companies[0].pipeline_stage='perdida';await s.api.tick();
+ assert.equal(companyStage(s.data.companies[0],s.data),'perdida');assert.equal(s.data.activities.filter(a=>a.kind==='contacto').length,1);assert.equal(s.calls.length,0);
+});

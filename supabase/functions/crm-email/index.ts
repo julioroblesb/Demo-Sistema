@@ -6,7 +6,7 @@ import {WhatsAppStore} from '../_shared/whatsapp-store.mjs';
 import {whatsappRuntime} from '../_shared/whatsapp-runtime.mjs';
 import {CampaignStore} from '../_shared/campaign-store.mjs';
 import {CampaignService} from '../_shared/campaign-core.mjs';
-import {contactOperations} from '../_shared/crm/prospecting.js';
+import {logOutboundContact} from '../_shared/outreach-contact.mjs';
 import {TEMPLATE_VERSION} from '../_shared/sectors.mjs';
 const cors={'Access-Control-Allow-Origin':'https://nexoamedida.com','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json','Vary':'Origin'};
 const reply=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:cors});
@@ -18,7 +18,7 @@ Deno.serve(async request=>{try{
  if(!url||!serviceKey||!anonKey)throw new OutboundError('BACKEND_NOT_CONFIGURED','Falta la configuración interna de Supabase.',503);
  const service=createClient(url,serviceKey,{auth:{persistSession:false,autoRefreshToken:false}}),identity=await authenticateSupabase(request.headers.get('authorization')||'',{service,makeUser:header=>createClient(url,anonKey,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:header}}})});
  const raw=await request.text();if(raw.length>150000)throw new OutboundError('INVALID_REQUEST','La solicitud es demasiado grande.',413);const input=JSON.parse(raw),crm=new WhatsAppStore(identity);
- const store={loadData:()=>crm.loadData(),logEmail:async({company,sendId,recipient,subject})=>{const data=await crm.loadData(),activityId='mail-'+sendId;if(data.activities.some(a=>a.id===activityId))return;const now=new Date(),operations=contactOperations(data,data.companies.find(c=>c.id===company.id),['correo'],{body:`${subject}\nDestinatario: ${recipient}`,now});const activity=operations.find(op=>op.type==='activities'&&op.record.kind==='contacto');activity.record.id=activityId;activity.record.outbound_id=sendId;await crm.commit(operations);}};
+ const store={loadData:()=>crm.loadData(),logEmail:async({company,sendId,recipient,subject})=>logOutboundContact(crm,{companyId:company.id,sendId,channel:'correo',body:`${subject}\nDestinatario: ${recipient}`,sentAt:new Date().toISOString()})};
  const provider=new ZohoMailClient({clientId:Deno.env.get('ZOHO_CLIENT_ID'),clientSecret:Deno.env.get('ZOHO_CLIENT_SECRET'),refreshToken:Deno.env.get('ZOHO_REFRESH_TOKEN'),fromAddress:Deno.env.get('ZOHO_FROM_ADDRESS')||'asesoria@nexoamedida.com'}),api=new EmailService({store,provider,enabled:Deno.env.get('ZOHO_MAIL_ENABLED')==='true'});
  const campaigns=new CampaignService({store:new CampaignStore({...identity,loadData:()=>crm.loadData()}),emailApi:api,whatsappFor:template=>whatsappRuntime(identity,template)});
  if(input.action==='capabilities')return reply({templateVersion:TEMPLATE_VERSION,queue:true});

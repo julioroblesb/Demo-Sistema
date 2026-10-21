@@ -774,10 +774,50 @@ function whatsappRuntime(identity, template = "general") {
   } });
 }
 
+// supabase/functions/_shared/outreach-contact.mjs
+async function logOutboundContact(crm, { companyId, sendId, channel, body, sentAt }) {
+  if (!["correo", "whatsapp"].includes(channel)) throw new Error("Canal inv\xE1lido.");
+  const activityId = (channel === "correo" ? "mail-" : "wa-") + sendId;
+  const now = new Date(sentAt || Date.now());
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const data = await crm.loadData();
+    if (data.activities.some((row) => row.id === activityId)) return;
+    const company = data.companies.find((row) => row.id === companyId);
+    if (!company) throw new OutboundError("COMPANY_NOT_FOUND", "No se encontr\xF3 la empresa para registrar el contacto.", 404);
+    const operations = company.archived || companyStage(company, data) === "perdida" ? [{ type: "activities", expected: 0, record: {
+      kind: "contacto",
+      company_id: company.id,
+      deal_id: "",
+      channels: [channel],
+      outcome: "sin_respuesta",
+      body,
+      occurred_at: now.toISOString(),
+      date: today(now),
+      time: localTime(now)
+    } }] : contactOperations(data, company, [channel], { body, now });
+    const activity = operations.find((op2) => op2.type === "activities" && op2.record.kind === "contacto").record;
+    activity.id = activityId;
+    activity.outbound_id = sendId;
+    try {
+      await crm.commit(operations);
+      return;
+    } catch (error) {
+      if (attempt === 2) throw error;
+    }
+  }
+}
+
 // supabase/functions/_shared/campaign-store.mjs
 var CampaignStore = class {
   constructor({ service, user, owner, loadData }) {
     Object.assign(this, { service, user, owner, loadData });
+  }
+  async logContact(job) {
+    return logOutboundContact({ loadData: this.loadData, commit: async (operations) => {
+      const { error } = await this.user.rpc("crm_commit", { operations });
+      if (error) throw error;
+    } }, { companyId: job.company_id, sendId: job.send_id, channel: job.channel, body: job.channel === "whatsapp" ? job.caption : `Correo de campa\xF1a enviado
+Destinatario: ${job.recipient}`, sentAt: job.sent_at });
   }
   unpack(row) {
     return row ? { ...row.data, id: row.id, version: row.version, created_at: row.created_at, updated_at: row.updated_at } : null;
@@ -842,6 +882,18 @@ var CampaignService = class {
   constructor({ store, emailApi, whatsappFor, now = () => /* @__PURE__ */ new Date(), uuid = () => crypto.randomUUID() }) {
     Object.assign(this, { store, emailApi, whatsappFor, now, uuid });
   }
+  async registerContact(job) {
+    try {
+      await this.store.logContact(job);
+      return await this.store.put({ ...job, contact_logged_at: this.now().toISOString(), contact_error: "", contact_retry_at: "" });
+    } catch {
+      try {
+        return await this.store.put({ ...job, contact_error: "Enviado. Pendiente de registrar el contacto; se reintentar\xE1 sin reenviar el mensaje.", contact_retry_at: new Date(this.now().getTime() + 6e4).toISOString() });
+      } catch {
+        return job;
+      }
+    }
+  }
   async create(input) {
     if (!UUID4.test(input.campaignId || "") || !Array.isArray(input.companyIds) || !input.companyIds.length || input.companyIds.length > 1e3 || !["correo", "whatsapp", "ambos"].includes(input.channel)) fail3("Selecciona el canal y entre 1 y 1000 empresas.");
     if (!["auto", "general", "impresion", "computadoras"].includes(input.template || "auto")) fail3("Selecciona una plantilla v\xE1lida.");
@@ -886,6 +938,11 @@ var CampaignService = class {
     let schedule = {};
     try {
       const data = await this.store.loadData(), campaigns = data.settings.filter((r) => r.category === "outreach_campaign"), jobs = data.settings.filter((r) => r.category === "outreach_delivery");
+      const pendingContact = jobs.find((j) => j.status === "sent" && !j.contact_logged_at && (!j.contact_retry_at || Date.parse(j.contact_retry_at) <= now.getTime()));
+      if (pendingContact) {
+        await this.registerContact(pendingContact);
+        return { changed: true, version: TEMPLATE_VERSION };
+      }
       const interrupted = jobs.find((j) => j.status === "sending" && Date.parse(j.lease_until || "") <= now.getTime());
       if (interrupted) {
         const logged = data.activities.find((a) => a.outbound_id === interrupted.send_id || a.id === "mail-" + interrupted.send_id || a.id === "wa-" + interrupted.send_id);
@@ -908,7 +965,8 @@ var CampaignService = class {
       if (awaiting) {
         try {
           const api = this.whatsappFor(awaiting.template), result = await api.refresh(awaiting.provider_id);
-          await this.store.put({ ...awaiting, status: result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+          const saved = await this.store.put({ ...awaiting, status: result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+          if (saved.status === "sent") await this.registerContact(saved);
         } catch {
         }
         return { changed: true };
@@ -947,7 +1005,8 @@ var CampaignService = class {
             if (![company.email, ...data.contacts.filter((c) => c.company_id === company.id).map((c) => c.email)].some((email) => email && email.toLowerCase() === job.recipient.toLowerCase())) fail3("El correo cambi\xF3; revisa la empresa antes de enviar.", "RECIPIENT_CHANGED");
             const result = await this.emailApi.send({ sendId: job.send_id, companyId: job.company_id, toAddress: job.recipient, template: job.template, dryRun: false });
             if (result.status !== "sent") throw new OutboundError("EMAIL_UNCERTAIN", "Zoho no confirm\xF3 el resultado.", 503);
-            await this.store.put({ ...claimed, status: "sent", sent_at: this.now().toISOString(), provider_id: result.providerId || "", error: "" });
+            const sent = await this.store.put({ ...claimed, status: "sent", sent_at: this.now().toISOString(), provider_id: result.providerId || "", error: "" });
+            await this.registerContact(sent);
           } else {
             const choices = recipientChoices(data, company), choice = choices.find((c) => (c.id || "") === job.contact_id);
             if (choice?.phone !== job.recipient) fail3("El tel\xE9fono cambi\xF3; revisa la empresa antes de enviar.", "RECIPIENT_CHANGED");
@@ -956,7 +1015,8 @@ var CampaignService = class {
               await this.store.put({ ...claimed, status: "skipped", provider_id: result.id, error: "Este mismo WhatsApp ya estaba registrado en LR; no se solicit\xF3 otro env\xEDo." });
               return { changed: true };
             }
-            await this.store.put({ ...claimed, status: ["prepared", "validated"].includes(result.status) ? "failed" : result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+            const saved = await this.store.put({ ...claimed, status: ["prepared", "validated"].includes(result.status) ? "failed" : result.status, provider_id: result.id, last_poll_at: now.toISOString(), sent_at: result.sent_at || "", error: result.error_message || "" });
+            if (saved.status === "sent") await this.registerContact(saved);
             if (result.retry_at) {
               schedule[key] = result.retry_at;
               await this.store.put({ ...campaign, status: "paused", error: "El proveedor pidi\xF3 esperar. Revisa el plazo del intento antes de continuar." });
@@ -996,16 +1056,8 @@ Deno.serve(async (request) => {
     const raw = await request.text();
     if (raw.length > 15e4) throw new OutboundError("INVALID_REQUEST", "La solicitud es demasiado grande.", 413);
     const input = JSON.parse(raw), crm = new WhatsAppStore(identity);
-    const store = { loadData: () => crm.loadData(), logEmail: async ({ company, sendId, recipient, subject }) => {
-      const data = await crm.loadData(), activityId = "mail-" + sendId;
-      if (data.activities.some((a) => a.id === activityId)) return;
-      const now = /* @__PURE__ */ new Date(), operations = contactOperations(data, data.companies.find((c) => c.id === company.id), ["correo"], { body: `${subject}
-Destinatario: ${recipient}`, now });
-      const activity = operations.find((op2) => op2.type === "activities" && op2.record.kind === "contacto");
-      activity.record.id = activityId;
-      activity.record.outbound_id = sendId;
-      await crm.commit(operations);
-    } };
+    const store = { loadData: () => crm.loadData(), logEmail: async ({ company, sendId, recipient, subject }) => logOutboundContact(crm, { companyId: company.id, sendId, channel: "correo", body: `${subject}
+Destinatario: ${recipient}`, sentAt: (/* @__PURE__ */ new Date()).toISOString() }) };
     const provider = new ZohoMailClient({ clientId: Deno.env.get("ZOHO_CLIENT_ID"), clientSecret: Deno.env.get("ZOHO_CLIENT_SECRET"), refreshToken: Deno.env.get("ZOHO_REFRESH_TOKEN"), fromAddress: Deno.env.get("ZOHO_FROM_ADDRESS") || "asesoria@nexoamedida.com" }), api = new EmailService({ store, provider, enabled: Deno.env.get("ZOHO_MAIL_ENABLED") === "true" });
     const campaigns = new CampaignService({ store: new CampaignStore({ ...identity, loadData: () => crm.loadData() }), emailApi: api, whatsappFor: (template) => whatsappRuntime(identity, template) });
     if (input.action === "capabilities") return reply({ templateVersion: TEMPLATE_VERSION, queue: true });

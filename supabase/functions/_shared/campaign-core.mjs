@@ -7,6 +7,10 @@ const terminal=['sent','failed','uncertain','skipped','cancelled'];
 const fail=(message,code='INVALID_CAMPAIGN',status=400)=>{throw new OutboundError(code,message,status);};
 export class CampaignService{
  constructor({store,emailApi,whatsappFor,now=()=>new Date(),uuid=()=>crypto.randomUUID()}){Object.assign(this,{store,emailApi,whatsappFor,now,uuid});}
+ async registerContact(job){
+  try{await this.store.logContact(job);return await this.store.put({...job,contact_logged_at:this.now().toISOString(),contact_error:'',contact_retry_at:''});}
+  catch{try{return await this.store.put({...job,contact_error:'Enviado. Pendiente de registrar el contacto; se reintentará sin reenviar el mensaje.',contact_retry_at:new Date(this.now().getTime()+60000).toISOString()});}catch{return job;}}
+ }
  async create(input){
   if(!UUID.test(input.campaignId||'')||!Array.isArray(input.companyIds)||!input.companyIds.length||input.companyIds.length>1000||!['correo','whatsapp','ambos'].includes(input.channel))fail('Selecciona el canal y entre 1 y 1000 empresas.');
   if(!['auto','general','impresion','computadoras'].includes(input.template||'auto'))fail('Selecciona una plantilla válida.');
@@ -27,6 +31,8 @@ export class CampaignService{
   const now=this.now(),lock=await this.store.acquire(now);if(!lock)return {busy:true,version:TEMPLATE_VERSION};let schedule={};
   try{
    const data=await this.store.loadData(),campaigns=data.settings.filter(r=>r.category==='outreach_campaign'),jobs=data.settings.filter(r=>r.category==='outreach_delivery');
+   const pendingContact=jobs.find(j=>j.status==='sent'&&!j.contact_logged_at&&(!j.contact_retry_at||Date.parse(j.contact_retry_at)<=now.getTime()));
+   if(pendingContact){await this.registerContact(pendingContact);return {changed:true,version:TEMPLATE_VERSION};}
    // A process stopped after contacting a provider is never blindly replayed.
    const interrupted=jobs.find(j=>j.status==='sending'&&Date.parse(j.lease_until||'')<=now.getTime());
    if(interrupted){
@@ -36,7 +42,7 @@ export class CampaignService{
     await this.store.put({...interrupted,status:'uncertain',error:'El intento se interrumpió. Revisa el proveedor antes de repetirlo.'});return {changed:true};
    }
    const awaiting=jobs.find(j=>['queued','processing'].includes(j.status)&&(!j.last_poll_at||now.getTime()-Date.parse(j.last_poll_at)>15000));
-   if(awaiting){try{const api=this.whatsappFor(awaiting.template),result=await api.refresh(awaiting.provider_id);await this.store.put({...awaiting,status:result.status,provider_id:result.id,last_poll_at:now.toISOString(),sent_at:result.sent_at||'',error:result.error_message||''});}catch{/* Keep the known state when polling fails. */}return {changed:true};}
+   if(awaiting){try{const api=this.whatsappFor(awaiting.template),result=await api.refresh(awaiting.provider_id);const saved=await this.store.put({...awaiting,status:result.status,provider_id:result.id,last_poll_at:now.toISOString(),sent_at:result.sent_at||'',error:result.error_message||''});if(saved.status==='sent')await this.registerContact(saved);}catch{/* Keep the known state when polling fails. */}return {changed:true};}
    const active=campaigns.filter(c=>c.status==='queued').sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at))||a.id.localeCompare(b.id));
    for(const campaign of active){
     const items=jobs.filter(j=>j.campaign_id===campaign.id).sort((a,b)=>a.rank-b.rank);
@@ -58,12 +64,12 @@ export class CampaignService{
       if(![company.email,...data.contacts.filter(c=>c.company_id===company.id).map(c=>c.email)].some(email=>email&&email.toLowerCase()===job.recipient.toLowerCase()))fail('El correo cambió; revisa la empresa antes de enviar.','RECIPIENT_CHANGED');
       const result=await this.emailApi.send({sendId:job.send_id,companyId:job.company_id,toAddress:job.recipient,template:job.template,dryRun:false});
       if(result.status!=='sent')throw new OutboundError('EMAIL_UNCERTAIN','Zoho no confirmó el resultado.',503);
-      await this.store.put({...claimed,status:'sent',sent_at:this.now().toISOString(),provider_id:result.providerId||'',error:''});
+      const sent=await this.store.put({...claimed,status:'sent',sent_at:this.now().toISOString(),provider_id:result.providerId||'',error:''});await this.registerContact(sent);
      }else{
       const choices=recipientChoices(data,company),choice=choices.find(c=>(c.id||'')===job.contact_id);if(choice?.phone!==job.recipient)fail('El teléfono cambió; revisa la empresa antes de enviar.','RECIPIENT_CHANGED');
       const result=await this.whatsappFor(job.template).submit({requestId:job.send_id,companyId:job.company_id,contactId:job.contact_id,caption:job.caption,emailAlreadySent:campaign.channel==='ambos'&&items.some(j=>j.company_id===job.company_id&&j.channel==='correo'&&j.status==='sent'),consent:{confirmed:true,source:'Confirmación del operador al crear campaña',capturedAt:now.toISOString()},dryRun:false});
       if(result.id!==job.send_id){await this.store.put({...claimed,status:'skipped',provider_id:result.id,error:'Este mismo WhatsApp ya estaba registrado en LR; no se solicitó otro envío.'});return {changed:true};}
-      await this.store.put({...claimed,status:['prepared','validated'].includes(result.status)?'failed':result.status,provider_id:result.id,last_poll_at:now.toISOString(),sent_at:result.sent_at||'',error:result.error_message||''});
+      const saved=await this.store.put({...claimed,status:['prepared','validated'].includes(result.status)?'failed':result.status,provider_id:result.id,last_poll_at:now.toISOString(),sent_at:result.sent_at||'',error:result.error_message||''});if(saved.status==='sent')await this.registerContact(saved);
       if(result.retry_at){schedule[key]=result.retry_at;await this.store.put({...campaign,status:'paused',error:'El proveedor pidió esperar. Revisa el plazo del intento antes de continuar.'});}else if(['prepared','validated','uncertain','failed'].includes(result.status)){await this.store.put({...campaign,status:'paused',error:'WhatsApp no confirmó el envío. Revisa el intento antes de continuar.'});}
      }
     }catch(error){const definite=['SENDING_DISABLED','EMAIL_REQUIRED','COMPANY_NOT_FOUND','CONTACT_BLOCKED','RECIPIENT_CHANGED','ZOHO_NOT_CONFIGURED','ZOHO_AUTH_FAILED','ZOHO_ACCOUNT_FAILED','ZOHO_SEND_REJECTED','RATE_LIMITED','SENDER_NOT_AUTHORIZED','SENDER_OWNER_NOT_CONFIGURED','LR_NOT_CONFIGURED'].includes(error.code);try{await this.store.put({...claimed,status:definite?'failed':'uncertain',error:error instanceof OutboundError?error.message:'No se pudo confirmar el envío. Revisa el proveedor antes de repetirlo.'});}catch{}await this.store.put({...campaign,status:'paused',error:'La campaña se pausó por un error. El historial conserva el intento.'});if(error.code==='RATE_LIMITED')schedule[key]=new Date(now.getTime()+300000).toISOString();}

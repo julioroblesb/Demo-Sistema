@@ -21,7 +21,7 @@ async function setup(page, context, mode = 'ready') {
     if (input.action === 'send') return route.fulfill({headers, json: {email: {
       status: input.dryRun ? 'validated' : 'sent', logged: true
     }}});
-    if (input.action === 'capabilities') return route.fulfill({headers, json: {templateVersion: TEMPLATE_VERSION, queue: true}});
+    if (input.action === 'capabilities') return route.fulfill({headers, json: {templateVersion: state.mode === 'old' ? 'sector-queue-v2' : TEMPLATE_VERSION, queue: state.mode !== 'no-queue'}});
     return route.fulfill({headers, json: {}});
   });
   await page.setViewportSize({width: 390, height: 844});
@@ -88,4 +88,22 @@ test('Puede crear una campaña de correo desde el celular sin volver a vincular 
   const created = requests.filter(r => r.action === 'campaign-create');
   expect(created).toHaveLength(1);
   expect(created[0]).toMatchObject({name: 'Campaña móvil', channel: 'correo', emailInterval: 60});
+});
+
+for (const mode of ['old', 'no-queue']) test(`En móvil, el bloqueo por servidor ${mode} enlaza al actualizador y conserva la campaña`, async ({page, context}) => {
+  const {state, requests} = await setup(page, context, mode);
+  await page.goto('/SKYROTE13/#envios');
+  await page.getByRole('button', {name: 'Crear campaña', exact: true}).first().click();
+  await page.getByLabel('Nombre de la campaña', {exact: true}).fill('Campaña por conservar');
+  await page.getByRole('button', {name: 'Añadir a la cola', exact: true}).click();
+  await expect(page.locator('#campaign-form [role=alert]')).toContainText('La campaña aún no se ha creado');
+  await expect(page.getByRole('link', {name: 'Actualizar servidor de envíos', exact: true})).toHaveAttribute('href', '/SKYROTE13/campanas/');
+  expect(requests.filter(r => r.action === 'campaign-create')).toHaveLength(0);
+  await expect(page.locator('#confirm-dialog')).not.toBeVisible();
+  // An updated server can be used from the same form, without recreating it.
+  state.mode = 'ready';
+  await page.getByRole('button', {name: 'Añadir a la cola', exact: true}).click();
+  await page.getByRole('button', {name: 'Confirmar campaña', exact: true}).click();
+  await expect(page.locator('#record-dialog')).not.toBeVisible();
+  expect(requests.find(r => r.action === 'campaign-create').name).toBe('Campaña por conservar');
 });

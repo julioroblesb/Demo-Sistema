@@ -1,6 +1,8 @@
 import {OutboundError} from './whatsapp-core.mjs';
+import {logOutboundContact} from './outreach-contact.mjs';
 export class CampaignStore{
  constructor({service,user,owner,loadData}){Object.assign(this,{service,user,owner,loadData});}
+ async logContact(job){return logOutboundContact({loadData:this.loadData,commit:async operations=>{const {error}=await this.user.rpc('crm_commit',{operations});if(error)throw error;}},{companyId:job.company_id,sendId:job.send_id,channel:job.channel,body:job.channel==='whatsapp'?job.caption:`Correo de campaña enviado\nDestinatario: ${job.recipient}`,sentAt:job.sent_at});}
  unpack(row){return row?{...row.data,id:row.id,version:row.version,created_at:row.created_at,updated_at:row.updated_at}:null;}
  async get(id){const {data,error}=await this.service.from('crm_records').select('*').eq('owner_id',this.owner).eq('kind','settings').eq('id',id).maybeSingle();if(error)throw new OutboundError('QUEUE_DATABASE_ERROR','No se pudo consultar la cola.',503);return this.unpack(data);}
  async put(record){const now=new Date().toISOString(),payload={...record};delete payload.version;delete payload.created_at;delete payload.updated_at;const row={owner_id:this.owner,kind:'settings',id:record.id,data:payload,version:(record.version||0)+1,updated_at:now};let query;if(record.version)query=this.service.from('crm_records').update(row).eq('owner_id',this.owner).eq('kind','settings').eq('id',record.id).eq('version',record.version).select('*').maybeSingle();else query=this.service.from('crm_records').insert(row).select('*').single();const {data,error}=await query;if(error||!data)throw new OutboundError('QUEUE_CONFLICT','La cola cambió en otro dispositivo. Actualiza para continuar.',409);return this.unpack(data);}
