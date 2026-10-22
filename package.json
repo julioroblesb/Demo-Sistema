@@ -8,7 +8,7 @@
     "build": "node scripts/sales-kit/export-outreach.mjs && node scripts/sales-kit/review-sector-messages.mjs && node scripts/sales-kit/prepare-whatsapp-server.mjs && node scripts/sales-kit/export-whatsapp-editor.mjs && node scripts/sales-kit/export-email-editor.mjs && node scripts/sales-kit/package-whatsapp.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "npm run build && npm run test:crm:unit && npm run test:crm:rules && playwright test",
-    "test:crm:unit": "node --test checks/crm/domain.test.mjs checks/crm/prospecting.test.mjs checks/crm/outreach-templates.test.mjs checks/crm/email.test.mjs checks/crm/lr-client.test.mjs checks/crm/whatsapp-service.test.mjs checks/crm/whatsapp-http.test.mjs checks/crm/whatsapp-editor.test.mjs checks/crm/campaigns.test.mjs checks/crm/private-functions.test.mjs",
+    "test:crm:unit": "node --test checks/crm/domain.test.mjs checks/crm/prospecting.test.mjs checks/crm/outreach-templates.test.mjs checks/crm/email.test.mjs checks/crm/lr-client.test.mjs checks/crm/whatsapp-service.test.mjs checks/crm/whatsapp-http.test.mjs checks/crm/whatsapp-editor.test.mjs checks/crm/campaigns.test.mjs checks/crm/private-functions.test.mjs checks/crm/excel-export.test.mjs",
     "test:crm:rules": "node --test checks/crm/database.test.mjs checks/crm/whatsapp-database.test.mjs",
     "build:sectors": "node scripts/sales-kit/sector-guides.mjs"
   },
@@ -19,6 +19,7 @@
     "vite": "^7.1.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.118.0"
+    "@supabase/supabase-js": "^2.118.0",
+    "exceljs": "4.4.0"
   }
 }
